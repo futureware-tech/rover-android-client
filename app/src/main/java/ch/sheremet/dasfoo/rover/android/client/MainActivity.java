@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
 
-import ch.sheremet.dasfoo.rover.android.client.R;
 import dasfoo.grpc.roverserver.nano.BoardInfoRequest;
 import dasfoo.grpc.roverserver.nano.BoardInfoResponse;
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             BoardInfoResponse reply = stub.getBoardInfo(message);
             // Create answer
             String answer = "Battery:" + reply.battery + "\n";
-            answer = answer + "Light" + reply.light + "\n";
+            answer = answer + "Light:" + reply.light + "\n";
             answer = answer + "Temperature:" + reply.temperature + "\n";
             answer = answer + "Humidity:" + reply.humidity;
 
@@ -97,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
                 mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
                         .usePlaintext(true)
                         .build();
-                if (command[0] == "moveCommand") return moveForward(mChannel);
-                if (command[0] == "getInfoCommand") return  getServerInfo(mChannel);
+                if (command[0].equals("moveCommand")) return moveForward(mChannel);
+                if (command[0].equals("getInfoCommand")) return  getServerInfo(mChannel);
             } catch (Exception e) {
                 return "Failed... : " + e.getMessage();
             }
