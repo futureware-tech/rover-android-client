@@ -14,14 +14,14 @@
             android:layout_weight="2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Enter Host" />
+            android:hint="@string/enter_host_hint" />
         <EditText
             android:id="@+id/port_edit_text"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:hint="Enter Port" />
+            android:hint="@string/enter_port_hint" />
     </LinearLayout>
 
     <Button
@@ -29,12 +29,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="sendMessage"
-        android:text="Move Forward" />
+        android:text="@string/move_forward_button" />
     <Button
         android:id="@+id/info_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Get Board Info"
+        android:text="@string/get_board_info_button"
         android:onClick="getInfo"/>
 
     <TextView
@@ -43,7 +43,7 @@
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
         android:textSize="16sp"
-        android:text="Response:" />
+        android:text="@string/response_text_view" />
 
     <TextView
         android:id="@+id/grpc_response_text"

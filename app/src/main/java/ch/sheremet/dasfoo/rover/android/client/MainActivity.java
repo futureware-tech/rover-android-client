@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         mSendButton.setEnabled(false);
+        mInfoButton.setEnabled(false);
         new GrpcTask().execute("moveCommand");
     }
 
@@ -51,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         mSendButton.setEnabled(false);
+        mInfoButton.setEnabled(false);
         new GrpcTask().execute("getInfoCommand");
     }
 
     private class GrpcTask extends AsyncTask<String, Void, String> {
         private String mHost;
-        private String mMessage;
         private int mPort;
         private ManagedChannel mChannel;
 
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
             mResultText.setText(result);
             mSendButton.setEnabled(true);
+            mInfoButton.setEnabled(true);
         }
     }
 }
