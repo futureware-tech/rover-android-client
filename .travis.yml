@@ -7,6 +7,9 @@ android:
 
     # The SDK version used to compile your project
     - android-23
+    
+    # For AppCompat
+    - extra
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
