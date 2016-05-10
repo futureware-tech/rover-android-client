@@ -15,12 +15,12 @@ android:
     # For AppCompat
     - extra
     
-    # For emulator
-    - sys-img-x86-android-23
+    # For emulator. Cannot use x86 w/o HW acceleration, which is provided by KVM.
+    - sys-img-armeabi-v7a-android-23
     
 # Emulator Management: Create, Start and Wait
 before_script:
-  - echo no | android create avd --force -n test -t android-23 --abi default/x86
+  - echo no | android create avd --force -n test -t android-23 --abi default/armeabi-v7a
   - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   # - adb shell input keyevent 82 &
