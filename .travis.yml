@@ -15,6 +15,9 @@ android:
     # For AppCompat
     - extra
     
+    # For emulator
+    - sys-img-x86-android-23
+    
 # Emulator Management: Create, Start and Wait
 before_script:
   - echo no | android create avd --force -n test -t android-23 --abi default/x86
