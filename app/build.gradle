@@ -22,11 +22,11 @@ android {
 }
 
 protobuf {
-    /*// Configure the protoc executable
+    // Configure the protoc executable
     protoc {
         // Download from repositories
         artifact = 'com.google.protobuf:protoc:3.0.0-beta-2'
-    }*/
+    }
     plugins {
         grpc {
             artifact = 'io.grpc:protoc-gen-grpc-java:0.13.2' // CURRENT_GRPC_VERSION

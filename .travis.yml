@@ -11,15 +11,9 @@ android:
 
     # The SDK version used to compile your project
     - android-23
-    
+
     # For AppCompat
     - extra
-
-before_install:
-  - wget -O /tmp/protoc.zip https://github.com/google/protobuf/releases/download/v3.0.0-beta-2/protoc-3.0.0-beta-2-linux-x86_64.zip
-  - mkdir -p $HOME/bin
-  - unzip /tmp/protoc.zip protoc -d $HOME/bin
-  - export PATH="$PATH:$HOME/bin"
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
