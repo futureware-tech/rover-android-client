@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import dasfoo.grpc.roverserver.nano.BoardInfoRequest;
 import dasfoo.grpc.roverserver.nano.BoardInfoResponse;
+import dasfoo.grpc.roverserver.nano.RoverServerProto;
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
 import dasfoo.grpc.roverserver.nano.RoverWheelResponse;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             message.left = 30;
             message.right = 30;
             RoverWheelResponse reply = stub.moveRover(message);
-            if (reply.status.code != 0) {
+            if (reply.status.code != RoverServerProto.OK) {
                 return reply.status.message;
             }
             return reply.status.message; //TODO: check errors and status
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             RoverServiceGrpc.RoverServiceBlockingStub stub = RoverServiceGrpc.newBlockingStub(channel);
             BoardInfoRequest message = new BoardInfoRequest();
             BoardInfoResponse reply = stub.getBoardInfo(message);
-            if (reply.status.code != 0) {
+            if (reply.status.code != RoverServerProto.OK) {
                 return reply.status.message;
             }
             // Create answer
