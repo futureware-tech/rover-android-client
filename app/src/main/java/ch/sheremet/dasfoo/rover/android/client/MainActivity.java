@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         mSendButton.setEnabled(false);
         mInfoButton.setEnabled(false);
-        new GrpcTask().execute("moveCommand");
+        new GrpcTask().execute("moveCommand"); // TODO: remove hardcode
     }
 
     public void getInfo(View view) {
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         mSendButton.setEnabled(false);
         mInfoButton.setEnabled(false);
-        new GrpcTask().execute("getInfoCommand");
+        new GrpcTask().execute("getInfoCommand"); // TODO: remove hardcode
     }
 
     private class GrpcTask extends AsyncTask<String, Void, String> {
@@ -75,18 +75,25 @@ public class MainActivity extends AppCompatActivity {
             message.left = 30;
             message.right = 30;
             RoverWheelResponse reply = stub.moveRover(message);
-            return reply.message;
+            if (reply.status.code != 0) {
+                return reply.status.message;
+            }
+            return reply.status.message; //TODO: check errors and status
         }
 
         private  String getServerInfo(ManagedChannel channel) {
             RoverServiceGrpc.RoverServiceBlockingStub stub = RoverServiceGrpc.newBlockingStub(channel);
             BoardInfoRequest message = new BoardInfoRequest();
             BoardInfoResponse reply = stub.getBoardInfo(message);
+            if (reply.status.code != 0) {
+                return reply.status.message;
+            }
             // Create answer
-            String answer = "Battery:" + reply.battery + "\n";
-            answer = answer + "Light:" + reply.light + "\n";
-            answer = answer + "Temperature:" + reply.temperature + "\n";
-            answer = answer + "Humidity:" + reply.humidity;
+                String answer = "Battery:" + reply.battery + "\n";
+                answer = answer + "Light:" + reply.light + "\n";
+                answer = answer + "Temperature:" + reply.temperature + "\n";
+                answer = answer + "Humidity:" + reply.humidity;
+                answer = answer + "Status:" + reply.status.message + ";" + reply.status.code;
 
             return answer;
         }
