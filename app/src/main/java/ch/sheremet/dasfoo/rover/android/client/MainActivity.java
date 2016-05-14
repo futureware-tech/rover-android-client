@@ -13,12 +13,16 @@ import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
 
-import dasfoo.grpc.roverserver.nano.BoardInfoRequest;
-import dasfoo.grpc.roverserver.nano.BoardInfoResponse;
+import dasfoo.grpc.roverserver.nano.AmbientLightRequest;
+import dasfoo.grpc.roverserver.nano.AmbientLightResponse;
+import dasfoo.grpc.roverserver.nano.BatteryPercentageRequest;
+import dasfoo.grpc.roverserver.nano.BatteryPercentageResponse;
 import dasfoo.grpc.roverserver.nano.RoverServerProto;
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
 import dasfoo.grpc.roverserver.nano.RoverWheelResponse;
+import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityRequest;
+import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -83,18 +87,34 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private  String getServerInfo(ManagedChannel channel) {
+            String errorMessage = "";
+
             RoverServiceGrpc.RoverServiceBlockingStub stub = RoverServiceGrpc.newBlockingStub(channel);
-            BoardInfoRequest message = new BoardInfoRequest();
-            BoardInfoResponse reply = stub.getBoardInfo(message);
-            if (reply.status.code != RoverServerProto.OK) {
-                return reply.status.message;
+            // Get battery percentage
+            BatteryPercentageRequest batteryReq = new BatteryPercentageRequest();
+            BatteryPercentageResponse batteryRes = stub.getBatteryPercentage(batteryReq);
+            if (batteryRes.status.code != RoverServerProto.OK) {
+                errorMessage = errorMessage + "Battery:" + batteryRes.status.message + "\n";
             }
+            // Get light
+            AmbientLightRequest lightReq = new AmbientLightRequest();
+            AmbientLightResponse lightRes = stub.getAmbientLight(lightReq);
+            if (lightRes.status.code != RoverServerProto.OK) {
+                errorMessage = errorMessage + "Light:" + lightRes.status.message + "\n";
+            }
+
+            TemperatureAndHumidityRequest tAndHReq = new TemperatureAndHumidityRequest();
+            TemperatureAndHumidityResponse tAndHRes = stub.getTemperatureAndHumidity(tAndHReq);
+            if (tAndHRes.status.code != RoverServerProto.OK) {
+                errorMessage = errorMessage + "Light:" + tAndHRes.status.message + "\n";
+            }
+
+            if (!"".equals(errorMessage)) return errorMessage;
             // Create answer
-                String answer = "Battery:" + reply.battery + "\n";
-                answer = answer + "Light:" + reply.light + "\n";
-                answer = answer + "Temperature:" + reply.temperature + "\n";
-                answer = answer + "Humidity:" + reply.humidity;
-                answer = answer + "Status:" + reply.status.message + ";" + reply.status.code;
+                String answer = "Battery:" + batteryRes.battery + "\n";
+                answer = answer + "Light:" + lightRes.light + "\n";
+                answer = answer + "Temperature:" + tAndHRes.temperature + "\n";
+                answer = answer + "Humidity:" + tAndHRes.humidity;
 
             return answer;
         }
