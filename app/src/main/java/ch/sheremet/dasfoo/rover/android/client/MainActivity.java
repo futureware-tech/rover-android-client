@@ -111,10 +111,10 @@ public class MainActivity extends AppCompatActivity {
 
             if (!"".equals(errorMessage)) return errorMessage;
             // Create answer
-                String answer = "Battery:" + batteryRes.battery + "\n";
-                answer = answer + "Light:" + lightRes.light + "\n";
-                answer = answer + "Temperature:" + tAndHRes.temperature + "\n";
-                answer = answer + "Humidity:" + tAndHRes.humidity;
+            String answer = "Battery:" + batteryRes.battery + "\n";
+            answer = answer + "Light:" + lightRes.light + "\n";
+            answer = answer + "Temperature:" + tAndHRes.temperature + "\n";
+            answer = answer + "Humidity:" + tAndHRes.humidity;
 
             return answer;
         }
