@@ -37,6 +37,13 @@
         android:text="@string/get_board_info_button"
         android:onClick="getInfo"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/read_encoders_button"
+        android:id="@+id/button"
+        android:onClick="readEncoders"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

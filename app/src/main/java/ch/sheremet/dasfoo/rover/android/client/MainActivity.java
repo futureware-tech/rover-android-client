@@ -17,6 +17,8 @@ import dasfoo.grpc.roverserver.nano.AmbientLightRequest;
 import dasfoo.grpc.roverserver.nano.AmbientLightResponse;
 import dasfoo.grpc.roverserver.nano.BatteryPercentageRequest;
 import dasfoo.grpc.roverserver.nano.BatteryPercentageResponse;
+import dasfoo.grpc.roverserver.nano.ReadEncodersRequest;
+import dasfoo.grpc.roverserver.nano.ReadEncodersResponse;
 import dasfoo.grpc.roverserver.nano.RoverServerProto;
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
@@ -61,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         new GrpcTask().execute("getInfoCommand"); // TODO: remove hardcode
     }
 
+    public void readEncoders(View view) {
+        new GrpcTask().execute("readEncoders"); //TODO:remove hardcode
+    }
+
     private class GrpcTask extends AsyncTask<String, Void, String> {
         private String mHost;
         private int mPort;
@@ -72,6 +78,18 @@ public class MainActivity extends AppCompatActivity {
             String portStr = mPortEdit.getText().toString();
             mPort = TextUtils.isEmpty(portStr) ? 0 : Integer.valueOf(portStr);
             mResultText.setText("");
+        }
+
+        public String readEncoders(ManagedChannel channel) {
+            RoverServiceGrpc.RoverServiceBlockingStub stub = RoverServiceGrpc.newBlockingStub(channel);
+            ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
+            ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);
+            String answer = "Encoders\n";
+            answer = answer + "Front left: " + readEncodersResponse.leftFront + "\n";
+            answer = answer + "Back left: " + readEncodersResponse.leftBack + "\n";
+            answer = answer + "Front right: " + readEncodersResponse.rightFront + "\n";
+            answer = answer + "Back right: " + readEncodersResponse.rightBack + "\n";
+            return answer;
         }
 
         private String moveForward(ManagedChannel channel) {
@@ -125,8 +143,9 @@ public class MainActivity extends AppCompatActivity {
                 mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
                         .usePlaintext(true)
                         .build();
-                if (command[0].equals("moveCommand")) return moveForward(mChannel);
-                if (command[0].equals("getInfoCommand")) return  getServerInfo(mChannel);
+                if (command[0].equals("moveCommand")) return moveForward(mChannel);//Todo: change to switch
+                if (command[0].equals("getInfoCommand")) return getServerInfo(mChannel);
+                if (command[0].equals("readEncoders")) return readEncoders(mChannel);
             } catch (Exception e) {
                 return "Failed... : " + e.getMessage();
             }
