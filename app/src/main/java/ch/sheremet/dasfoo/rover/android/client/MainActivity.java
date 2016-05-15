@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
     }
 
-    public void sendMessage(View view) {
+    public void moveForward(View view) {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         mSendButton.setEnabled(false);
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                         .usePlaintext(true)
                         .build();
                 if (command[0].equals("moveCommand")) return moveForward(mChannel);//Todo: change to switch
-                if (command[0].equals("getInfoCommand")) return getServerInfo(mChannel);
+                if (command[0].equals("getInfoCommand")) return getServerInfo(mChannel);// Todo:command
                 if (command[0].equals("readEncoders")) return readEncoders(mChannel);
             } catch (Exception e) {
                 return "Failed... : " + e.getMessage();
