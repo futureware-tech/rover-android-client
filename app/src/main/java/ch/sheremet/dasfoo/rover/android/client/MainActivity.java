@@ -19,7 +19,6 @@ import dasfoo.grpc.roverserver.nano.BatteryPercentageRequest;
 import dasfoo.grpc.roverserver.nano.BatteryPercentageResponse;
 import dasfoo.grpc.roverserver.nano.ReadEncodersRequest;
 import dasfoo.grpc.roverserver.nano.ReadEncodersResponse;
-import dasfoo.grpc.roverserver.nano.RoverServerProto;
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
 import dasfoo.grpc.roverserver.nano.RoverWheelResponse;
@@ -27,6 +26,7 @@ import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityRequest;
 import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -98,42 +98,24 @@ public class MainActivity extends AppCompatActivity {
             message.left = 30;
             message.right = 30;
             RoverWheelResponse reply = stub.moveRover(message);
-            if (reply.status.code != RoverServerProto.OK) {
-                return reply.status.message;
-            }
-            return reply.status.message; //TODO: check errors and status
+            return "Ok"; //TODO: check errors and status, remove hardcode
         }
 
-        private  String getServerInfo(ManagedChannel channel) {
-            String errorMessage = "";
-
+        private String getServerInfo(ManagedChannel channel) {
             RoverServiceGrpc.RoverServiceBlockingStub stub = RoverServiceGrpc.newBlockingStub(channel);
             // Get battery percentage
             BatteryPercentageRequest batteryReq = new BatteryPercentageRequest();
             BatteryPercentageResponse batteryRes = stub.getBatteryPercentage(batteryReq);
-            if (batteryRes.status.code != RoverServerProto.OK) {
-                errorMessage = errorMessage + "Battery:" + batteryRes.status.message + "\n";
-            }
             // Get light
             AmbientLightRequest lightReq = new AmbientLightRequest();
             AmbientLightResponse lightRes = stub.getAmbientLight(lightReq);
-            if (lightRes.status.code != RoverServerProto.OK) {
-                errorMessage = errorMessage + "Light:" + lightRes.status.message + "\n";
-            }
-
             TemperatureAndHumidityRequest tAndHReq = new TemperatureAndHumidityRequest();
             TemperatureAndHumidityResponse tAndHRes = stub.getTemperatureAndHumidity(tAndHReq);
-            if (tAndHRes.status.code != RoverServerProto.OK) {
-                errorMessage = errorMessage + "Light:" + tAndHRes.status.message + "\n";
-            }
-
-            if (!"".equals(errorMessage)) return errorMessage;
             // Create answer
             String answer = "Battery:" + batteryRes.battery + "\n";
             answer = answer + "Light:" + lightRes.light + "\n";
             answer = answer + "Temperature:" + tAndHRes.temperature + "\n";
             answer = answer + "Humidity:" + tAndHRes.humidity;
-
             return answer;
         }
 
@@ -143,15 +125,23 @@ public class MainActivity extends AppCompatActivity {
                 mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
                         .usePlaintext(true)
                         .build();
-                if (command[0].equals("moveCommand")) return moveForward(mChannel);//Todo: change to switch
-                if (command[0].equals("getInfoCommand")) return getServerInfo(mChannel);// Todo:command
+                if (command[0].equals("moveCommand"))
+                    return moveForward(mChannel);//Todo: change to switch
+                if (command[0].equals("getInfoCommand"))
+                    return getServerInfo(mChannel);// Todo:command
                 if (command[0].equals("readEncoders")) return readEncoders(mChannel);
+            } catch (StatusRuntimeException e) {
+                switch (e.getStatus().getCode()) {
+                    case UNKNOWN:
+                        return "Unknown error. Try later";
+                    default:
+                        return e.getMessage();
+                }
             } catch (Exception e) {
                 return "Failed... : " + e.getMessage();
             }
             return "Error in command name";
         }
-
 
 
         @Override
