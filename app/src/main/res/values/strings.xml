@@ -5,4 +5,5 @@
     <string name="move_forward_button">Move Forward</string>
     <string name="get_board_info_button">Get Board Info</string>
     <string name="response_text_view">Response:</string>
+    <string name="read_encoders_button">Read Encoders</string>
 </resources>
