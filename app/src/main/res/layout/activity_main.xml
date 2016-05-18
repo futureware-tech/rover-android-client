@@ -25,7 +25,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/send_button"
+        android:id="@+id/move_forward_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="moveForward"
@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/read_encoders_button"
-        android:id="@+id/button"
+        android:id="@+id/read_encoders_button"
         android:onClick="readEncoders"/>
 
     <TextView

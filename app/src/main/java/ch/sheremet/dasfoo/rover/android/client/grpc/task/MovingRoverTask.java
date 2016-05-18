@@ -18,7 +18,7 @@ public class MovingRoverTask extends GrpcTask {
         establishConnection(params[0], params[1]);
         try {
             // Not implemented yet. It moves forward.
-            // Todo: implement movement
+            // Todo: Implement movement
             RoverWheelRequest message = new RoverWheelRequest();
             message.left = 30;
             message.right = 30;
