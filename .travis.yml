@@ -34,3 +34,7 @@ cache:
 
 jdk:
   - oraclejdk8
+
+branches:
+    only:
+        - master
