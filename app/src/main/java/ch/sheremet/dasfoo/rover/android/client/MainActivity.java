@@ -1,34 +1,21 @@
 package ch.sheremet.dasfoo.rover.android.client;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.concurrent.TimeUnit;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.OnTaskCompleted;
 
-import dasfoo.grpc.roverserver.nano.AmbientLightRequest;
-import dasfoo.grpc.roverserver.nano.AmbientLightResponse;
-import dasfoo.grpc.roverserver.nano.BatteryPercentageRequest;
-import dasfoo.grpc.roverserver.nano.BatteryPercentageResponse;
-import dasfoo.grpc.roverserver.nano.ReadEncodersRequest;
-import dasfoo.grpc.roverserver.nano.ReadEncodersResponse;
-import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
-import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
-import dasfoo.grpc.roverserver.nano.RoverWheelResponse;
-import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityRequest;
-import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityResponse;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.StatusRuntimeException;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnTaskCompleted{
 
     private Button mSendButton;
     private EditText mHostEdit;
@@ -52,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         mSendButton.setEnabled(false);
         mInfoButton.setEnabled(false);
-        new GrpcTask().execute("moveCommand"); // TODO: remove hardcode
+        GrpcTask movingRoverTask = new MovingRoverTask(this);
+        //Todo: move the same code to private method
+        movingRoverTask.execute(mHostEdit.getText().toString(), mPortEdit.getText().toString());
     }
 
     public void getInfo(View view) {
@@ -60,14 +49,27 @@ public class MainActivity extends AppCompatActivity {
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         mSendButton.setEnabled(false);
         mInfoButton.setEnabled(false);
-        new GrpcTask().execute("getInfoCommand"); // TODO: remove hardcode
+        GrpcTask getBoardInfoTask = new GettingBoardInfoTask(this);
+        //Todo: move the same code to private method
+        getBoardInfoTask.execute(mHostEdit.getText().toString(), mPortEdit.getText().toString());
     }
 
     public void readEncoders(View view) {
-        new GrpcTask().execute("readEncoders"); //TODO:remove hardcode
+        mSendButton.setEnabled(false);
+        mInfoButton.setEnabled(false);
+        GrpcTask encodersReadingTask = new EncodersReadingTask(this);
+        encodersReadingTask.execute(mHostEdit.getText().toString(), mPortEdit.getText().toString());//host and port
     }
 
-    private class GrpcTask extends AsyncTask<String, Void, String> {
+    @Override
+    public void onTaskCompleted(String result) {
+        if (result==null) mResultText.setText(R.string.getting_null_result_text);
+        mResultText.setText(result);
+        mSendButton.setEnabled(true);
+        mInfoButton.setEnabled(true);
+    }
+
+    /**  public class GrpcTask extends AsyncTask<String, Void, String> {
         private String mHost;
         private int mPort;
         private ManagedChannel mChannel;
@@ -155,5 +157,5 @@ public class MainActivity extends AppCompatActivity {
             mSendButton.setEnabled(true);
             mInfoButton.setEnabled(true);
         }
-    }
+    } */
 }
