@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         String host = mHostEdit.getText().toString();
         String port = mPortEdit.getText().toString();
         if ((host.matches("")) || (port.matches(""))) {
-            Toast.makeText(this, "You did not enter a host or a post", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You did not enter a host or a port", Toast.LENGTH_SHORT).show();
             return;
         }
         mMoveForwardButton.setEnabled(false);
