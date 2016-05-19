@@ -3,6 +3,7 @@ package ch.sheremet.dasfoo.rover.android.client;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
     private void executeGrpcTask(GrpcTask task) {
         String host = mHostEdit.getText().toString();
         String port = mPortEdit.getText().toString();
-        if ((host.matches("")) || (port.matches(""))) {
+        if (TextUtils.isEmpty(host) || TextUtils.isEmpty(port)) {
             Toast.makeText(this, "You did not enter a host or a port", Toast.LENGTH_SHORT).show();
             return;
         }
