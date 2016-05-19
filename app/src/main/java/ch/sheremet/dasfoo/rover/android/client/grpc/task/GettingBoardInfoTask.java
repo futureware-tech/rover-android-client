@@ -30,11 +30,12 @@ public class GettingBoardInfoTask extends GrpcTask {
             TemperatureAndHumidityRequest tAndHReq = new TemperatureAndHumidityRequest();
             TemperatureAndHumidityResponse tAndHRes = stub.getTemperatureAndHumidity(tAndHReq);
             // Create answer
-            String answer = "Battery:" + batteryRes.battery + "\n";
-            answer +="Light:" + lightRes.light + "\n";
-            answer +="Temperature:" + tAndHRes.temperature + "\n";
-            answer +="Humidity:" + tAndHRes.humidity;
-            return answer;
+            StringBuilder answer = new StringBuilder();
+            answer.append("Battery: ").append(batteryRes.battery).append("\n");
+            answer.append("Light: ").append(lightRes.light).append("\n");
+            answer.append("Temperature: ").append(tAndHRes.temperature).append("\n");
+            answer.append("Humidity: ").append(tAndHRes.humidity).append("\n");
+            return answer.toString();
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {
                 case UNKNOWN:

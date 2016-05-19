@@ -19,12 +19,12 @@ public class EncodersReadingTask extends GrpcTask {
         try {
             ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
             ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);
-            String answer = "Encoders\n";
-            answer += "Front left: " + readEncodersResponse.leftFront + "\n";
-            answer += "Back left: " + readEncodersResponse.leftBack + "\n";
-            answer += "Front right: " + readEncodersResponse.rightFront + "\n";
-            answer += "Back right: " + readEncodersResponse.rightBack + "\n";
-            return answer;
+            StringBuilder answer = new StringBuilder("Encoders\n");
+            answer.append("Front left: ").append(readEncodersResponse.leftFront).append("\n");
+            answer.append("Back left: ").append(readEncodersResponse.leftBack).append("\n");
+            answer.append("Front right: ").append(readEncodersResponse.rightFront).append("\n");
+            answer.append("Back right: ").append(readEncodersResponse.rightBack).append("\n");
+            return answer.toString();
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {
                 case UNKNOWN:
