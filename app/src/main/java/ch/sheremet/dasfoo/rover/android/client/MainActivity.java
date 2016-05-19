@@ -1,150 +1,81 @@
 package ch.sheremet.dasfoo.rover.android.client;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.concurrent.TimeUnit;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.OnTaskCompleted;
 
-import dasfoo.grpc.roverserver.nano.AmbientLightRequest;
-import dasfoo.grpc.roverserver.nano.AmbientLightResponse;
-import dasfoo.grpc.roverserver.nano.BatteryPercentageRequest;
-import dasfoo.grpc.roverserver.nano.BatteryPercentageResponse;
-import dasfoo.grpc.roverserver.nano.RoverServerProto;
-import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
-import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
-import dasfoo.grpc.roverserver.nano.RoverWheelResponse;
-import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityRequest;
-import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityResponse;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
 
-public class MainActivity extends AppCompatActivity {
-
-    private Button mSendButton;
+    private Button mMoveForwardButton;
+    private Button mInfoButton;
+    private Button mReadEncodersButton;
     private EditText mHostEdit;
     private EditText mPortEdit;
     private TextView mResultText;
-    private Button mInfoButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mSendButton = (Button) findViewById(R.id.send_button);
+        mMoveForwardButton = (Button) findViewById(R.id.move_forward_button);
         mInfoButton = (Button) findViewById(R.id.info_button);
+        mReadEncodersButton = (Button) findViewById(R.id.read_encoders_button);
         mHostEdit = (EditText) findViewById(R.id.host_edit_text);
         mPortEdit = (EditText) findViewById(R.id.port_edit_text);
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
     }
 
-    public void sendMessage(View view) {
+    public void moveForward(View view) {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
-        mSendButton.setEnabled(false);
-        mInfoButton.setEnabled(false);
-        new GrpcTask().execute("moveCommand"); // TODO: remove hardcode
+        GrpcTask movingRoverTask = new MovingRoverTask(this);
+        executeGrpcTask(movingRoverTask);
     }
 
     public void getInfo(View view) {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
-        mSendButton.setEnabled(false);
-        mInfoButton.setEnabled(false);
-        new GrpcTask().execute("getInfoCommand"); // TODO: remove hardcode
+        GrpcTask getBoardInfoTask = new GettingBoardInfoTask(this);
+        executeGrpcTask(getBoardInfoTask);
     }
 
-    private class GrpcTask extends AsyncTask<String, Void, String> {
-        private String mHost;
-        private int mPort;
-        private ManagedChannel mChannel;
+    public void readEncoders(View view) {
+        GrpcTask encodersReadingTask = new EncodersReadingTask(this);
+        executeGrpcTask(encodersReadingTask);
+    }
 
-        @Override
-        protected void onPreExecute() {
-            mHost = mHostEdit.getText().toString();
-            String portStr = mPortEdit.getText().toString();
-            mPort = TextUtils.isEmpty(portStr) ? 0 : Integer.valueOf(portStr);
-            mResultText.setText("");
+    @Override
+    public void onTaskCompleted(String result) {
+        if (result == null) mResultText.setText(R.string.getting_null_result_text);
+        mResultText.setText(result);
+        mMoveForwardButton.setEnabled(true);
+        mInfoButton.setEnabled(true);
+        mReadEncodersButton.setEnabled(true);
+    }
+
+    private void executeGrpcTask(GrpcTask task) {
+        String host = mHostEdit.getText().toString();
+        String port = mPortEdit.getText().toString();
+        if ((host.matches("")) || (port.matches(""))) {
+            Toast.makeText(this, "You did not enter a host or a port", Toast.LENGTH_SHORT).show();
+            return;
         }
-
-        private String moveForward(ManagedChannel channel) {
-            RoverServiceGrpc.RoverServiceBlockingStub stub = RoverServiceGrpc.newBlockingStub(channel);
-            RoverWheelRequest message = new RoverWheelRequest();
-            message.left = 30;
-            message.right = 30;
-            RoverWheelResponse reply = stub.moveRover(message);
-            if (reply.status.code != RoverServerProto.OK) {
-                return reply.status.message;
-            }
-            return reply.status.message; //TODO: check errors and status
-        }
-
-        private  String getServerInfo(ManagedChannel channel) {
-            String errorMessage = "";
-
-            RoverServiceGrpc.RoverServiceBlockingStub stub = RoverServiceGrpc.newBlockingStub(channel);
-            // Get battery percentage
-            BatteryPercentageRequest batteryReq = new BatteryPercentageRequest();
-            BatteryPercentageResponse batteryRes = stub.getBatteryPercentage(batteryReq);
-            if (batteryRes.status.code != RoverServerProto.OK) {
-                errorMessage = errorMessage + "Battery:" + batteryRes.status.message + "\n";
-            }
-            // Get light
-            AmbientLightRequest lightReq = new AmbientLightRequest();
-            AmbientLightResponse lightRes = stub.getAmbientLight(lightReq);
-            if (lightRes.status.code != RoverServerProto.OK) {
-                errorMessage = errorMessage + "Light:" + lightRes.status.message + "\n";
-            }
-
-            TemperatureAndHumidityRequest tAndHReq = new TemperatureAndHumidityRequest();
-            TemperatureAndHumidityResponse tAndHRes = stub.getTemperatureAndHumidity(tAndHReq);
-            if (tAndHRes.status.code != RoverServerProto.OK) {
-                errorMessage = errorMessage + "Light:" + tAndHRes.status.message + "\n";
-            }
-
-            if (!"".equals(errorMessage)) return errorMessage;
-            // Create answer
-            String answer = "Battery:" + batteryRes.battery + "\n";
-            answer = answer + "Light:" + lightRes.light + "\n";
-            answer = answer + "Temperature:" + tAndHRes.temperature + "\n";
-            answer = answer + "Humidity:" + tAndHRes.humidity;
-
-            return answer;
-        }
-
-        @Override
-        protected String doInBackground(String... command) {
-            try {
-                mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
-                        .usePlaintext(true)
-                        .build();
-                if (command[0].equals("moveCommand")) return moveForward(mChannel);
-                if (command[0].equals("getInfoCommand")) return  getServerInfo(mChannel);
-            } catch (Exception e) {
-                return "Failed... : " + e.getMessage();
-            }
-            return "Error in command name";
-        }
-
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            mResultText.setText(result);
-            mSendButton.setEnabled(true);
-            mInfoButton.setEnabled(true);
-        }
+        mMoveForwardButton.setEnabled(false);
+        mInfoButton.setEnabled(false);
+        mMoveForwardButton.setEnabled(false);
+        task.execute(host, port);
     }
 }
