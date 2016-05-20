@@ -15,7 +15,7 @@ public class MovingRoverTask extends GrpcTask {
 
     @Override
     protected String doInBackground(String... params) {
-        establishConnection(params[0], params[1]);
+        super.doInBackground(params[0], params[1]);
         try {
             // Not implemented yet. It moves forward.
             // Todo: Implement movement

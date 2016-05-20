@@ -15,7 +15,7 @@ public class EncodersReadingTask extends GrpcTask {
 
     @Override
     protected String doInBackground(String... params) {
-       establishConnection(params[0], params[1]);
+        super.doInBackground(params[0], params[1]);
         try {
             ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
             ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);

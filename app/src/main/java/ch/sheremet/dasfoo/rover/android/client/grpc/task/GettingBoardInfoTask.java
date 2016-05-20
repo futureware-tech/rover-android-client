@@ -19,7 +19,7 @@ public class GettingBoardInfoTask extends GrpcTask {
 
     @Override
     protected String doInBackground(String... params) {
-        establishConnection(params[0], params[1]);
+        super.doInBackground(params[0], params[1]);
         try {
             // Get battery percentage
             BatteryPercentageRequest batteryReq = new BatteryPercentageRequest();

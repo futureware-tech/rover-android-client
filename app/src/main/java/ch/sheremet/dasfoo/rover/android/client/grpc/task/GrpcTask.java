@@ -20,17 +20,14 @@ public class GrpcTask extends AsyncTask<String, Void, String> {
     public GrpcTask(OnTaskCompleted listener) {
         this.listener = listener;
     }
-
-    protected void establishConnection(String host, String port) {
-        int mPort = TextUtils.isEmpty(port) ? 0 : Integer.valueOf(port);
-        mChannel = ManagedChannelBuilder.forAddress(host, mPort)
+    
+    @Override
+    protected String doInBackground(String... params) {
+        int mPort = TextUtils.isEmpty(params[1]) ? 0 : Integer.valueOf(params[1]);
+        mChannel = ManagedChannelBuilder.forAddress(params[0], mPort)
                 .usePlaintext(true)
                 .build();
         stub = RoverServiceGrpc.newBlockingStub(mChannel);
-    }
-
-    @Override
-    protected String doInBackground(String... params) {
         return null;
     }
 
