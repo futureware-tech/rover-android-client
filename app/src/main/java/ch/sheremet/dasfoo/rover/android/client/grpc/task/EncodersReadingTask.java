@@ -9,16 +9,16 @@ import io.grpc.StatusRuntimeException;
  */
 public class EncodersReadingTask extends GrpcTask {
 
-    public EncodersReadingTask(OnTaskCompleted listener) {
+    public EncodersReadingTask(final OnTaskCompleted listener) {
         super(listener);
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected final String doInBackground(final String... params) {
         super.doInBackground(params[0], params[1]);
         try {
             ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
-            ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);
+            ReadEncodersResponse readEncodersResponse = getStub().readEncoders(readEncodersRequest);
             StringBuilder answer = new StringBuilder("Encoders\n");
             answer.append("Front left: ").append(readEncodersResponse.leftFront).append("\n");
             answer.append("Back left: ").append(readEncodersResponse.leftBack).append("\n");

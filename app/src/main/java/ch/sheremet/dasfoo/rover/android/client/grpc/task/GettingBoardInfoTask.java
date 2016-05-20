@@ -13,22 +13,22 @@ import io.grpc.StatusRuntimeException;
  */
 public class GettingBoardInfoTask extends GrpcTask {
 
-    public GettingBoardInfoTask(OnTaskCompleted listener) {
+    public GettingBoardInfoTask(final OnTaskCompleted listener) {
         super(listener);
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected final String doInBackground(final String... params) {
         super.doInBackground(params[0], params[1]);
         try {
             // Get battery percentage
             BatteryPercentageRequest batteryReq = new BatteryPercentageRequest();
-            BatteryPercentageResponse batteryRes = stub.getBatteryPercentage(batteryReq);
+            BatteryPercentageResponse batteryRes = getStub().getBatteryPercentage(batteryReq);
             // Get light
             AmbientLightRequest lightReq = new AmbientLightRequest();
-            AmbientLightResponse lightRes = stub.getAmbientLight(lightReq);
+            AmbientLightResponse lightRes = getStub().getAmbientLight(lightReq);
             TemperatureAndHumidityRequest tAndHReq = new TemperatureAndHumidityRequest();
-            TemperatureAndHumidityResponse tAndHRes = stub.getTemperatureAndHumidity(tAndHReq);
+            TemperatureAndHumidityResponse tAndHRes = getStub().getTemperatureAndHumidity(tAndHReq);
             // Create answer
             StringBuilder answer = new StringBuilder();
             answer.append("Battery: ").append(batteryRes.battery).append("\n");
