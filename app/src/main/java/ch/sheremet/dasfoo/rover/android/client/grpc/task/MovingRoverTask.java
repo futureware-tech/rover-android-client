@@ -9,20 +9,20 @@ import io.grpc.StatusRuntimeException;
  */
 public class MovingRoverTask extends GrpcTask {
 
-    public MovingRoverTask(OnTaskCompleted listener) {
+    public MovingRoverTask(final OnTaskCompleted listener) {
         super(listener);
     }
 
     @Override
-    protected String doInBackground(String... params) {
-        establishConnection(params[0], params[1]);
+    protected final String doInBackground(final String... params) {
+        super.doInBackground(params[0], params[1]);
         try {
             // Not implemented yet. It moves forward.
             // Todo: Implement movement
             RoverWheelRequest message = new RoverWheelRequest();
             message.left = 30;
             message.right = 30;
-            RoverWheelResponse reply = stub.moveRover(message);
+            RoverWheelResponse reply = getStub().moveRover(message);
             return "Ok"; //TODO: check errors and status, remove hardcode
         } catch (StatusRuntimeException e) {
             // Not implemented error messages

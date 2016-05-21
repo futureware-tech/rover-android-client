@@ -9,22 +9,22 @@ import io.grpc.StatusRuntimeException;
  */
 public class EncodersReadingTask extends GrpcTask {
 
-    public EncodersReadingTask(OnTaskCompleted listener) {
+    public EncodersReadingTask(final OnTaskCompleted listener) {
         super(listener);
     }
 
     @Override
-    protected String doInBackground(String... params) {
-       establishConnection(params[0], params[1]);
+    protected final String doInBackground(final String... params) {
+        super.doInBackground(params[0], params[1]);
         try {
             ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
-            ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);
-            String answer = "Encoders\n";
-            answer += "Front left: " + readEncodersResponse.leftFront + "\n";
-            answer += "Back left: " + readEncodersResponse.leftBack + "\n";
-            answer += "Front right: " + readEncodersResponse.rightFront + "\n";
-            answer += "Back right: " + readEncodersResponse.rightBack + "\n";
-            return answer;
+            ReadEncodersResponse readEncodersResponse = getStub().readEncoders(readEncodersRequest);
+            StringBuilder answer = new StringBuilder("Encoders\n");
+            answer.append("Front left: ").append(readEncodersResponse.leftFront).append("\n");
+            answer.append("Back left: ").append(readEncodersResponse.leftBack).append("\n");
+            answer.append("Front right: ").append(readEncodersResponse.rightFront).append("\n");
+            answer.append("Back right: ").append(readEncodersResponse.rightBack).append("\n");
+            return answer.toString();
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {
                 case UNKNOWN:

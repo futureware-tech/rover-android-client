@@ -15,27 +15,28 @@ import io.grpc.ManagedChannelBuilder;
 public class GrpcTask extends AsyncTask<String, Void, String> {
     private ManagedChannel mChannel;
     private OnTaskCompleted listener;
-    RoverServiceGrpc.RoverServiceBlockingStub stub;
+    private RoverServiceGrpc.RoverServiceBlockingStub stub;
 
-    public GrpcTask(OnTaskCompleted listener) {
+    public final RoverServiceGrpc.RoverServiceBlockingStub getStub() {
+        return stub;
+    }
+
+    public GrpcTask(final OnTaskCompleted listener) {
         this.listener = listener;
     }
 
-    protected void establishConnection(String host, String port) {
-        int mPort = TextUtils.isEmpty(port) ? 0 : Integer.valueOf(port);
-        mChannel = ManagedChannelBuilder.forAddress(host, mPort)
+    @Override
+    protected String doInBackground(final String... params) {
+        int mPort = TextUtils.isEmpty(params[1]) ? 0 : Integer.valueOf(params[1]);
+        mChannel = ManagedChannelBuilder.forAddress(params[0], mPort)
                 .usePlaintext(true)
                 .build();
         stub = RoverServiceGrpc.newBlockingStub(mChannel);
-    }
-
-    @Override
-    protected String doInBackground(String... params) {
         return null;
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(final String result) {
         try {
             mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
             listener.onTaskCompleted(result);
