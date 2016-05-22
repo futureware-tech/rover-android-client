@@ -14,7 +14,7 @@ import io.grpc.ManagedChannelBuilder;
  */
 public class GrpcTask extends AsyncTask<String, Void, String> {
     private ManagedChannel mChannel;
-    private OnTaskCompleted listener;
+    private OnTaskCompleted mListener;
     private RoverServiceGrpc.RoverServiceBlockingStub stub;
 
     public final RoverServiceGrpc.RoverServiceBlockingStub getStub() {
@@ -22,7 +22,7 @@ public class GrpcTask extends AsyncTask<String, Void, String> {
     }
 
     public GrpcTask(final OnTaskCompleted listener) {
-        this.listener = listener;
+        this.mListener = listener;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class GrpcTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(final String result) {
         try {
             mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-            listener.onTaskCompleted(result);
+            mListener.onTaskCompleted(result);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

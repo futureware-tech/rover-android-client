@@ -22,19 +22,25 @@ public class GettingBoardInfoTask extends GrpcTask {
         super.doInBackground(params[0], params[1]);
         try {
             // Get battery percentage
-            BatteryPercentageRequest batteryReq = new BatteryPercentageRequest();
-            BatteryPercentageResponse batteryRes = getStub().getBatteryPercentage(batteryReq);
+            BatteryPercentageRequest batteryPercentageRequest = new BatteryPercentageRequest();
+            BatteryPercentageResponse batteryPercentageResponse =
+                    getStub().getBatteryPercentage(batteryPercentageRequest);
             // Get light
-            AmbientLightRequest lightReq = new AmbientLightRequest();
-            AmbientLightResponse lightRes = getStub().getAmbientLight(lightReq);
-            TemperatureAndHumidityRequest tAndHReq = new TemperatureAndHumidityRequest();
-            TemperatureAndHumidityResponse tAndHRes = getStub().getTemperatureAndHumidity(tAndHReq);
+            AmbientLightRequest ambientLightRequest = new AmbientLightRequest();
+            AmbientLightResponse ambientLightResponse =
+                    getStub().getAmbientLight(ambientLightRequest);
+            TemperatureAndHumidityRequest temperatureAndHumidityRequest =
+                    new TemperatureAndHumidityRequest();
+            TemperatureAndHumidityResponse temperatureAndHumidityResponse =
+                    getStub().getTemperatureAndHumidity(temperatureAndHumidityRequest);
             // Create answer
             StringBuilder answer = new StringBuilder();
-            answer.append("Battery: ").append(batteryRes.battery).append("\n");
-            answer.append("Light: ").append(lightRes.light).append("\n");
-            answer.append("Temperature: ").append(tAndHRes.temperature).append("\n");
-            answer.append("Humidity: ").append(tAndHRes.humidity).append("\n");
+            answer.append("Battery: ").append(batteryPercentageResponse.battery).append("\n");
+            answer.append("Light: ").append(ambientLightResponse.light).append("\n");
+            answer.append("Temperature: ").append(temperatureAndHumidityResponse.temperature)
+                    .append("\n");
+            answer.append("Humidity: ").append(temperatureAndHumidityResponse.humidity)
+                    .append("\n");
             return answer.toString();
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {

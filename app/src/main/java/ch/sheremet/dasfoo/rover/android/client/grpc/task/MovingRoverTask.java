@@ -19,10 +19,10 @@ public class MovingRoverTask extends GrpcTask {
         try {
             // Not implemented yet. It moves forward.
             // Todo: Implement movement
-            RoverWheelRequest message = new RoverWheelRequest();
-            message.left = 30;
-            message.right = 30;
-            RoverWheelResponse reply = getStub().moveRover(message);
+            RoverWheelRequest roverWheelRequest = new RoverWheelRequest();
+            roverWheelRequest.left = 30;
+            roverWheelRequest.right = 30;
+            RoverWheelResponse reply = getStub().moveRover(roverWheelRequest);
             return "Ok"; //TODO: check errors and status, remove hardcode
         } catch (StatusRuntimeException e) {
             // Not implemented error messages
