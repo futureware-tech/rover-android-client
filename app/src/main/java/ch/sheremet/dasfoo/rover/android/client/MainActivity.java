@@ -111,10 +111,10 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
         private RoverServiceGrpc.RoverServiceBlockingStub mStub;
         private IOnGrpcTaskCompleted mListener;
 
-        public GrpcTask(IOnGrpcTaskCompleted mListener, String mHost, int mPort) {
-            this.mHost = mHost;
-            this.mPort = mPort;
-            this.mListener = mListener;
+        public GrpcTask(IOnGrpcTaskCompleted listener, String host, int port) {
+            this.mHost = host;
+            this.mPort = port;
+            this.mListener = listener;
         }
 
         @Override
