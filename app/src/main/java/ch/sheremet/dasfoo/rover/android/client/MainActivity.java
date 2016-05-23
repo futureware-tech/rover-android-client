@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         private final String mHost;
         private final int mPort;
         private ManagedChannel mChannel;
-        private RoverServiceGrpc.RoverServiceBlockingStub stub;
+        private RoverServiceGrpc.RoverServiceBlockingStub mStub;
 
         public GrpcTask(String mHost, int mPort) {
             this.mHost = mHost;
@@ -110,12 +110,12 @@ public class MainActivity extends AppCompatActivity {
             mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
                     .usePlaintext(true)
                     .build();
-            stub = RoverServiceGrpc.newBlockingStub(mChannel);
+            mStub = RoverServiceGrpc.newBlockingStub(mChannel);
         }
 
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
-            return params[0].execute(stub);
+            return params[0].execute(mStub);
         }
 
         @Override
