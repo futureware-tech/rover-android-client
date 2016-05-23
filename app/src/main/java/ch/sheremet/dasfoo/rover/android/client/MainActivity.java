@@ -87,11 +87,15 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "You did not enter a host or a port", Toast.LENGTH_SHORT).show();
             return;
         }
-        mMoveForwardButton.setEnabled(false);
-        mInfoButton.setEnabled(false);
-        mReadEncodersButton.setEnabled(false);
+        enableButtons(false);
         GrpcTask grpcTask = new GrpcTask(host, Integer.valueOf(port));
         grpcTask.execute(task);
+    }
+
+    private void enableButtons(boolean flag) {
+        mMoveForwardButton.setEnabled(flag);
+        mInfoButton.setEnabled(flag);
+        mReadEncodersButton.setEnabled(flag);
     }
 
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
@@ -123,9 +127,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 if (result == null) mResultText.setText(R.string.getting_null_result_text);
                 mResultText.setText(result);
-                mMoveForwardButton.setEnabled(true);
-                mInfoButton.setEnabled(true);
-                mReadEncodersButton.setEnabled(true);
+                enableButtons(true);
                 mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
