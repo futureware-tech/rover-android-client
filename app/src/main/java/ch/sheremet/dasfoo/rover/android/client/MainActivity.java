@@ -17,12 +17,13 @@ import java.util.concurrent.TimeUnit;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.IOnGrpcTaskCompleted;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IOnGrpcTaskCompleted {
 
     private Button mMoveForwardButton;
     private Button mInfoButton;
@@ -88,14 +89,19 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         enableButtons(false);
-        GrpcTask grpcTask = new GrpcTask(host, Integer.valueOf(port));
+        GrpcTask grpcTask = new GrpcTask(this, host, Integer.valueOf(port));
         grpcTask.execute(task);
     }
 
-    private void enableButtons(boolean flag) {
-        mMoveForwardButton.setEnabled(flag);
-        mInfoButton.setEnabled(flag);
-        mReadEncodersButton.setEnabled(flag);
+    private void enableButtons(boolean isEnabled) {
+        mMoveForwardButton.setEnabled(isEnabled);
+        mInfoButton.setEnabled(isEnabled);
+        mReadEncodersButton.setEnabled(isEnabled);
+    }
+
+    @Override
+    public void onGrpcTaskCompleted() {
+        enableButtons(true);
     }
 
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
@@ -103,10 +109,12 @@ public class MainActivity extends AppCompatActivity {
         private final int mPort;
         private ManagedChannel mChannel;
         private RoverServiceGrpc.RoverServiceBlockingStub mStub;
+        private IOnGrpcTaskCompleted mListener;
 
-        public GrpcTask(String mHost, int mPort) {
+        public GrpcTask(IOnGrpcTaskCompleted mListener, String mHost, int mPort) {
             this.mHost = mHost;
             this.mPort = mPort;
+            this.mListener = mListener;
         }
 
         @Override
@@ -127,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 if (result == null) mResultText.setText(R.string.getting_null_result_text);
                 mResultText.setText(result);
-                enableButtons(true);
                 mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+                mListener.onGrpcTaskCompleted();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
