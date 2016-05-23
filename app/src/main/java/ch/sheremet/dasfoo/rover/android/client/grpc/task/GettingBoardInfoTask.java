@@ -4,6 +4,7 @@ import dasfoo.grpc.roverserver.nano.AmbientLightRequest;
 import dasfoo.grpc.roverserver.nano.AmbientLightResponse;
 import dasfoo.grpc.roverserver.nano.BatteryPercentageRequest;
 import dasfoo.grpc.roverserver.nano.BatteryPercentageResponse;
+import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityRequest;
 import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityResponse;
 import io.grpc.StatusRuntimeException;
@@ -11,28 +12,23 @@ import io.grpc.StatusRuntimeException;
 /**
  * Created by Katarina Sheremet on 5/18/16 10:51 AM.
  */
-public class GettingBoardInfoTask extends GrpcTask {
-
-    public GettingBoardInfoTask(final OnTaskCompleted listener) {
-        super(listener);
-    }
+public class GettingBoardInfoTask extends AbstractGrpcTaskExecutor {
 
     @Override
-    protected final String doInBackground(final String... params) {
-        super.doInBackground(params[0], params[1]);
+    public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
             // Get battery percentage
             BatteryPercentageRequest batteryPercentageRequest = new BatteryPercentageRequest();
             BatteryPercentageResponse batteryPercentageResponse =
-                    getStub().getBatteryPercentage(batteryPercentageRequest);
+                    stub.getBatteryPercentage(batteryPercentageRequest);
             // Get light
             AmbientLightRequest ambientLightRequest = new AmbientLightRequest();
             AmbientLightResponse ambientLightResponse =
-                    getStub().getAmbientLight(ambientLightRequest);
+                    stub.getAmbientLight(ambientLightRequest);
             TemperatureAndHumidityRequest temperatureAndHumidityRequest =
                     new TemperatureAndHumidityRequest();
             TemperatureAndHumidityResponse temperatureAndHumidityResponse =
-                    getStub().getTemperatureAndHumidity(temperatureAndHumidityRequest);
+                    stub.getTemperatureAndHumidity(temperatureAndHumidityRequest);
             // Create answer
             StringBuilder answer = new StringBuilder();
             answer.append("Battery: ").append(batteryPercentageResponse.battery).append("\n");

@@ -1,6 +1,7 @@
 package ch.sheremet.dasfoo.rover.android.client;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -11,13 +12,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.concurrent.TimeUnit;
+
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
-import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
-import ch.sheremet.dasfoo.rover.android.client.grpc.task.OnTaskCompleted;
+import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
-public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
+public class MainActivity extends AppCompatActivity {
 
     private Button mMoveForwardButton;
     private Button mInfoButton;
@@ -56,35 +61,26 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
     }
 
-    public void moveForward() {
+    private void moveForward() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
-        GrpcTask movingRoverTask = new MovingRoverTask(this);
+        AbstractGrpcTaskExecutor movingRoverTask = new MovingRoverTask();
         executeGrpcTask(movingRoverTask);
     }
 
-    public void getInfo() {
+    private void getInfo() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
-        GrpcTask getBoardInfoTask = new GettingBoardInfoTask(this);
+        AbstractGrpcTaskExecutor getBoardInfoTask = new GettingBoardInfoTask();
         executeGrpcTask(getBoardInfoTask);
     }
 
-    public void readEncoders() {
-        GrpcTask encodersReadingTask = new EncodersReadingTask(this);
+    private void readEncoders() {
+        AbstractGrpcTaskExecutor encodersReadingTask = new EncodersReadingTask();
         executeGrpcTask(encodersReadingTask);
     }
 
-    @Override
-    public void onTaskCompleted(String result) {
-        if (result == null) mResultText.setText(R.string.getting_null_result_text);
-        mResultText.setText(result);
-        mMoveForwardButton.setEnabled(true);
-        mInfoButton.setEnabled(true);
-        mReadEncodersButton.setEnabled(true);
-    }
-
-    private void executeGrpcTask(GrpcTask task) {
+    private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
         String host = mHostEdit.getText().toString();
         String port = mPortEdit.getText().toString();
         if (TextUtils.isEmpty(host) || TextUtils.isEmpty(port)) {
@@ -94,6 +90,46 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted {
         mMoveForwardButton.setEnabled(false);
         mInfoButton.setEnabled(false);
         mReadEncodersButton.setEnabled(false);
-        task.execute(host, port);
+        GrpcTask grpcTask = new GrpcTask(host, Integer.valueOf(port));
+        grpcTask.execute(task);
+    }
+
+    public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
+        private final String mHost;
+        private final int mPort;
+        private ManagedChannel mChannel;
+        private RoverServiceGrpc.RoverServiceBlockingStub stub;
+
+        public GrpcTask(String mHost, int mPort) {
+            this.mHost = mHost;
+            this.mPort = mPort;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
+                    .usePlaintext(true)
+                    .build();
+            stub = RoverServiceGrpc.newBlockingStub(mChannel);
+        }
+
+        @Override
+        protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
+            return params[0].execute(stub);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if (result == null) mResultText.setText(R.string.getting_null_result_text);
+                mResultText.setText(result);
+                mMoveForwardButton.setEnabled(true);
+                mInfoButton.setEnabled(true);
+                mReadEncodersButton.setEnabled(true);
+                mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 }
