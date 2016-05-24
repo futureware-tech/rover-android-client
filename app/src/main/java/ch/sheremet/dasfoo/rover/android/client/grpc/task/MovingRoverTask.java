@@ -1,5 +1,6 @@
 package ch.sheremet.dasfoo.rover.android.client.grpc.task;
 
+import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
 import dasfoo.grpc.roverserver.nano.RoverWheelResponse;
 import io.grpc.StatusRuntimeException;
@@ -7,23 +8,18 @@ import io.grpc.StatusRuntimeException;
 /**
  * Created by Katarina Sheremet on 5/18/16 11:10 AM.
  */
-public class MovingRoverTask extends GrpcTask {
-
-    public MovingRoverTask(final OnTaskCompleted listener) {
-        super(listener);
-    }
+public class MovingRoverTask extends AbstractGrpcTaskExecutor {
 
     @Override
-    protected final String doInBackground(final String... params) {
-        super.doInBackground(params[0], params[1]);
+    public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
             // Not implemented yet. It moves forward.
             // Todo: Implement movement
-            RoverWheelRequest message = new RoverWheelRequest();
-            message.left = 30;
-            message.right = 30;
-            RoverWheelResponse reply = getStub().moveRover(message);
-            return "Ok"; //TODO: check errors and status, remove hardcode
+            RoverWheelRequest roverWheelRequest = new RoverWheelRequest();
+            roverWheelRequest.left = 30;
+            roverWheelRequest.right = 30;
+            RoverWheelResponse reply = stub.moveRover(roverWheelRequest);
+            return "Ok"; //Todo: Check errors and status, remove hardcode
         } catch (StatusRuntimeException e) {
             // Not implemented error messages
             switch (e.getStatus().getCode()) {
