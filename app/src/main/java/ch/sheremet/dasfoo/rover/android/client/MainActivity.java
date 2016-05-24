@@ -65,20 +65,19 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
     private void moveForward() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
-        AbstractGrpcTaskExecutor movingRoverTask = new MovingRoverTask();
-        executeGrpcTask(movingRoverTask);
+        executeGrpcTask(new MovingRoverTask());
     }
 
     private void getInfo() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
-        AbstractGrpcTaskExecutor getBoardInfoTask = new GettingBoardInfoTask();
-        executeGrpcTask(getBoardInfoTask);
+        executeGrpcTask(new GettingBoardInfoTask());
     }
 
     private void readEncoders() {
-        AbstractGrpcTaskExecutor encodersReadingTask = new EncodersReadingTask();
-        executeGrpcTask(encodersReadingTask);
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
+        executeGrpcTask(new EncodersReadingTask());
     }
 
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
