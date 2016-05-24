@@ -62,21 +62,25 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
     }
 
-    private void moveForward() {
+    private void hideKeyboard(){
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(mPortEdit.getWindowToken(), 0);
+    }
+
+    private void moveForward() {
+        hideKeyboard();
         executeGrpcTask(new MovingRoverTask());
     }
 
     private void getInfo() {
-        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
+        hideKeyboard();
         executeGrpcTask(new GettingBoardInfoTask());
     }
 
     private void readEncoders() {
-        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
+        hideKeyboard();
         executeGrpcTask(new EncodersReadingTask());
     }
 
