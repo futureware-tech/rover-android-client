@@ -4,6 +4,7 @@ import dasfoo.grpc.roverserver.nano.AmbientLightRequest;
 import dasfoo.grpc.roverserver.nano.AmbientLightResponse;
 import dasfoo.grpc.roverserver.nano.BatteryPercentageRequest;
 import dasfoo.grpc.roverserver.nano.BatteryPercentageResponse;
+import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityRequest;
 import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityResponse;
 import io.grpc.StatusRuntimeException;
@@ -11,30 +12,32 @@ import io.grpc.StatusRuntimeException;
 /**
  * Created by Katarina Sheremet on 5/18/16 10:51 AM.
  */
-public class GettingBoardInfoTask extends GrpcTask {
-
-    public GettingBoardInfoTask(OnTaskCompleted listener) {
-        super(listener);
-    }
+public class GettingBoardInfoTask extends AbstractGrpcTaskExecutor {
 
     @Override
-    protected String doInBackground(String... params) {
-        establishConnection(params[0], params[1]);
+    public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
             // Get battery percentage
-            BatteryPercentageRequest batteryReq = new BatteryPercentageRequest();
-            BatteryPercentageResponse batteryRes = stub.getBatteryPercentage(batteryReq);
+            BatteryPercentageRequest batteryPercentageRequest = new BatteryPercentageRequest();
+            BatteryPercentageResponse batteryPercentageResponse =
+                    stub.getBatteryPercentage(batteryPercentageRequest);
             // Get light
-            AmbientLightRequest lightReq = new AmbientLightRequest();
-            AmbientLightResponse lightRes = stub.getAmbientLight(lightReq);
-            TemperatureAndHumidityRequest tAndHReq = new TemperatureAndHumidityRequest();
-            TemperatureAndHumidityResponse tAndHRes = stub.getTemperatureAndHumidity(tAndHReq);
+            AmbientLightRequest ambientLightRequest = new AmbientLightRequest();
+            AmbientLightResponse ambientLightResponse =
+                    stub.getAmbientLight(ambientLightRequest);
+            TemperatureAndHumidityRequest temperatureAndHumidityRequest =
+                    new TemperatureAndHumidityRequest();
+            TemperatureAndHumidityResponse temperatureAndHumidityResponse =
+                    stub.getTemperatureAndHumidity(temperatureAndHumidityRequest);
             // Create answer
-            String answer = "Battery:" + batteryRes.battery + "\n";
-            answer +="Light:" + lightRes.light + "\n";
-            answer +="Temperature:" + tAndHRes.temperature + "\n";
-            answer +="Humidity:" + tAndHRes.humidity;
-            return answer;
+            StringBuilder answer = new StringBuilder();
+            answer.append("Battery: ").append(batteryPercentageResponse.battery).append("\n");
+            answer.append("Light: ").append(ambientLightResponse.light).append("\n");
+            answer.append("Temperature: ").append(temperatureAndHumidityResponse.temperature)
+                    .append("\n");
+            answer.append("Humidity: ").append(temperatureAndHumidityResponse.humidity)
+                    .append("\n");
+            return answer.toString();
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {
                 case UNKNOWN:

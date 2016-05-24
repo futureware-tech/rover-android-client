@@ -28,21 +28,19 @@
         android:id="@+id/move_forward_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="moveForward"
         android:text="@string/move_forward_button" />
+
     <Button
         android:id="@+id/info_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/get_board_info_button"
-        android:onClick="getInfo"/>
+        android:text="@string/get_board_info_button"/>
 
     <Button
+        android:id="@+id/read_encoders_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/read_encoders_button"
-        android:id="@+id/read_encoders_button"
-        android:onClick="readEncoders"/>
+        android:text="@string/read_encoders_button" />
 
     <TextView
         android:layout_width="match_parent"
