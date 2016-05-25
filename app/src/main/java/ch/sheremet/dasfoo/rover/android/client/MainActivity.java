@@ -12,16 +12,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.TimeUnit;
-
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcConnection;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.IOnGrpcTaskCompleted;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
-import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 
 public class MainActivity extends AppCompatActivity implements IOnGrpcTaskCompleted {
 
@@ -31,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
     private EditText mHostEdit;
     private EditText mPortEdit;
     private TextView mResultText;
+    private GrpcConnection mGrpcConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +59,13 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
     }
 
-    private void hideKeyboard(){
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mGrpcConnection != null) mGrpcConnection.shutDownConnection();
+    }
+
+    private void hideKeyboard() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -108,41 +111,28 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
     }
 
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
-        private final String mHost;
-        private final int mPort;
-        private ManagedChannel mChannel;
-        private RoverServiceGrpc.RoverServiceBlockingStub mStub;
         private IOnGrpcTaskCompleted mListener;
 
         public GrpcTask(IOnGrpcTaskCompleted listener, String host, int port) {
-            this.mHost = host;
-            this.mPort = port;
             this.mListener = listener;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
-                    .usePlaintext(true)
-                    .build();
-            mStub = RoverServiceGrpc.newBlockingStub(mChannel);
+            if ((mGrpcConnection == null) ||
+                    (!host.equals(mGrpcConnection.getHost())) ||
+                    (port != mGrpcConnection.getPort())) {
+                mGrpcConnection = new GrpcConnection(host, port);
+            }
         }
 
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
-            return params[0].execute(mStub);
+            return params[0].execute(mGrpcConnection.getStub());
         }
 
         @Override
         protected void onPostExecute(String result) {
-            try {
-                if (result == null) mResultText.setText(R.string.getting_null_result_text);
-                mResultText.setText(result);
-                mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-                mListener.onGrpcTaskCompleted();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            if (result == null) mResultText.setText(R.string.getting_null_result_text);
+            mResultText.setText(result);
+            //  mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+            mListener.onGrpcTaskCompleted();
         }
     }
 }
