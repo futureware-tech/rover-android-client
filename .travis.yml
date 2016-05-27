@@ -27,16 +27,19 @@ before_script:
 
 after_script:
 - pip install --user gsutil
-- ARTIFACTS_PATH=${GSUTIL_BUCKET}/${TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST}
+- cd app/build/outputs
 # Build a poor man's index
-- (cd app/build &&
-  find outputs -type f -exec echo "<a href={}>{}</a><br/>" \; >>index.html)
+- echo
+  "<h1>Artifacts for <a href=https://github.com/${TRAVIS_REPO_SLUG?}/compare/${TRAVIS_COMMIT_RANGE?}>commit ${TRAVIS_COMMIT?}</a></h1>"
+  >index.html
+- find . -type f -exec echo "<p><a href='{}'>{}</a></p>" \; >>index.html
 # Upload build artifacts to GCS
+- ARTIFACTS_PATH=${GSUTIL_BUCKET?}/${TRAVIS_REPO_SLUG?}/${TRAVIS_PULL_REQUEST/false/${TRAVIS_BRANCH?}}
 - gsutil -m
-  -o "Credentials:gs_oauth2_refresh_token=${GSUTIL_TOKEN}"
-  -o "GSUtil:default_project_id=${GSUTIL_PROJECT}"
-  cp -r app/build/outputs "gs://${ARTIFACTS_PATH}"
-- echo "Artifacts uploaded to http://${ARTIFACTS_PATH}/outputs"
+  -o "Credentials:gs_oauth2_refresh_token=${GSUTIL_TOKEN?}"
+  -o "GSUtil:default_project_id=${GSUTIL_PROJECT?}"
+  rsync -d -r . "gs://${ARTIFACTS_PATH?}"
+- echo "Artifacts uploaded to http://${ARTIFACTS_PATH?}"
 
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
