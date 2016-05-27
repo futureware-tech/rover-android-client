@@ -25,6 +25,15 @@ before_script:
 - android-wait-for-emulator
 # - adb shell input keyevent 82 &
 
+after_script:
+- pip install --user gsutil
+# Upload build artifacts to GCS
+- gsutil -m
+  -o "Credentials:gs_oauth2_refresh_token=${GSUTIL_TOKEN}"
+  -o "GSUtil:default_project_id=${GSUTIL_PROJECT}"
+  cp -r app/build/outputs
+  "gs://${GSUTIL_BUCKET}/${TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST}"
+
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
