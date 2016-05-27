@@ -27,12 +27,16 @@ before_script:
 
 after_script:
 - pip install --user gsutil
+- ARTIFACTS_PATH=${GSUTIL_BUCKET}/${TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST}
+# Build a poor man's index
+- (cd app/build &&
+  find outputs -type f -exec echo "<a href={}>{}</a><br/>" \; >>index.html)
 # Upload build artifacts to GCS
 - gsutil -m
   -o "Credentials:gs_oauth2_refresh_token=${GSUTIL_TOKEN}"
   -o "GSUtil:default_project_id=${GSUTIL_PROJECT}"
-  cp -r app/build/outputs
-  "gs://${GSUTIL_BUCKET}/${TRAVIS_REPO_SLUG}/${TRAVIS_PULL_REQUEST}"
+  cp -r app/build/outputs "gs://${ARTIFACTS_PATH}"
+- echo "Artifacts uploaded to http://${ARTIFACTS_PATH}/outputs"
 
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
