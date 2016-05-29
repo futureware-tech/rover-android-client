@@ -16,10 +16,9 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecuto
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcConnection;
-import ch.sheremet.dasfoo.rover.android.client.grpc.task.IOnGrpcTaskCompleted;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 
-public class MainActivity extends AppCompatActivity implements IOnGrpcTaskCompleted {
+public class MainActivity extends AppCompatActivity {
 
     private Button mMoveForwardButton;
     private Button mInfoButton;
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.move_forward_button : moveForward();
                     break;
                 case R.id.info_button : getInfo();
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
             return;
         }
         enableButtons(false);
-        new GrpcTask(this, host, Integer.parseInt(port)).execute(task);
+        new GrpcTask(host, Integer.parseInt(port)).execute(task);
     }
 
     private void enableButtons(boolean isEnabled) {
@@ -103,16 +102,15 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
         mReadEncodersButton.setEnabled(isEnabled);
     }
 
-    @Override
-    public void onGrpcTaskCompleted() {
-        enableButtons(true);
-    }
-
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
-        private IOnGrpcTaskCompleted mListener;
 
-        public GrpcTask(IOnGrpcTaskCompleted listener, String host, int port) {
-            this.mListener = listener;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            enableButtons(Boolean.FALSE);
+        }
+
+        public GrpcTask(String host, int port) {
             if ((mGrpcConnection == null) ||
                     (!host.equals(mGrpcConnection.getHost())) ||
                     (port != mGrpcConnection.getPort())) {
@@ -129,8 +127,7 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
         protected void onPostExecute(String result) {
             if (result == null) mResultText.setText(R.string.getting_null_result_text);
             mResultText.setText(result);
-            //  mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-            mListener.onGrpcTaskCompleted();
+            enableButtons(Boolean.TRUE);
         }
     }
 }
