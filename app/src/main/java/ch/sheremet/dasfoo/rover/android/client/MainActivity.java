@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
             return;
         }
         enableButtons(false);
-        new GrpcTask(this, host, Integer.valueOf(port)).execute(task);
+        new GrpcTask(this, host, Integer.parseInt(port)).execute(task);
     }
 
     private void enableButtons(boolean isEnabled) {
