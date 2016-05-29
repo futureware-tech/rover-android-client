@@ -2,7 +2,6 @@ package ch.sheremet.dasfoo.rover.android.client.grpc.task;
 
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
-import dasfoo.grpc.roverserver.nano.RoverWheelResponse;
 import io.grpc.StatusRuntimeException;
 
 /**
@@ -18,7 +17,7 @@ public class MovingRoverTask extends AbstractGrpcTaskExecutor {
             RoverWheelRequest roverWheelRequest = new RoverWheelRequest();
             roverWheelRequest.left = 30;
             roverWheelRequest.right = 30;
-            RoverWheelResponse reply = stub.moveRover(roverWheelRequest);
+            stub.moveRover(roverWheelRequest);
             return "Ok"; //Todo: Check errors and status, remove hardcode
         } catch (StatusRuntimeException e) {
             // Not implemented error messages
