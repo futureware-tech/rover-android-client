@@ -34,30 +34,29 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMoveForwardButton = (Button) findViewById(R.id.move_forward_button);
-        mMoveForwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveForward();
-            }
-        });
+        mMoveForwardButton.setOnClickListener(onClickListener);
         mInfoButton = (Button) findViewById(R.id.info_button);
-        mInfoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getInfo();
-            }
-        });
+        mInfoButton.setOnClickListener(onClickListener);
         mReadEncodersButton = (Button) findViewById(R.id.read_encoders_button);
-        mReadEncodersButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                readEncoders();
-            }
-        });
+        mReadEncodersButton.setOnClickListener(onClickListener);
         mHostEdit = (EditText) findViewById(R.id.host_edit_text);
         mPortEdit = (EditText) findViewById(R.id.port_edit_text);
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
     }
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.move_forward_button : moveForward();
+                    break;
+                case R.id.info_button : getInfo();
+                    break;
+                case R.id.read_encoders_button : readEncoders();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onDestroy() {
