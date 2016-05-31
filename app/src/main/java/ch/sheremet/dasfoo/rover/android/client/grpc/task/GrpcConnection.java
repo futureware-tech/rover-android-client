@@ -6,6 +6,7 @@ import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
+
 /**
  * Created by Katarina Sheremet on 5/24/16 5:09 PM.
  */
@@ -30,9 +31,7 @@ public class GrpcConnection {
     }
 
     private void establishConnection() {
-        mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
-                .usePlaintext(true)
-                .build();
+        mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).build();
         mStub = RoverServiceGrpc.newBlockingStub(mChannel);
     }
 

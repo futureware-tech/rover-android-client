@@ -1,6 +1,7 @@
 package ch.sheremet.dasfoo.rover.android.client;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.security.ProviderInstaller;
 
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
@@ -41,7 +44,21 @@ public class MainActivity extends AppCompatActivity {
         mHostEdit = (EditText) findViewById(R.id.host_edit_text);
         mPortEdit = (EditText) findViewById(R.id.port_edit_text);
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
+
+        ProviderInstaller.installIfNeededAsync(this, providerInstallListener);
     }
+
+    private ProviderInstaller.ProviderInstallListener providerInstallListener = new ProviderInstaller.ProviderInstallListener() {
+        @Override
+        public void onProviderInstalled() {
+            // Provider installed
+        }
+
+        @Override
+        public void onProviderInstallFailed(int errorCode, Intent recoveryIntent) {
+            // Provider installation failed
+        }
+    };
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
