@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -30,11 +31,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPortEdit;
     private TextView mResultText;
     private GrpcConnection mGrpcConnection;
-
-    private static final int ERROR_DIALOG_REQUEST_CODE = 1;
+    private static final String TAG = MainActivity.class.getName();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMoveForwardButton = (Button) findViewById(R.id.move_forward_button);
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(final View v) {
             switch (v.getId()) {
                 case R.id.move_forward_button : moveForward();
                     break;
@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.read_encoders_button : readEncoders();
                     break;
+                default:
+                    Log.v(TAG, "Button is not implemented yet.");
             }
         }
     };
@@ -69,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mGrpcConnection != null) mGrpcConnection.shutDownConnection();
+        if (mGrpcConnection != null) {
+            mGrpcConnection.shutDownConnection();
+        }
     }
 
     private void hideKeyboard() {
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         new GrpcTask(host, Integer.parseInt(port)).execute(task);
     }
 
-    private void enableButtons(boolean isEnabled) {
+    private void enableButtons(final boolean isEnabled) {
         mMoveForwardButton.setEnabled(isEnabled);
         mInfoButton.setEnabled(isEnabled);
         mReadEncodersButton.setEnabled(isEnabled);
@@ -119,10 +123,10 @@ public class MainActivity extends AppCompatActivity {
             enableButtons(Boolean.FALSE);
         }
 
-        public GrpcTask(String host, int port) {
-            if ((mGrpcConnection == null) ||
-                    (!host.equals(mGrpcConnection.getHost())) ||
-                    (port != mGrpcConnection.getPort())) {
+        public GrpcTask(final String host, final int port) {
+            if ((mGrpcConnection == null)
+                    || (!host.equals(mGrpcConnection.getHost()))
+                    || (port != mGrpcConnection.getPort())) {
                 mGrpcConnection = new GrpcConnection(host, port);
             }
         }
@@ -133,8 +137,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            if (result == null) mResultText.setText(R.string.getting_null_result_text);
+        protected void onPostExecute(final String result) {
+            if (result == null) {
+                mResultText.setText(R.string.getting_null_result_text);
+            }
             mResultText.setText(result);
             enableButtons(Boolean.TRUE);
         }

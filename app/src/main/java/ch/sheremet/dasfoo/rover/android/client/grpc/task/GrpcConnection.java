@@ -16,7 +16,7 @@ public class GrpcConnection {
     private String mHost;
     private int mPort;
 
-    public GrpcConnection(String host, int port) {
+    public GrpcConnection(final String host, final int port) {
         this.mHost = host;
         this.mPort = port;
         establishConnection();

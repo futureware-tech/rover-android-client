@@ -8,7 +8,6 @@ import com.google.android.gms.security.ProviderInstaller;
  * Created by Katarina Sheremet on 5/31/16 3:22 PM.
  */
 public class GrpcProviderInstaller implements ProviderInstaller.ProviderInstallListener {
-
     /**
      * This method is only called if the provider is successfully updated
      * (or is already up-to-date).
@@ -23,7 +22,7 @@ public class GrpcProviderInstaller implements ProviderInstaller.ProviderInstallL
      * whether the error is recoverable.
      */
     @Override
-    public void onProviderInstallFailed(int i, Intent intent) {
+    public void onProviderInstallFailed(final int i, final Intent intent) {
 
     }
 }

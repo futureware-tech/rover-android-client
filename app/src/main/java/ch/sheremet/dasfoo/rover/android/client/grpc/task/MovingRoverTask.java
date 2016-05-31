@@ -8,6 +8,8 @@ import io.grpc.StatusRuntimeException;
  * Created by Katarina Sheremet on 5/18/16 11:10 AM.
  */
 public class MovingRoverTask extends AbstractGrpcTaskExecutor {
+    private static final int FORWARD_MOVE_LEFT = 30;
+    private static final int FORWARD_MOVE_RIGHT = 30;
 
     @Override
     public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
@@ -15,8 +17,8 @@ public class MovingRoverTask extends AbstractGrpcTaskExecutor {
             // Not implemented yet. It moves forward.
             // Todo: Implement movement
             RoverWheelRequest roverWheelRequest = new RoverWheelRequest();
-            roverWheelRequest.left = 30;
-            roverWheelRequest.right = 30;
+            roverWheelRequest.left = FORWARD_MOVE_LEFT;
+            roverWheelRequest.right = FORWARD_MOVE_RIGHT;
             stub.moveRover(roverWheelRequest);
             return "Ok"; //Todo: Check errors and status, remove hardcode
         } catch (StatusRuntimeException e) {
