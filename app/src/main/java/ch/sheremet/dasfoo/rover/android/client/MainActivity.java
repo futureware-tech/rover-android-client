@@ -45,15 +45,25 @@ public class MainActivity extends AppCompatActivity {
         mPortEdit = (EditText) findViewById(R.id.port_edit_text);
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
 
+        // Android relies on a security Provider to provide secure network communications.
+        // It verifies that the security provider is up-to-date.
         ProviderInstaller.installIfNeededAsync(this, providerInstallListener);
     }
 
     private ProviderInstaller.ProviderInstallListener providerInstallListener = new ProviderInstaller.ProviderInstallListener() {
+        /**
+         * This method is only called if the provider is successfully updated
+         * (or is already up-to-date).
+         */
         @Override
         public void onProviderInstalled() {
             // Provider installed
         }
 
+        /**
+         * This method is called if updating fails; the error code indicates
+         * whether the error is recoverable.
+         */
         @Override
         public void onProviderInstallFailed(int errorCode, Intent recoveryIntent) {
             // Provider installation failed
