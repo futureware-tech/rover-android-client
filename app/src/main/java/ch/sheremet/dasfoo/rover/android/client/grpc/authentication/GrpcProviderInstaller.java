@@ -14,7 +14,7 @@ public class GrpcProviderInstaller implements ProviderInstaller.ProviderInstallL
      */
     @Override
     public void onProviderInstalled() {
-
+        // It is not implemented yet
     }
 
     /**
@@ -23,6 +23,7 @@ public class GrpcProviderInstaller implements ProviderInstaller.ProviderInstallL
      */
     @Override
     public void onProviderInstallFailed(final int i, final Intent intent) {
-
+        // It is not implemented yet. It should show a dialog prompting the user to
+        // install/update/enable Google Play services.
     }
 }

@@ -23,6 +23,7 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcConnection;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getName();
 
     private Button mMoveForwardButton;
     private Button mInfoButton;
@@ -30,8 +31,25 @@ public class MainActivity extends AppCompatActivity {
     private EditText mHostEdit;
     private EditText mPortEdit;
     private TextView mResultText;
+
     private GrpcConnection mGrpcConnection;
-    private static final String TAG = MainActivity.class.getName();
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(final View v) {
+            switch (v.getId()) {
+                case R.id.move_forward_button : moveForward();
+                    break;
+                case R.id.info_button : getInfo();
+                    break;
+                case R.id.read_encoders_button : readEncoders();
+                    break;
+                default:
+                    Log.v(TAG, "Button is not implemented yet.");
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -51,22 +69,6 @@ public class MainActivity extends AppCompatActivity {
         // It verifies that the security provider is up-to-date.
         ProviderInstaller.installIfNeededAsync(this, new GrpcProviderInstaller());
     }
-
-    private View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(final View v) {
-            switch (v.getId()) {
-                case R.id.move_forward_button : moveForward();
-                    break;
-                case R.id.info_button : getInfo();
-                    break;
-                case R.id.read_encoders_button : readEncoders();
-                    break;
-                default:
-                    Log.v(TAG, "Button is not implemented yet.");
-            }
-        }
-    };
 
     @Override
     protected void onDestroy() {
@@ -117,18 +119,19 @@ public class MainActivity extends AppCompatActivity {
 
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
 
+        public GrpcTask(final String host, final int port) {
+            super();
+            if (mGrpcConnection == null
+                    || !host.equals(mGrpcConnection.getHost())
+                    || port != mGrpcConnection.getPort()) {
+                mGrpcConnection = new GrpcConnection(host, port);
+            }
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             enableButtons(Boolean.FALSE);
-        }
-
-        public GrpcTask(final String host, final int port) {
-            if ((mGrpcConnection == null)
-                    || (!host.equals(mGrpcConnection.getHost()))
-                    || (port != mGrpcConnection.getPort())) {
-                mGrpcConnection = new GrpcConnection(host, port);
-            }
         }
 
         @Override

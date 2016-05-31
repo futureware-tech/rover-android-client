@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
-apply plugin: 'com.noveogroup.android.check'
 
 android {
     compileSdkVersion 23
@@ -13,7 +12,6 @@ android {
         versionCode 1
         versionName '1.0'
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -55,14 +53,6 @@ protobuf {
             }
         }
     }
-}
-
-check {
-    // TODO(dotdoom): flip to true once build artifacts end up on gcloud
-    abortOnError false
-    // Skip PMD until https://github.com/noveogroup/android-check/issues/13
-    // is released.
-    pmd { skip true }
 }
 
 dependencies {

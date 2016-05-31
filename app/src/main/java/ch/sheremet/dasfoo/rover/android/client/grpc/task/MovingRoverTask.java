@@ -9,6 +9,7 @@ import io.grpc.StatusRuntimeException;
  */
 public class MovingRoverTask extends AbstractGrpcTaskExecutor {
     private static final int FORWARD_MOVE_LEFT = 30;
+
     private static final int FORWARD_MOVE_RIGHT = 30;
 
     @Override
