@@ -7,7 +7,7 @@ import com.google.android.gms.security.ProviderInstaller;
 /**
  * Created by Katarina Sheremet on 5/31/16 3:22 PM.
  */
-public class GrpcProviderInstaller implements ProviderInstaller.ProviderInstallListener {
+public class ProviderInstallerListener implements ProviderInstaller.ProviderInstallListener {
     /**
      * This method is only called if the provider is successfully updated
      * (or is already up-to-date).

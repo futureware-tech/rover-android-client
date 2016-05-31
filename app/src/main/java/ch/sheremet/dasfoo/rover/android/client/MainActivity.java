@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.security.ProviderInstaller;
 
-import ch.sheremet.dasfoo.rover.android.client.grpc.authentication.GrpcProviderInstaller;
+import ch.sheremet.dasfoo.rover.android.client.grpc.authentication.ProviderInstallerListener;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
@@ -37,12 +37,16 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
+            hideKeyboard();
             switch (v.getId()) {
-                case R.id.move_forward_button : moveForward();
+                case R.id.move_forward_button:
+                    executeGrpcTask(new MovingRoverTask());
                     break;
-                case R.id.info_button : getInfo();
+                case R.id.info_button:
+                    executeGrpcTask(new GettingBoardInfoTask());
                     break;
-                case R.id.read_encoders_button : readEncoders();
+                case R.id.read_encoders_button:
+                    executeGrpcTask(new EncodersReadingTask());
                     break;
                 default:
                     Log.v(TAG, "Button is not implemented yet.");
@@ -67,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Android relies on a security Provider to provide secure network communications.
         // It verifies that the security provider is up-to-date.
-        ProviderInstaller.installIfNeededAsync(this, new GrpcProviderInstaller());
+        ProviderInstaller.installIfNeededAsync(this, new ProviderInstallerListener());
+
     }
 
     @Override
@@ -83,21 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mPortEdit.getWindowToken(), 0);
-    }
-
-    private void moveForward() {
-        hideKeyboard();
-        executeGrpcTask(new MovingRoverTask());
-    }
-
-    private void getInfo() {
-        hideKeyboard();
-        executeGrpcTask(new GettingBoardInfoTask());
-    }
-
-    private void readEncoders() {
-        hideKeyboard();
-        executeGrpcTask(new EncodersReadingTask());
     }
 
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
@@ -141,9 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final String result) {
-            if (result == null) {
-                mResultText.setText(R.string.getting_null_result_text);
-            }
             mResultText.setText(result);
             enableButtons(Boolean.TRUE);
         }
