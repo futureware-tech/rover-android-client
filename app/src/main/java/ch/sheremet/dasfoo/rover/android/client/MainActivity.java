@@ -1,7 +1,6 @@
 package ch.sheremet.dasfoo.rover.android.client;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.security.ProviderInstaller;
 
+import ch.sheremet.dasfoo.rover.android.client.grpc.authentication.GrpcProviderInstaller;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPortEdit;
     private TextView mResultText;
     private GrpcConnection mGrpcConnection;
+
+    private static final int ERROR_DIALOG_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,28 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Android relies on a security Provider to provide secure network communications.
         // It verifies that the security provider is up-to-date.
-        ProviderInstaller.installIfNeededAsync(this, providerInstallListener);
+        ProviderInstaller.installIfNeededAsync(this, new GrpcProviderInstaller());
     }
-
-    private ProviderInstaller.ProviderInstallListener providerInstallListener = new ProviderInstaller.ProviderInstallListener() {
-        /**
-         * This method is only called if the provider is successfully updated
-         * (or is already up-to-date).
-         */
-        @Override
-        public void onProviderInstalled() {
-            // Provider installed
-        }
-
-        /**
-         * This method is called if updating fails; the error code indicates
-         * whether the error is recoverable.
-         */
-        @Override
-        public void onProviderInstallFailed(int errorCode, Intent recoveryIntent) {
-            // Provider installation failed
-        }
-    };
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
