@@ -63,4 +63,5 @@ dependencies {
     compile 'io.grpc:grpc-protobuf-nano:0.13.2'
     compile 'io.grpc:grpc-stub:0.13.2'
     compile 'javax.annotation:javax.annotation-api:1.2'
+    compile 'com.google.android.gms:play-services-safetynet:9.0.1'
 }

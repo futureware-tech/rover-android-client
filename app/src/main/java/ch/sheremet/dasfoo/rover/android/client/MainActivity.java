@@ -1,10 +1,14 @@
 package ch.sheremet.dasfoo.rover.android.client;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -12,18 +16,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.TimeUnit;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
-import ch.sheremet.dasfoo.rover.android.client.grpc.task.IOnGrpcTaskCompleted;
+import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcConnection;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
-import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 
-public class MainActivity extends AppCompatActivity implements IOnGrpcTaskCompleted {
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getName();
 
     private Button mMoveForwardButton;
     private Button mInfoButton;
@@ -32,56 +37,57 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
     private EditText mPortEdit;
     private TextView mResultText;
 
+    private GrpcConnection mGrpcConnection;
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(final View v) {
+            hideKeyboard();
+            switch (v.getId()) {
+                case R.id.move_forward_button:
+                    executeGrpcTask(new MovingRoverTask());
+                    break;
+                case R.id.info_button:
+                    executeGrpcTask(new GettingBoardInfoTask());
+                    break;
+                case R.id.read_encoders_button:
+                    executeGrpcTask(new EncodersReadingTask());
+                    break;
+                default:
+                    Log.v(TAG, "Button is not implemented yet.");
+                    break;
+            }
+        }
+    };
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMoveForwardButton = (Button) findViewById(R.id.move_forward_button);
-        mMoveForwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveForward();
-            }
-        });
+        mMoveForwardButton.setOnClickListener(onClickListener);
         mInfoButton = (Button) findViewById(R.id.info_button);
-        mInfoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getInfo();
-            }
-        });
+        mInfoButton.setOnClickListener(onClickListener);
         mReadEncodersButton = (Button) findViewById(R.id.read_encoders_button);
-        mReadEncodersButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                readEncoders();
-            }
-        });
+        mReadEncodersButton.setOnClickListener(onClickListener);
         mHostEdit = (EditText) findViewById(R.id.host_edit_text);
         mPortEdit = (EditText) findViewById(R.id.port_edit_text);
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
     }
 
-    private void hideKeyboard(){
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mGrpcConnection != null) {
+            mGrpcConnection.shutDownConnection();
+        }
+    }
+
+    private void hideKeyboard() {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mPortEdit.getWindowToken(), 0);
-    }
-
-    private void moveForward() {
-        hideKeyboard();
-        executeGrpcTask(new MovingRoverTask());
-    }
-
-    private void getInfo() {
-        hideKeyboard();
-        executeGrpcTask(new GettingBoardInfoTask());
-    }
-
-    private void readEncoders() {
-        hideKeyboard();
-        executeGrpcTask(new EncodersReadingTask());
     }
 
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
@@ -91,57 +97,78 @@ public class MainActivity extends AppCompatActivity implements IOnGrpcTaskComple
             Toast.makeText(this, "You did not enter a host or a port", Toast.LENGTH_SHORT).show();
             return;
         }
-        enableButtons(false);
-        new GrpcTask(this, host, Integer.parseInt(port)).execute(task);
+        new GrpcTask(host, Integer.parseInt(port)).execute(task);
     }
 
-    private void enableButtons(boolean isEnabled) {
+    private void enableButtons(final boolean isEnabled) {
         mMoveForwardButton.setEnabled(isEnabled);
         mInfoButton.setEnabled(isEnabled);
         mReadEncodersButton.setEnabled(isEnabled);
     }
 
-    @Override
-    public void onGrpcTaskCompleted() {
-        enableButtons(true);
-    }
-
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
-        private final String mHost;
-        private final int mPort;
-        private ManagedChannel mChannel;
-        private RoverServiceGrpc.RoverServiceBlockingStub mStub;
-        private IOnGrpcTaskCompleted mListener;
+        private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-        public GrpcTask(IOnGrpcTaskCompleted listener, String host, int port) {
-            this.mHost = host;
-            this.mPort = port;
-            this.mListener = listener;
+        private static final String PROVIDER_NOT_INSTALLED =
+                "The security provider installation failed, "
+                        + "encrypted communication is not available: %s";
+
+        public GrpcTask(final String host, final int port) {
+            super();
+            if (mGrpcConnection == null
+                    || !host.equals(mGrpcConnection.getHost())
+                    || port != mGrpcConnection.getPort()) {
+                mGrpcConnection = new GrpcConnection(host, port);
+            }
         }
 
         @Override
         protected void onPreExecute() {
-            mChannel = ManagedChannelBuilder.forAddress(mHost, mPort)
-                    .usePlaintext(true)
-                    .build();
-            mStub = RoverServiceGrpc.newBlockingStub(mChannel);
+            super.onPreExecute();
+            enableButtons(Boolean.FALSE);
         }
 
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
-            return params[0].execute(mStub);
+            checkProviderInstaller();
+            return params[0].execute(mGrpcConnection.getStub());
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(final String result) {
+            mResultText.setText(result);
+            enableButtons(Boolean.TRUE);
+        }
+
+        private void checkProviderInstaller() {
+            // Android relies on a security Provider to provide secure network communications.
+            // It verifies that the security provider is up-to-date.
             try {
-                if (result == null) mResultText.setText(R.string.getting_null_result_text);
-                mResultText.setText(result);
-                mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-                mListener.onGrpcTaskCompleted();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                ProviderInstaller.installIfNeeded(MainActivity.this);
+            } catch (GooglePlayServicesRepairableException e) {
+                GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+                googleAPI.getErrorDialog(MainActivity.this, e.getConnectionStatusCode(),
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } catch (GooglePlayServicesNotAvailableException e) {
+                onProviderInstallerNotAvailable(e);
             }
+        }
+
+        private void onProviderInstallerNotAvailable(Exception e) {
+            new AlertDialog.Builder(MainActivity.this)
+            .setMessage(String.format(PROVIDER_NOT_INSTALLED, e.getMessage()))
+            .setCancelable(false)
+            .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialog, final int which) {
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            })
+            .create()
+            .show();
         }
     }
 }
