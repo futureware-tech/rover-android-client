@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
             dialog.setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(final DialogInterface dialog, final int which) {
-                    dialog.dismiss();
                     Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_HOME);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
