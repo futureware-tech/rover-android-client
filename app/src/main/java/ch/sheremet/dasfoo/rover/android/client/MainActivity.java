@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
         private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
         private static final String PROVIDER_NOT_INSTALLED =
-                "The security provider isn't available";
+                "The security provider installation failed, "
+                        + "encrypted communication is not available";
 
         public GrpcTask(final String host, final int port) {
             super();
