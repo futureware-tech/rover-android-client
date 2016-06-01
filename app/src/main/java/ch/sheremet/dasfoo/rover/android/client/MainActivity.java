@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         private static final String PROVIDER_NOT_INSTALLED =
                 "The security provider installation failed, "
-                        + "encrypted communication is not available";
+                        + "encrypted communication is not available: %s";
 
         public GrpcTask(final String host, final int port) {
             super();
@@ -149,15 +149,14 @@ public class MainActivity extends AppCompatActivity {
                 GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
                 googleAPI.getErrorDialog(MainActivity.this, e.getConnectionStatusCode(),
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
-
             } catch (GooglePlayServicesNotAvailableException e) {
-                onProviderInstallerNotAvailable();
+                onProviderInstallerNotAvailable(e);
             }
         }
 
-        private void onProviderInstallerNotAvailable() {
+        private void onProviderInstallerNotAvailable(Exception e) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-            dialog.setMessage(PROVIDER_NOT_INSTALLED);
+            dialog.setMessage(String.format(PROVIDER_NOT_INSTALLED, e.getMessage()));
             dialog.setCancelable(false);
             dialog.setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
                 @Override
