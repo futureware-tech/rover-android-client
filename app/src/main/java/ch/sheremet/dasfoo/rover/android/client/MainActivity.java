@@ -111,8 +111,6 @@ public class MainActivity extends AppCompatActivity {
 
         private static final String PROVIDER_NOT_INSTALLED =
                 "The security provider isn't available";
-        private static final String PROVIDER_INSTALLED =
-                "The security provider installed successful";
 
         public GrpcTask(final String host, final int port) {
             super();
