@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
@@ -104,10 +106,9 @@ public class MainActivity extends AppCompatActivity {
         mReadEncodersButton.setEnabled(isEnabled);
     }
 
-    public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String>
-            implements ProviderInstaller.ProviderInstallListener {
+    public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
         private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-        
+
         private static final String PROVIDER_NOT_INSTALLED =
                 "The security provider isn't available";
         private static final String PROVIDER_INSTALLED =
@@ -121,7 +122,16 @@ public class MainActivity extends AppCompatActivity {
                 mGrpcConnection = new GrpcConnection(host, port);
                 // Android relies on a security Provider to provide secure network communications.
                 // It verifies that the security provider is up-to-date.
-                ProviderInstaller.installIfNeededAsync(MainActivity.this, this);
+                try {
+                    ProviderInstaller.installIfNeeded(MainActivity.this);
+                } catch (GooglePlayServicesRepairableException e) {
+                    GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+                    googleAPI.getErrorDialog(MainActivity.this, e.getConnectionStatusCode(),
+                            PLAY_SERVICES_RESOLUTION_REQUEST).show();
+
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    onProviderInstallerNotAvailable();
+                }
             }
         }
 
@@ -142,20 +152,7 @@ public class MainActivity extends AppCompatActivity {
             enableButtons(Boolean.TRUE);
         }
 
-        @Override
-        public void onProviderInstalled() {
-            Toast toast = Toast.makeText(MainActivity.this, PROVIDER_INSTALLED, Toast.LENGTH_SHORT);
-            toast.show();
-        }
-
-        @Override
-        public void onProviderInstallFailed(final int errorCode, final Intent intent) {
-            GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-            if (googleAPI.isUserResolvableError(errorCode)) {
-                googleAPI.getErrorDialog(MainActivity.this, errorCode,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-                return;
-            }
+        private void onProviderInstallerNotAvailable() {
             AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
             dialog.setMessage(PROVIDER_NOT_INSTALLED);
             dialog.setCancelable(false);
