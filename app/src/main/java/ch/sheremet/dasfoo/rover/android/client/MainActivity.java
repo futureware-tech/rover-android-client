@@ -119,18 +119,6 @@ public class MainActivity extends AppCompatActivity {
                     || !host.equals(mGrpcConnection.getHost())
                     || port != mGrpcConnection.getPort()) {
                 mGrpcConnection = new GrpcConnection(host, port);
-                // Android relies on a security Provider to provide secure network communications.
-                // It verifies that the security provider is up-to-date.
-                try {
-                    ProviderInstaller.installIfNeeded(MainActivity.this);
-                } catch (GooglePlayServicesRepairableException e) {
-                    GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-                    googleAPI.getErrorDialog(MainActivity.this, e.getConnectionStatusCode(),
-                            PLAY_SERVICES_RESOLUTION_REQUEST).show();
-
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    onProviderInstallerNotAvailable();
-                }
             }
         }
 
@@ -142,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
+            checkProviderInstaller();
             return params[0].execute(mGrpcConnection.getStub());
         }
 
@@ -149,6 +138,21 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(final String result) {
             mResultText.setText(result);
             enableButtons(Boolean.TRUE);
+        }
+
+        private void checkProviderInstaller() {
+            // Android relies on a security Provider to provide secure network communications.
+            // It verifies that the security provider is up-to-date.
+            try {
+                ProviderInstaller.installIfNeeded(MainActivity.this);
+            } catch (GooglePlayServicesRepairableException e) {
+                GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+                googleAPI.getErrorDialog(MainActivity.this, e.getConnectionStatusCode(),
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+
+            } catch (GooglePlayServicesNotAvailableException e) {
+                onProviderInstallerNotAvailable();
+            }
         }
 
         private void onProviderInstallerNotAvailable() {
