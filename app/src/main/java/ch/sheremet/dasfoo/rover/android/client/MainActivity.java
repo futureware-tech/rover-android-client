@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String>
             implements ProviderInstaller.ProviderInstallListener {
         private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+        
         private static final String PROVIDER_NOT_INSTALLED =
                 "The security provider isn't available";
         private static final String PROVIDER_INSTALLED =
