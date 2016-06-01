@@ -162,7 +162,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(final DialogInterface dialog, final int which) {
                     dialog.dismiss();
-                    System.exit(0);
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }
             });
             dialog.create();
