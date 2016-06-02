@@ -155,20 +155,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void onProviderInstallerNotAvailable(Exception e) {
-            new AlertDialog.Builder(MainActivity.this)
-            .setMessage(String.format(PROVIDER_NOT_INSTALLED, e.getMessage()))
-            .setCancelable(false)
-            .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(final DialogInterface dialog, final int which) {
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-            })
-            .create()
-            .show();
+            new AlertDialog.Builder(MainActivity.this).
+                    setMessage(String.format(PROVIDER_NOT_INSTALLED, e.getMessage())).
+                    setCancelable(false).
+                    setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialog, final int which) {
+                            Intent intent = new Intent(Intent.ACTION_MAIN);
+                            intent.addCategory(Intent.CATEGORY_HOME);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    }).
+                    create().
+                    show();
         }
     }
 }
