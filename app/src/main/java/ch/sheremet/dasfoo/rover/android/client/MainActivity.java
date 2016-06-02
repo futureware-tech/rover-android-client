@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (mGrpcConnection != null) {
             mGrpcConnection.shutDownConnection();
+            mGrpcConnection = null;
         }
     }
 
