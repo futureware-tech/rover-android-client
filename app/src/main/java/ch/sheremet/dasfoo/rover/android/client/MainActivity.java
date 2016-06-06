@@ -30,9 +30,7 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
-
-    private static final String EMPTY_PORT_HOST = "Port or Host are empty";
-
+    
     private Button mMoveForwardButton;
     private Button mInfoButton;
     private Button mReadEncodersButton;
@@ -143,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                     mGrpcConnection = new GrpcConnection(getHost(), getPort());
                 }
             } catch (MissingFormatArgumentException e) {
-                return EMPTY_PORT_HOST;
+                return e.getMessage();
             }
                 return params[0].execute(mGrpcConnection.getStub());
         }
