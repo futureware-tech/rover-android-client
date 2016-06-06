@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (MissingFormatArgumentException e) {
                 return e.getMessage();
             }
-                return params[0].execute(mGrpcConnection.getStub());
+            return params[0].execute(mGrpcConnection.getStub());
         }
 
         @Override
