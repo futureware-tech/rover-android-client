@@ -30,7 +30,7 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
-    
+
     private Button mMoveForwardButton;
     private Button mInfoButton;
     private Button mReadEncodersButton;
@@ -135,9 +135,9 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
             checkProviderInstaller();
             try {
-                if ((mGrpcConnection == null)
-                        || (getHost().equals(mGrpcConnection.getHost()))
-                        || (getPort() != mGrpcConnection.getPort())) {
+                if (mGrpcConnection == null
+                        || getHost().equals(mGrpcConnection.getHost())
+                        || getPort() != mGrpcConnection.getPort()) {
                     mGrpcConnection = new GrpcConnection(getHost(), getPort());
                 }
             } catch (MissingFormatArgumentException e) {
