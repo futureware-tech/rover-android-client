@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             checkProviderInstaller();
             try {
                 if (mGrpcConnection == null
-                        || getHost().equals(mGrpcConnection.getHost())
+                        || !getHost().equals(mGrpcConnection.getHost())
                         || getPort() != mGrpcConnection.getPort()) {
                     mGrpcConnection = new GrpcConnection(getHost(), getPort());
                 }
