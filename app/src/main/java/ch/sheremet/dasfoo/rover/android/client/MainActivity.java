@@ -29,6 +29,7 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
+    private static final String EMPTY_PORT_HOST = "Port or Host are empty";
 
     private Button mMoveForwardButton;
     private Button mInfoButton;
@@ -36,6 +37,24 @@ public class MainActivity extends AppCompatActivity {
     private EditText mHostEdit;
     private EditText mPortEdit;
     private TextView mResultText;
+
+    public final int getPort() {
+        String port = mPortEdit.getText().toString();
+        if (TextUtils.isEmpty(port)) {
+            Toast.makeText(this, "You did not enter a port", Toast.LENGTH_SHORT).show();
+            return -1;
+        }
+        return Integer.parseInt(port);
+    }
+
+    public final String getHost() {
+        String host = mHostEdit.getText().toString();
+        if (TextUtils.isEmpty(host)) {
+            Toast.makeText(this, "You did not enter a host", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        return host;
+    }
 
     private GrpcConnection mGrpcConnection;
 
@@ -92,13 +111,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
-        String host = mHostEdit.getText().toString();
-        String port = mPortEdit.getText().toString();
-        if (TextUtils.isEmpty(host) || TextUtils.isEmpty(port)) {
-            Toast.makeText(this, "You did not enter a host or a port", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        new GrpcTask(host, Integer.parseInt(port)).execute(task);
+        new GrpcTask().execute(task);
     }
 
     private void enableButtons(final boolean isEnabled) {
@@ -114,15 +127,6 @@ public class MainActivity extends AppCompatActivity {
                 "The security provider installation failed, "
                         + "encrypted communication is not available: %s";
 
-        public GrpcTask(final String host, final int port) {
-            super();
-            if (mGrpcConnection == null
-                    || !host.equals(mGrpcConnection.getHost())
-                    || port != mGrpcConnection.getPort()) {
-                mGrpcConnection = new GrpcConnection(host, port);
-            }
-        }
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -132,13 +136,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
             checkProviderInstaller();
-            return params[0].execute(mGrpcConnection.getStub());
+            if (notEmptyHostAndPort(getHost(), getPort())) {
+                if (mGrpcConnection == null
+                        || !getHost().equals(mGrpcConnection.getHost())
+                        || getPort() != mGrpcConnection.getPort()) {
+                    mGrpcConnection = new GrpcConnection(getHost(), getPort());
+                }
+                return params[0].execute(mGrpcConnection.getStub());
+            }
+            return EMPTY_PORT_HOST;
         }
 
         @Override
         protected void onPostExecute(final String result) {
             mResultText.setText(result);
             enableButtons(Boolean.TRUE);
+        }
+
+        private boolean notEmptyHostAndPort(final String host, final int port) {
+            if (getHost() == null || getPort() == -1) {
+                return false;
+            }
+            return true;
         }
 
         private void checkProviderInstaller() {
@@ -155,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private void onProviderInstallerNotAvailable(Exception e) {
+        private void onProviderInstallerNotAvailable(final Exception e) {
             new AlertDialog.Builder(MainActivity.this).
                     setMessage(String.format(PROVIDER_NOT_INSTALLED, e.getMessage())).
                     setCancelable(false).
