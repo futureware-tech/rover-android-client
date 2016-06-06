@@ -29,6 +29,7 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
+
     private static final String EMPTY_PORT_HOST = "Port or Host are empty";
 
     private Button mMoveForwardButton;
