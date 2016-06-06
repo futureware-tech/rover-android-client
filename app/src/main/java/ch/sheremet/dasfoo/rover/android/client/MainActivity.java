@@ -154,10 +154,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private boolean notEmptyHostAndPort(final String host, final int port) {
-            if (getHost() == null || getPort() == -1) {
-                return false;
-            }
-            return true;
+            return getHost() != null && getPort() != -1;
         }
 
         private void checkProviderInstaller() {
