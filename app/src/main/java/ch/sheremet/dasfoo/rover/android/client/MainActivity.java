@@ -14,12 +14,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
+
+import java.util.MissingFormatArgumentException;
 
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
@@ -39,11 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPortEdit;
     private TextView mResultText;
 
-    public final int getPort() {
+    public final int getPort() throws MissingFormatArgumentException {
         String port = mPortEdit.getText().toString();
         if (TextUtils.isEmpty(port)) {
-            Toast.makeText(this, "You did not enter a port", Toast.LENGTH_SHORT).show();
-            return -1;
+            throw new MissingFormatArgumentException("You did not enter a port");
         }
         return Integer.parseInt(port);
     }
@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public final String getHost() {
         String host = mHostEdit.getText().toString();
         if (TextUtils.isEmpty(host)) {
-            Toast.makeText(this, "You did not enter a host", Toast.LENGTH_SHORT).show();
-            return null;
+            throw new MissingFormatArgumentException("You did not enter a host");
         }
         return host;
     }
@@ -137,25 +136,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
             checkProviderInstaller();
-            if (notEmptyHostAndPort()) {
-                if (mGrpcConnection == null
-                        || !getHost().equals(mGrpcConnection.getHost())
-                        || getPort() != mGrpcConnection.getPort()) {
+            try {
+                if ((mGrpcConnection == null)
+                        || (getHost().equals(mGrpcConnection.getHost()))
+                        || (getPort() != mGrpcConnection.getPort())) {
                     mGrpcConnection = new GrpcConnection(getHost(), getPort());
                 }
-                return params[0].execute(mGrpcConnection.getStub());
+            } catch (MissingFormatArgumentException e) {
+                return EMPTY_PORT_HOST;
             }
-            return EMPTY_PORT_HOST;
+                return params[0].execute(mGrpcConnection.getStub());
         }
 
         @Override
         protected void onPostExecute(final String result) {
             mResultText.setText(result);
             enableButtons(Boolean.TRUE);
-        }
-
-        private boolean notEmptyHostAndPort() {
-            return getHost() != null && getPort() != -1;
         }
 
         private void checkProviderInstaller() {
