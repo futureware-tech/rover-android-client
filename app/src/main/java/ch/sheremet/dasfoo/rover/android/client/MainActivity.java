@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
             checkProviderInstaller();
-            if (notEmptyHostAndPort(getHost(), getPort())) {
+            if (notEmptyHostAndPort()) {
                 if (mGrpcConnection == null
                         || !getHost().equals(mGrpcConnection.getHost())
                         || getPort() != mGrpcConnection.getPort()) {
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             enableButtons(Boolean.TRUE);
         }
 
-        private boolean notEmptyHostAndPort(final String host, final int port) {
+        private boolean notEmptyHostAndPort() {
             return getHost() != null && getPort() != -1;
         }
 
