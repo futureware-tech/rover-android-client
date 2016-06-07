@@ -14,12 +14,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
+
+import java.util.MissingFormatArgumentException;
 
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
@@ -36,6 +37,22 @@ public class MainActivity extends AppCompatActivity {
     private EditText mHostEdit;
     private EditText mPortEdit;
     private TextView mResultText;
+
+    public final int getPort() throws MissingFormatArgumentException {
+        String port = mPortEdit.getText().toString();
+        if (TextUtils.isEmpty(port)) {
+            throw new MissingFormatArgumentException("You did not enter a port");
+        }
+        return Integer.parseInt(port);
+    }
+
+    public final String getHost() {
+        String host = mHostEdit.getText().toString();
+        if (TextUtils.isEmpty(host)) {
+            throw new MissingFormatArgumentException("You did not enter a host");
+        }
+        return host;
+    }
 
     private GrpcConnection mGrpcConnection;
 
@@ -92,13 +109,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
-        String host = mHostEdit.getText().toString();
-        String port = mPortEdit.getText().toString();
-        if (TextUtils.isEmpty(host) || TextUtils.isEmpty(port)) {
-            Toast.makeText(this, "You did not enter a host or a port", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        new GrpcTask(host, Integer.parseInt(port)).execute(task);
+        new GrpcTask().execute(task);
     }
 
     private void enableButtons(final boolean isEnabled) {
@@ -114,15 +125,6 @@ public class MainActivity extends AppCompatActivity {
                 "The security provider installation failed, "
                         + "encrypted communication is not available: %s";
 
-        public GrpcTask(final String host, final int port) {
-            super();
-            if (mGrpcConnection == null
-                    || !host.equals(mGrpcConnection.getHost())
-                    || port != mGrpcConnection.getPort()) {
-                mGrpcConnection = new GrpcConnection(host, port);
-            }
-        }
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -132,6 +134,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
             checkProviderInstaller();
+            try {
+                if (mGrpcConnection == null
+                        || !getHost().equals(mGrpcConnection.getHost())
+                        || getPort() != mGrpcConnection.getPort()) {
+                    mGrpcConnection = new GrpcConnection(getHost(), getPort());
+                }
+            } catch (MissingFormatArgumentException e) {
+                return e.getMessage();
+            }
             return params[0].execute(mGrpcConnection.getStub());
         }
 
@@ -155,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private void onProviderInstallerNotAvailable(Exception e) {
+        private void onProviderInstallerNotAvailable(final Exception e) {
             new AlertDialog.Builder(MainActivity.this).
                     setMessage(String.format(PROVIDER_NOT_INSTALLED, e.getMessage())).
                     setCancelable(false).
