@@ -135,19 +135,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onProviderInstallFailed(final int errorCode, final Intent intent) {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-            if (googleAPI.isUserResolvableError(errorCode)) {
-                googleAPI.getErrorDialog(MainActivity.this, errorCode,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                onProviderInstallerNotAvailable(errorCode);
-            }
+        if (googleAPI.isUserResolvableError(errorCode)) {
+            googleAPI.getErrorDialog(MainActivity.this, errorCode,
+                    PLAY_SERVICES_RESOLUTION_REQUEST).show();
+        } else {
+            onProviderInstallerNotAvailable(errorCode);
+        }
     }
 
     private void onProviderInstallerNotAvailable(final int errorCode) {
-        new AlertDialog.Builder(MainActivity.this).
-                setMessage(String.format(PROVIDER_NOT_INSTALLED, errorCode)).
-                setCancelable(false).
-                setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(String.format(PROVIDER_NOT_INSTALLED, errorCode))
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -155,9 +155,9 @@ public class MainActivity extends AppCompatActivity
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
-                }).
-                create().
-                show();
+                })
+                .create()
+                .show();
     }
 
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
