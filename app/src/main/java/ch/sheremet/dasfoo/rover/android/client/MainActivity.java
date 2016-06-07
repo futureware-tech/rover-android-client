@@ -14,10 +14,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.util.MissingFormatArgumentException;
@@ -28,8 +27,14 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcConnection;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements ProviderInstaller.ProviderInstallListener {
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String PROVIDER_NOT_INSTALLED =
+            "The security provider installation failed, "
+                    + "encrypted communication is not available: %s";
     private static final String TAG = MainActivity.class.getName();
+
 
     private Button mMoveForwardButton;
     private Button mInfoButton;
@@ -90,6 +95,10 @@ public class MainActivity extends AppCompatActivity {
         mHostEdit = (EditText) findViewById(R.id.host_edit_text);
         mPortEdit = (EditText) findViewById(R.id.port_edit_text);
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
+
+        // Android relies on a security Provider to provide secure network communications.
+        // It verifies that the security provider is up-to-date.
+        ProviderInstaller.installIfNeededAsync(this, this);
     }
 
     @Override
@@ -118,12 +127,40 @@ public class MainActivity extends AppCompatActivity {
         mReadEncodersButton.setEnabled(isEnabled);
     }
 
-    public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
-        private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    @Override
+    public void onProviderInstalled() {
+        Toast.makeText(this, "The security provider installed.", Toast.LENGTH_SHORT).show();
+    }
 
-        private static final String PROVIDER_NOT_INSTALLED =
-                "The security provider installation failed, "
-                        + "encrypted communication is not available: %s";
+    @Override
+    public void onProviderInstallFailed(final int errorCode, final Intent intent) {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+            if (googleAPI.isUserResolvableError(errorCode)) {
+                googleAPI.getErrorDialog(MainActivity.this, errorCode,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                onProviderInstallerNotAvailable(errorCode);
+            }
+    }
+
+    private void onProviderInstallerNotAvailable(final int errorCode) {
+        new AlertDialog.Builder(MainActivity.this).
+                setMessage(String.format(PROVIDER_NOT_INSTALLED, errorCode)).
+                setCancelable(false).
+                setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_HOME);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                }).
+                create().
+                show();
+    }
+
+    public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -133,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
-            checkProviderInstaller();
             try {
                 if (mGrpcConnection == null
                         || !getHost().equals(mGrpcConnection.getHost())
@@ -150,37 +186,6 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(final String result) {
             mResultText.setText(result);
             enableButtons(Boolean.TRUE);
-        }
-
-        private void checkProviderInstaller() {
-            // Android relies on a security Provider to provide secure network communications.
-            // It verifies that the security provider is up-to-date.
-            try {
-                ProviderInstaller.installIfNeeded(MainActivity.this);
-            } catch (GooglePlayServicesRepairableException e) {
-                GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-                googleAPI.getErrorDialog(MainActivity.this, e.getConnectionStatusCode(),
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } catch (GooglePlayServicesNotAvailableException e) {
-                onProviderInstallerNotAvailable(e);
-            }
-        }
-
-        private void onProviderInstallerNotAvailable(final Exception e) {
-            new AlertDialog.Builder(MainActivity.this).
-                    setMessage(String.format(PROVIDER_NOT_INSTALLED, e.getMessage())).
-                    setCancelable(false).
-                    setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(final DialogInterface dialog, final int which) {
-                            Intent intent = new Intent(Intent.ACTION_MAIN);
-                            intent.addCategory(Intent.CATEGORY_HOME);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        }
-                    }).
-                    create().
-                    show();
         }
     }
 }
