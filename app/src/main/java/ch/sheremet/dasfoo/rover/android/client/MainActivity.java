@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity
                     + "encrypted communication is not available: %s";
     private static final String TAG = MainActivity.class.getName();
 
-
     private Button mMoveForwardButton;
     private Button mInfoButton;
     private Button mReadEncodersButton;
