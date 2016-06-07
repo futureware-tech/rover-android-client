@@ -18,4 +18,14 @@ public class VideoFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         return inflater.inflate(R.layout.fragment_video, container, false);
     }
+
+    public void startVideo(View view) {
+        //Not implemented yet
+        //Todo: add button implementation
+    }
+
+    public void stopVideo(View view) {
+        //Not implemented yet
+        //Todo: add button implementation
+    }
 }
