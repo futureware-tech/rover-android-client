@@ -20,7 +20,20 @@ android {
     }
 
     lintOptions {
+        // https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.LintOptions.html
+
+        // https://github.com/square/okio/issues/58
+        // A part of okio.Okio references a missing (on Android) package java.nio.file.
+        // We don't use that part, but it generates an error. Downgrade it to warning.
+        // TODO(dotdoom): use lint.xml instead to disable this warning specifically for okio.
         warning 'InvalidPackage'
+
+        // Enable all warnings, even those disabled by default.
+        checkAllWarnings true
+
+        // Generate a text report that might be seen in the CI build log.
+        textReport true
+        textOutput "stdout"
     }
 }
 
