@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity
         return Integer.parseInt(port);
     }
 
-    public final String getHost() {
+    public final String getHost() throws MissingFormatArgumentException {
         String host = mHostEdit.getText().toString();
         if (TextUtils.isEmpty(host)) {
             throw new MissingFormatArgumentException("You did not enter a host");
