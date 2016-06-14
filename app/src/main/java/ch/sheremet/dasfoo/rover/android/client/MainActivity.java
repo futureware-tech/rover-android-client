@@ -103,9 +103,9 @@ public class MainActivity extends AppCompatActivity
         ProviderInstaller.installIfNeededAsync(this, this);
 
         // Add menu fragment
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        MenuFragment menuFragment = new MenuFragment();
+        final FragmentManager fragmentManager = getFragmentManager();
+        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        final MenuFragment menuFragment = new MenuFragment();
         fragmentTransaction.add(menuFragment, "menu");
         fragmentTransaction.commit();
 
