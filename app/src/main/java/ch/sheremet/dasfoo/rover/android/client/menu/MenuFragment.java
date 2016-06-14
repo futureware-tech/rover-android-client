@@ -21,7 +21,8 @@ public class MenuFragment extends Fragment {
     private static final String TAG = MenuFragment.class.getSimpleName();
 
     /**
-     * Called to do initial creation of a fragment.  
+     * Called to do initial creation of a fragment.
+     *
      * @param savedInstanceState If the fragment is being re-created from
      *                           a previous saved state, this is the state.
      */
@@ -48,7 +49,7 @@ public class MenuFragment extends Fragment {
      * to be called, you must have first called {@link #setHasOptionsMenu}.
      *
      * @param menu     The options menu in which you place your items.
-     * @param inflater
+     * @param inflater It instantiates menu XML files into Menu objects.
      * @see #setHasOptionsMenu
      * @see #onPrepareOptionsMenu
      * @see #onOptionsItemSelected
@@ -67,12 +68,13 @@ public class MenuFragment extends Fragment {
      * for which you would like to do processing without those other
      * facilities.
      * <p/>
+     * <p/>
      * <p>Derived classes should call through to the base class for it to
      * perform the default menu handling.
      *
      * @param item The menu item that was selected.
      * @return boolean Return false to allow normal menu processing to
-     * proceed, true to consume it here.
+     *         proceed, true to consume it here.
      * @see #onCreateOptionsMenu
      */
     @Override
