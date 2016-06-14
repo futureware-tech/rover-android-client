@@ -29,13 +29,9 @@ public class MediaCodecHandler {
                 try {
                     // Get Nal unit from queue
                     byte[] unit = VideoFragment.nalQueue.take();
-                    if (unit != null) {
-                        inputBuffer.put(unit);
-                        codec.queueInputBuffer(inputBufferId, 0, unit.length, 0, 0);
-                    } else {
-                        throw new NullPointerException("Null Nal unit is gotten");
-                    }
-                } catch (InterruptedException | NullPointerException e) {
+                    inputBuffer.put(unit);
+                    codec.queueInputBuffer(inputBufferId, 0, unit.length, 0, 0);
+                } catch (InterruptedException e) {
                     Log.e(TAG, e.getMessage());
                 }
             }

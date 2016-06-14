@@ -17,7 +17,7 @@ public class VideoDecoderRunnable implements Runnable {
     private String mPassword;
     private int mPort;
 
-    private HttpURLConnection mUrlConnection = null;
+    private HttpURLConnection mUrlConnection;
 
     public VideoDecoderRunnable(final String host, final int port, final String password) {
         this.mHost = host;
@@ -27,17 +27,15 @@ public class VideoDecoderRunnable implements Runnable {
 
     private void initServerConnection() {
         try {
-            //TODO:UriBuilder
+            //TODO(ksheremet): UriBuilder
             URL url = new URL("https://" + mHost + ":" + mPort);
             mUrlConnection = (HttpURLConnection) url.openConnection();
             mUrlConnection.setRequestProperty("X-Capture-Server-PASSWORD",
                     mPassword);
-            // Todo: change width and height
-            mUrlConnection.setRequestProperty("X-Capture-Server_WIDTH", "320");
-            mUrlConnection.setRequestProperty("X-Capture-Server_HEIGHT", "240");
-            // WIDTH 320
-            // HEIGHT 240
-            // FPS
+            // TODO(ksheremet): Change width and height
+            mUrlConnection.setRequestProperty("X-Capture-Server-WIDTH", "320");
+            mUrlConnection.setRequestProperty("X-Capture-Server-HEIGHT", "240");
+            // TODO(ksheremet): FPS
         } catch (MalformedURLException e) {
             Log.e(TAG, e.toString());
         } catch (IOException e) {

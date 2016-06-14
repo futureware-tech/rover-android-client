@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -13,6 +14,7 @@ import java.util.Properties;
 
 /** This class is created for temporary purpose. It will be deleted
  * after development menu with settings.
+ * TODO(ksheremet): Remove it
  */
 public class PropertyReader {
     private static final String TAG = PropertyReader.class.getSimpleName();
@@ -29,7 +31,7 @@ public class PropertyReader {
             AssetManager assetManager = mContext.getAssets();
             InputStream inputStream = assetManager.open(file);
             mProperties.load(inputStream);
-        } catch (Exception e) {
+        } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
         return mProperties;
