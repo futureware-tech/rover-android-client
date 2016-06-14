@@ -1,5 +1,7 @@
 package ch.sheremet.dasfoo.rover.android.client;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +28,7 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcConnection;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
+import ch.sheremet.dasfoo.rover.android.client.menu.MenuFragment;
 
 public class MainActivity extends AppCompatActivity
         implements ProviderInstaller.ProviderInstallListener {
@@ -98,6 +101,14 @@ public class MainActivity extends AppCompatActivity
         // Android relies on a security Provider to provide secure network communications.
         // It verifies that the security provider is up-to-date.
         ProviderInstaller.installIfNeededAsync(this, this);
+
+        // Add menu fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        MenuFragment menuFragment = new MenuFragment();
+        fragmentTransaction.add(menuFragment, "menu");
+        fragmentTransaction.commit();
+
     }
 
     @Override
