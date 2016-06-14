@@ -67,8 +67,7 @@ public class MenuFragment extends Fragment {
      * its Handler as appropriate).  You can use this method for any items
      * for which you would like to do processing without those other
      * facilities.
-     * <p/>
-     * <p/>
+     *
      * <p>Derived classes should call through to the base class for it to
      * perform the default menu handling.
      *

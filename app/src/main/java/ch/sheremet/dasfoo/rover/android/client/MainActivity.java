@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity
         final MenuFragment menuFragment = new MenuFragment();
         fragmentTransaction.add(menuFragment, "menu");
         fragmentTransaction.commit();
-
     }
 
     @Override
