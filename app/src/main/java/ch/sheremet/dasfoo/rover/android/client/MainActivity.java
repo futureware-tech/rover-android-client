@@ -35,11 +35,35 @@ public class MainActivity extends AppCompatActivity
                     + "encrypted communication is not available: %s";
     private static final String TAG = MainActivity.class.getName();
 
+    /**
+     *Moves rover forward
+     */
     private Button mMoveForwardButton;
+
+    /**
+     * Gets information about battery, humidity, temperature and light
+     */
     private Button mInfoButton;
+
+    /**
+     * Gets the number of turns the rights and left wheels
+     */
     private Button mReadEncodersButton;
+
+
+    /**
+     * Host edit text
+     */
     private EditText mHostEdit;
+
+    /**
+     * Port edit text
+     */
     private EditText mPortEdit;
+
+    /**
+     * Result text view
+     */
     private TextView mResultText;
 
     public final int getPort() throws MissingFormatArgumentException {
