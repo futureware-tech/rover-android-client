@@ -18,7 +18,7 @@ import ch.sheremet.dasfoo.rover.android.client.R;
 public class MenuFragment extends Fragment {
 
     /**
-     * @param TAG A variable is for logger messages
+     * Variable for logger messages.
      */
     private static final String TAG = MenuFragment.class.getSimpleName();
 
