@@ -3,11 +3,9 @@ package ch.sheremet.dasfoo.rover.android.client.menu;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
 import ch.sheremet.dasfoo.rover.android.client.R;
 
@@ -23,9 +21,7 @@ public class MenuFragment extends Fragment {
     private static final String TAG = MenuFragment.class.getSimpleName();
 
     /**
-     * Called to do initial creation of a fragment.  This is called before
-     * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     *
+     * Called to do initial creation of a fragment.  
      * @param savedInstanceState If the fragment is being re-created from
      *                           a previous saved state, this is the state.
      */
