@@ -18,14 +18,15 @@ public class GettingBoardInfoTask extends AbstractGrpcTaskExecutor {
     public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
             // Get battery percentage
-            BatteryPercentageRequest batteryPercentageRequest = new BatteryPercentageRequest();
+            final BatteryPercentageRequest batteryPercentageRequest =
+                    new BatteryPercentageRequest();
             BatteryPercentageResponse batteryPercentageResponse =
                     stub.getBatteryPercentage(batteryPercentageRequest);
             // Get light
-            AmbientLightRequest ambientLightRequest = new AmbientLightRequest();
+            final AmbientLightRequest ambientLightRequest = new AmbientLightRequest();
             AmbientLightResponse ambientLightResponse =
                     stub.getAmbientLight(ambientLightRequest);
-            TemperatureAndHumidityRequest temperatureAndHumidityRequest =
+            final TemperatureAndHumidityRequest temperatureAndHumidityRequest =
                     new TemperatureAndHumidityRequest();
             TemperatureAndHumidityResponse temperatureAndHumidityResponse =
                     stub.getTemperatureAndHumidity(temperatureAndHumidityRequest);

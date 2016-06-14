@@ -35,13 +35,41 @@ public class MainActivity extends AppCompatActivity
                     + "encrypted communication is not available: %s";
     private static final String TAG = MainActivity.class.getName();
 
+    /**
+     * Moves rover forward.
+     */
     private Button mMoveForwardButton;
+
+    /**
+     * Gets information about battery, humidity, temperature and light.
+     */
     private Button mInfoButton;
+
+    /**
+     * Gets the number of turns the rights and left wheels.
+     */
     private Button mReadEncodersButton;
+
+    /**
+     * Host edit text.
+     */
     private EditText mHostEdit;
+
+    /**
+     * Port edit text.
+     */
     private EditText mPortEdit;
+
+    /**
+     * Result text view.
+     */
     private TextView mResultText;
 
+    /**
+     * Gets Port from mPortEdit. If view is empty, it returns error.
+     * @return Port for connection to the server
+     * @throws MissingFormatArgumentException Port is empty
+     */
     public final int getPort() throws MissingFormatArgumentException {
         String port = mPortEdit.getText().toString();
         if (TextUtils.isEmpty(port)) {
@@ -50,6 +78,11 @@ public class MainActivity extends AppCompatActivity
         return Integer.parseInt(port);
     }
 
+    /**
+     * Gets Host from mHostEdit. If view is empty, it returns error.
+     * @return Host for connection to the server
+     * @throws MissingFormatArgumentException Host is empty
+     */
     public final String getHost() throws MissingFormatArgumentException {
         String host = mHostEdit.getText().toString();
         if (TextUtils.isEmpty(host)) {
@@ -142,6 +175,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Executes when provider installation was failed. And it is not possible to install it.
+     * Shows the dialog to a user and returns to the main screen.
+     * @param errorCode code of exception
+     */
     private void onProviderInstallerNotAvailable(final int errorCode) {
         new AlertDialog.Builder(MainActivity.this)
                 .setMessage(String.format(PROVIDER_NOT_INSTALLED, errorCode))
