@@ -13,7 +13,7 @@ public class EncodersReadingTask extends AbstractGrpcTaskExecutor {
     @Override
     public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
-            ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
+            final ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
             ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);
             StringBuilder answer = new StringBuilder("Encoders\n");
             answer.append("Front left: ").append(readEncodersResponse.leftFront).append("\n");

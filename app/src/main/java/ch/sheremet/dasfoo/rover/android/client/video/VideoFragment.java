@@ -50,10 +50,10 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
         TextureView textureView = (TextureView) view.findViewById(R.id.textureView);
         textureView.setSurfaceTextureListener(this);
 
-        Button playVideo = (Button) view.findViewById(R.id.start_video_button);
+        final Button playVideo = (Button) view.findViewById(R.id.start_video_button);
         playVideo.setOnClickListener(this);
 
-        Button stopVideo = (Button) view.findViewById(R.id.stop_video_button);
+        final Button stopVideo = (Button) view.findViewById(R.id.stop_video_button);
         stopVideo.setOnClickListener(this);
         return view;
     }

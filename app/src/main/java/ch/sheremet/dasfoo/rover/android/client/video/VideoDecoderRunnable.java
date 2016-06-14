@@ -13,9 +13,9 @@ import java.net.URL;
  */
 public class VideoDecoderRunnable implements Runnable {
     private static final String TAG = VideoDecoderRunnable.class.getSimpleName();
-    private String mHost;
-    private String mPassword;
-    private int mPort;
+    private final String mHost;
+    private final String mPassword;
+    private final int mPort;
 
     private HttpURLConnection mUrlConnection;
 

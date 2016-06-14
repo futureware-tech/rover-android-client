@@ -15,9 +15,9 @@ import io.grpc.ManagedChannelBuilder;
 public class GrpcConnection {
     private static final String TAG = GrpcConnection.class.getName();
 
-    private String mHost;
+    private final String mHost;
 
-    private int mPort;
+    private final int mPort;
 
     private ManagedChannel mChannel;
 

@@ -25,7 +25,7 @@ public class MediaCodecHandler {
             @Override
             public void onInputBufferAvailable(@NonNull final MediaCodec codec,
                                                final int inputBufferId) {
-                ByteBuffer inputBuffer = codec.getInputBuffer(inputBufferId);
+                final ByteBuffer inputBuffer = codec.getInputBuffer(inputBufferId);
                 try {
                     // Get Nal unit from queue
                     byte[] unit = VideoFragment.nalQueue.take();
