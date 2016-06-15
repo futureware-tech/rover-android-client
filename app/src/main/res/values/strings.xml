@@ -10,4 +10,8 @@
     <string name="start_video_button">Start</string>
     <string name="stop_video_button">Stop</string>
     <string name="settings_title_menu">Setting</string>
+    <string name="video_settings_title">Video Settings</string>
+    <string name="host_settings_title">Host</string>
+    <string name="port_settings_title">Port</string>
+    <string name="grpc_settings_title">GRPC Settings</string>
 </resources>
