@@ -144,8 +144,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected final void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
+    protected final void onSaveInstanceState(final Bundle state) {
+        super.onSaveInstanceState(state);
     }
 
     /**
