@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity
     };
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMoveForwardButton = (Button) findViewById(R.id.move_forward_button);
@@ -141,6 +141,35 @@ public class MainActivity extends AppCompatActivity
         final MenuFragment menuFragment = new MenuFragment();
         fragmentTransaction.add(menuFragment, "menu");
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected final void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * This method is called after {@link #onStart} when the activity is
+     * being re-initialized from a previously saved state, given here in
+     * savedInstanceState. Most implementations will simply use {@link #onCreate}
+     * to restore their state, but it is sometimes convenient to do it here
+     * after all of the initialization has been done or to allow subclasses to
+     * decide whether to use your default implementation.  The default
+     * implementation of this method performs a restore of any view state that
+     * had previously been frozen by {@link #onSaveInstanceState}.
+     *
+     * <p>This method is called between {@link #onStart} and
+     * {@link #onPostCreate}.
+     *
+     * @param savedInstanceState the data most recently supplied in {@link #onSaveInstanceState}.
+     * @see #onCreate
+     * @see #onPostCreate
+     * @see #onResume
+     * @see #onSaveInstanceState
+     */
+    @Override
+    protected final void onRestoreInstanceState(final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
