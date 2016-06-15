@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".menu.SettingsActivity"
+            android:name="ch.sheremet.dasfoo.rover.android.client.menu.SettingsActivity"
             android:label="Preferences" />
 
     </application>
