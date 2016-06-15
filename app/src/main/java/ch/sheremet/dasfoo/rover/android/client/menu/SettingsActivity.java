@@ -12,7 +12,6 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected  final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // addPreferencesFromResource(R.xml.preferences);
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment()).commit();
     }
