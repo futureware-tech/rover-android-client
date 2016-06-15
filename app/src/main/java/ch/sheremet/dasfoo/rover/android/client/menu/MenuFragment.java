@@ -74,7 +74,7 @@ public class MenuFragment extends Fragment {
     public final boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings_item_menu:
-                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                final Intent intent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(intent);
                 return true;
             default:
