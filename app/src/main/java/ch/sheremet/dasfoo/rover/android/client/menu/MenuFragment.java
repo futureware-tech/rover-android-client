@@ -1,8 +1,8 @@
 package ch.sheremet.dasfoo.rover.android.client.menu;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,12 +14,6 @@ import ch.sheremet.dasfoo.rover.android.client.R;
  * This class is created for implementation menu.
  */
 public class MenuFragment extends Fragment {
-
-    /**
-     * Variable for logger messages.
-     */
-    private static final String TAG = MenuFragment.class.getSimpleName();
-
     /**
      * Called to do initial creation of a fragment.
      *
@@ -80,7 +74,8 @@ public class MenuFragment extends Fragment {
     public final boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings_item_menu:
-                Log.v(TAG, "Item settings is selected");
+                final Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
