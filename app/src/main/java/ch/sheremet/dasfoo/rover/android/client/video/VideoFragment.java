@@ -1,10 +1,12 @@
 package ch.sheremet.dasfoo.rover.android.client.video;
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -16,34 +18,45 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.MissingFormatArgumentException;
-import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import ch.sheremet.dasfoo.rover.android.client.MainActivity;
 import ch.sheremet.dasfoo.rover.android.client.R;
-import ch.sheremet.dasfoo.rover.android.client.property.PropertyReader;
+import ch.sheremet.dasfoo.rover.android.client.menu.Settings;
 
 /**
  * Created by Katarina Sheremet on 6/7/16 12:00 PM.
+ * Fragment setups MediaCodec and binds it with Surface.
  */
 public class VideoFragment extends Fragment implements TextureView.SurfaceTextureListener,
         View.OnClickListener {
 
+    /**
+     * Formant for video.
+     */
     private static final String VIDEO_FORMAT = "video/avc"; // h.264
-
-    // Log tag.
+    /**
+     * Class information for logging.
+     */
     private static final String TAG = VideoFragment.class.getName();
 
+    /**
+     * Queue is used for saving NAL units.
+     */
+    //TODO(ksheremet): create setters and getters and do private
     public static volatile BlockingQueue<byte[]> nalQueue = new LinkedBlockingQueue<>();
-
+    /**
+     * Thread for getting NAL units.
+     */
     private Thread mVideoThread;
 
-    //MediaCodec
+    /**
+     * MediaCodec.
+     */
     private MediaCodec mMediaCodec;
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+    public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_video, container, false);
@@ -59,7 +72,8 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     @Override
-    public void onSurfaceTextureAvailable(final SurfaceTexture surfaceTexture, int width, int height) {
+    public final void onSurfaceTextureAvailable(final SurfaceTexture surfaceTexture,
+                                                final int width, final int height) {
         Surface surface = new Surface(surfaceTexture);
         try {
             // Surface output format
@@ -77,11 +91,12 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
     }
 
     @Override
-    public void onSurfaceTextureSizeChanged(final SurfaceTexture surface, int width, int height) {
+    public void onSurfaceTextureSizeChanged(final SurfaceTexture surface,
+                                            final int width, final int height) {
     }
 
     @Override
-    public boolean onSurfaceTextureDestroyed(final SurfaceTexture surface) {
+    public final boolean onSurfaceTextureDestroyed(final SurfaceTexture surface) {
         mMediaCodec.stop();
         mMediaCodec.release();
         return true;
@@ -97,16 +112,20 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
      * @param v The view that was clicked.
      */
     @Override
-    public void onClick(View v) {
+    public final void onClick(final View v) {
         switch (v.getId()) {
             case R.id.start_video_button:
                 // Start thread reading on server
                 try {
-                    PropertyReader propertyReader = new PropertyReader(getActivity());
-                    Properties properties = propertyReader.getProperties("network.properties");
-                    String host = ((MainActivity) getActivity()).getHost();
-                    int port = ((MainActivity) getActivity()).getPort();
-                    String password = properties.getProperty("password");
+                    // TODO(ksheremet): check errors
+                    final SharedPreferences sharedPreferences =
+                            PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    final String host = sharedPreferences
+                            .getString(Settings.VIDEO_HOST.toString(), "Get host");
+                    final int port = Integer.parseInt(sharedPreferences
+                            .getString(Settings.VIDEO_PORT.toString(), "Get port"));
+                    final String password = sharedPreferences
+                            .getString(Settings.VIDEO_PASSWORD.toString(), "Get password");
                     mVideoThread = new Thread(new VideoDecoderRunnable(host, port, password));
                     mVideoThread.start();
                     // Start mMediaCodec
