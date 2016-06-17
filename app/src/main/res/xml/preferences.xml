@@ -6,15 +6,18 @@
 
         <EditTextPreference
             android:key="pref_video_host"
-            android:title="@string/host_settings_title" />
+            android:title="@string/host_settings_title"
+            android:summary="%s"/>
 
         <EditTextPreference
             android:key="pref_video_port"
-            android:title="@string/port_settings_title" />
+            android:title="@string/port_settings_title"
+            android:summary="%s"/>
 
         <EditTextPreference
             android:key="pref_video_password"
-            android:title="Password" />
+            android:title="Password"
+            android:summary="%s"/>
 
     </PreferenceCategory>
 
@@ -24,11 +27,13 @@
 
         <EditTextPreference
             android:key="pref_grpc_host"
-            android:title="@string/host_settings_title" />
+            android:title="@string/host_settings_title"
+            android:summary="%1$s"/>
 
         <EditTextPreference
             android:key="pref_grpc_port"
-            android:title="@string/port_settings_title" />
+            android:title="@string/port_settings_title"
+            android:summary="%1$s"/>
 
     </PreferenceCategory>
 
