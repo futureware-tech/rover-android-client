@@ -9,6 +9,7 @@ import android.preference.PreferenceActivity;
  * Class is created for opening Settings from menu
  */
 public class SettingsActivity extends PreferenceActivity {
+
     @Override
     protected  final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

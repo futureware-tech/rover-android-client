@@ -27,18 +27,6 @@ public class MenuFragment extends Fragment {
     }
 
     /**
-     * Report that this fragment would like to participate in populating
-     * the options menu by receiving a call to {@link #onCreateOptionsMenu}
-     * and related methods.
-     *
-     * @param hasMenu If true, the fragment has menu items to contribute.
-     */
-    @Override
-    public final void setHasOptionsMenu(final boolean hasMenu) {
-        super.setHasOptionsMenu(hasMenu);
-    }
-
-    /**
      * Initialize the contents of the Activity's standard options menu. For this method
      * to be called, you must have first called {@link #setHasOptionsMenu}.
      *
