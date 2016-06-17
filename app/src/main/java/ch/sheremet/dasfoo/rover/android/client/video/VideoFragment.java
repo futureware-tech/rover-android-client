@@ -121,11 +121,11 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
                     final SharedPreferences sharedPreferences =
                             PreferenceManager.getDefaultSharedPreferences(getActivity());
                     final String host = sharedPreferences
-                            .getString(Settings.VIDEO_HOST.toString(), "Get host");
+                            .getString(Settings.VIDEO_HOST.toString(), "");
                     final int port = Integer.parseInt(sharedPreferences
-                            .getString(Settings.VIDEO_PORT.toString(), "Get port"));
+                            .getString(Settings.VIDEO_PORT.toString(), ""));
                     final String password = sharedPreferences
-                            .getString(Settings.VIDEO_PASSWORD.toString(), "Get password");
+                            .getString(Settings.VIDEO_PASSWORD.toString(), "");
                     mVideoThread = new Thread(new VideoDecoderRunnable(host, port, password));
                     mVideoThread.start();
                     // Start mMediaCodec
