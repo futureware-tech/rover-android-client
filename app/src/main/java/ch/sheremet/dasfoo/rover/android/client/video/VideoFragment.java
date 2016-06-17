@@ -57,7 +57,7 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
 
     @Override
     public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             final Bundle savedInstanceState) {
+                                   final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_video, container, false);
         TextureView textureView = (TextureView) view.findViewById(R.id.textureView);
