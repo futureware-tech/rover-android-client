@@ -65,7 +65,7 @@ public class SettingsFragment extends PreferenceFragment
     @Override
     public final void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
                                           final String key) {
-        Preference pref = findPreference(key);
+        final Preference pref = findPreference(key);
         pref.setSummary(sharedPreferences.getString(key, ""));
         //This is necessary to reflect change after coming back from sub-pref screen
         ((BaseAdapter) getPreferenceScreen().getRootAdapter()).notifyDataSetChanged();
@@ -75,10 +75,10 @@ public class SettingsFragment extends PreferenceFragment
      * Updates and shows summary for every editText.
      */
     private void updatePreference() {
-        for (Settings settings : Settings.values()) {
-            Preference preference = findPreference(settings.toString());
+        for (final Settings settings : Settings.values()) {
+            final Preference preference = findPreference(settings.toString());
             if (preference instanceof EditTextPreference) {
-                EditTextPreference editTextPreference = (EditTextPreference) preference;
+                final EditTextPreference editTextPreference = (EditTextPreference) preference;
                 editTextPreference.setSummary(editTextPreference.getText());
             }
         }

@@ -19,11 +19,11 @@ public enum Settings {
      */
     VIDEO_PASSWORD("pref_video_password"),
     /**
-     * Host is for getting devises information from server.
+     * Host is for getting devices information from server.
      */
     GRPC_HOST("pref_grpc_host"),
     /**
-     * Port is for getting devises information from server.
+     * Port is for getting devices information from server.
      */
     GRPC_POST("pref_grpc_port");
     /**
