@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://developer.android.com/studio/write/lint.html#config -->
+<lint>
+	<issue id="InvalidPackage">
+		<!-- https://github.com/square/okio/issues/58
+			 A part of okio.Okio references a missing (on Android) package
+			 java.nio.file. We don't use that part. -->
+		<ignore regexp="okio-[0-9.]+jar" />
+	</issue>
+</lint>
