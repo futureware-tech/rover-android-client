@@ -1,12 +1,10 @@
 package ch.sheremet.dasfoo.rover.android.client.video;
 
 import android.app.Fragment;
-import android.content.SharedPreferences;
 import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -22,7 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import ch.sheremet.dasfoo.rover.android.client.R;
-import ch.sheremet.dasfoo.rover.android.client.menu.Settings;
+import ch.sheremet.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 
 /**
  * Created by Katarina Sheremet on 6/7/16 12:00 PM.
@@ -117,16 +115,9 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
             case R.id.start_video_button:
                 // Start thread reading on server
                 try {
-                    // TODO(ksheremet): check errors
-                    final SharedPreferences sharedPreferences =
-                            PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    final String host = sharedPreferences
-                            .getString(Settings.VIDEO_HOST.toString(), "");
-                    final int port = Integer.parseInt(sharedPreferences
-                            .getString(Settings.VIDEO_PORT.toString(), ""));
-                    final String password = sharedPreferences
-                            .getString(Settings.VIDEO_PASSWORD.toString(), "");
-                    mVideoThread = new Thread(new VideoDecoderRunnable(host, port, password));
+                    SharedPreferencesHandler handler = new SharedPreferencesHandler(getActivity());
+                    mVideoThread = new Thread(new VideoDecoderRunnable(handler.getVideoHost(),
+                            handler.getVideoPort(), handler.getPassword()));
                     mVideoThread.start();
                     // Start mMediaCodec
                     mMediaCodec.start();
