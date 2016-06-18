@@ -9,12 +9,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +26,7 @@ import ch.sheremet.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.GrpcConnection;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 import ch.sheremet.dasfoo.rover.android.client.menu.MenuFragment;
+import ch.sheremet.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 
 public class MainActivity extends AppCompatActivity
         implements ProviderInstaller.ProviderInstallListener {
@@ -54,52 +52,15 @@ public class MainActivity extends AppCompatActivity
     private Button mReadEncodersButton;
 
     /**
-     * Host edit text.
-     */
-    private EditText mHostEdit;
-
-    /**
-     * Port edit text.
-     */
-    private EditText mPortEdit;
-
-    /**
      * Result text view.
      */
     private TextView mResultText;
-
-    /**
-     * Gets Port from mPortEdit. If view is empty, it returns error.
-     * @return Port for connection to the server
-     * @throws MissingFormatArgumentException Port is empty
-     */
-    public final int getPort() throws MissingFormatArgumentException {
-        String port = mPortEdit.getText().toString();
-        if (TextUtils.isEmpty(port)) {
-            throw new MissingFormatArgumentException("You did not enter a port");
-        }
-        return Integer.parseInt(port);
-    }
-
-    /**
-     * Gets Host from mHostEdit. If view is empty, it returns error.
-     * @return Host for connection to the server
-     * @throws MissingFormatArgumentException Host is empty
-     */
-    public final String getHost() throws MissingFormatArgumentException {
-        String host = mHostEdit.getText().toString();
-        if (TextUtils.isEmpty(host)) {
-            throw new MissingFormatArgumentException("You did not enter a host");
-        }
-        return host;
-    }
 
     private GrpcConnection mGrpcConnection;
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
-            hideKeyboard();
             switch (v.getId()) {
                 case R.id.move_forward_button:
                     executeGrpcTask(new MovingRoverTask());
@@ -127,8 +88,6 @@ public class MainActivity extends AppCompatActivity
         mInfoButton.setOnClickListener(onClickListener);
         mReadEncodersButton = (Button) findViewById(R.id.read_encoders_button);
         mReadEncodersButton.setOnClickListener(onClickListener);
-        mHostEdit = (EditText) findViewById(R.id.host_edit_text);
-        mPortEdit = (EditText) findViewById(R.id.port_edit_text);
         mResultText = (TextView) findViewById(R.id.grpc_response_text);
 
         // Android relies on a security Provider to provide secure network communications.
@@ -157,7 +116,7 @@ public class MainActivity extends AppCompatActivity
      * decide whether to use your default implementation.  The default
      * implementation of this method performs a restore of any view state that
      * had previously been frozen by {@link #onSaveInstanceState}.
-     *
+     * <p/>
      * <p>This method is called between {@link #onStart} and
      * {@link #onPostCreate}.
      *
@@ -173,7 +132,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onDestroy() {
+    protected final void onDestroy() {
         super.onDestroy();
         if (mGrpcConnection != null) {
             mGrpcConnection.shutDownConnection();
@@ -181,15 +140,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void hideKeyboard() {
-        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mHostEdit.getWindowToken(), 0);
-        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(mPortEdit.getWindowToken(), 0);
-    }
-
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
-        new GrpcTask().execute(task);
+        new GrpcTask(this).execute(task);
     }
 
     private void enableButtons(final boolean isEnabled) {
@@ -199,12 +151,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onProviderInstalled() {
-        Toast.makeText(this, "The security provider installed.", Toast.LENGTH_SHORT).show();
+    public final void onProviderInstalled() {
+        Toast.makeText(this, "The security provider installed.", Toast.LENGTH_SHORT).show();       
     }
 
     @Override
-    public void onProviderInstallFailed(final int errorCode, final Intent intent) {
+    public final void onProviderInstallFailed(final int errorCode, final Intent intent) {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         if (googleAPI.isUserResolvableError(errorCode)) {
             googleAPI.getErrorDialog(MainActivity.this, errorCode,
@@ -217,6 +169,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Executes when provider installation was failed. And it is not possible to install it.
      * Shows the dialog to a user and returns to the main screen.
+     *
      * @param errorCode code of exception
      */
     private void onProviderInstallerNotAvailable(final int errorCode) {
@@ -238,19 +191,29 @@ public class MainActivity extends AppCompatActivity
 
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
 
+        private Context mContext;
+
+        public GrpcTask(final Context context) {
+            this.mContext = context;
+        }
+
         @Override
-        protected void onPreExecute() {
+        protected final void onPreExecute() {
             super.onPreExecute();
             enableButtons(Boolean.FALSE);
         }
 
         @Override
-        protected String doInBackground(final AbstractGrpcTaskExecutor... params) {
+        protected final String doInBackground(final AbstractGrpcTaskExecutor... params) {
             try {
+                final SharedPreferencesHandler sharedPreferences =
+                        new SharedPreferencesHandler(mContext);
+                final String host = sharedPreferences.getGrpcHost();
+                final int port = sharedPreferences.getGrpcPort();
                 if (mGrpcConnection == null
-                        || !getHost().equals(mGrpcConnection.getHost())
-                        || getPort() != mGrpcConnection.getPort()) {
-                    mGrpcConnection = new GrpcConnection(getHost(), getPort());
+                        || !host.equals(mGrpcConnection.getHost())
+                        || port != mGrpcConnection.getPort()) {
+                    mGrpcConnection = new GrpcConnection(host, port);
                 }
             } catch (MissingFormatArgumentException e) {
                 return e.getMessage();
@@ -259,7 +222,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(final String result) {
+        protected final void onPostExecute(final String result) {
             mResultText.setText(result);
             enableButtons(Boolean.TRUE);
         }
