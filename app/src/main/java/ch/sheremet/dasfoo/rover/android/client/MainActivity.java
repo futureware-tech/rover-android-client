@@ -191,9 +191,17 @@ public class MainActivity extends AppCompatActivity
 
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
 
-        private Context mContext;
+        /**
+         * Saves information about application environment.
+         */
+        private final Context mContext;
 
+        /**
+         * Constructor.
+         * @param context saves information about application environment
+         */
         public GrpcTask(final Context context) {
+            super();
             this.mContext = context;
         }
 

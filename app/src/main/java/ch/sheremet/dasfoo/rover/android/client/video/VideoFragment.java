@@ -115,7 +115,8 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
             case R.id.start_video_button:
                 // Start thread reading on server
                 try {
-                    SharedPreferencesHandler handler = new SharedPreferencesHandler(getActivity());
+                    final SharedPreferencesHandler handler =
+                            new SharedPreferencesHandler(getActivity());
                     mVideoThread = new Thread(new VideoDecoderRunnable(handler.getVideoHost(),
                             handler.getVideoPort(), handler.getPassword()));
                     mVideoThread.start();
