@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity
                         || port != mGrpcConnection.getPort()) {
                     mGrpcConnection = new GrpcConnection(host, port);
                 }
-            } catch (MissingFormatArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 return e.getMessage();
             }
             return params[0].execute(mGrpcConnection.getStub());

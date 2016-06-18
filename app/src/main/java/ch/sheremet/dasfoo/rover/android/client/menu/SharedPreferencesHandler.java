@@ -32,9 +32,9 @@ public class SharedPreferencesHandler {
      * Gets host for video.
      *
      * @return host
-     * @throws MissingFormatArgumentException if host is empty
+     * @throws IllegalArgumentException if host is empty
      */
-    public final String getVideoHost() throws MissingFormatArgumentException {
+    public final String getVideoHost() throws IllegalArgumentException {
         return getString(Settings.VIDEO_HOST);
     }
 
@@ -42,9 +42,9 @@ public class SharedPreferencesHandler {
      * Gets port for video.
      *
      * @return port
-     * @throws MissingFormatArgumentException if port is empty
+     * @throws IllegalArgumentException if port is empty
      */
-    public final int getVideoPort() throws MissingFormatArgumentException {
+    public final int getVideoPort() throws IllegalArgumentException {
         return Integer.parseInt(getString(Settings.VIDEO_PORT));
     }
 
@@ -52,12 +52,12 @@ public class SharedPreferencesHandler {
      * Gets grpc host. If host is empty, it tries to return host from video setting.
      *
      * @return host
-     * @throws MissingFormatArgumentException if host is empty
+     * @throws IllegalArgumentException if host is empty
      */
-    public final String getGrpcHost() throws MissingFormatArgumentException {
+    public final String getGrpcHost() throws IllegalArgumentException {
         try {
             return getString(Settings.GRPC_HOST);
-        } catch (MissingFormatArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return getVideoHost();
         }
 
@@ -67,9 +67,9 @@ public class SharedPreferencesHandler {
      * Gets grpc post.
      *
      * @return grpc port
-     * @throws MissingFormatArgumentException if post is empty
+     * @throws IllegalArgumentException if post is empty
      */
-    public final int getGrpcPort() throws MissingFormatArgumentException {
+    public final int getGrpcPort() throws IllegalArgumentException {
         return Integer.parseInt(getString(Settings.GRPC_PORT));
     }
 
@@ -77,9 +77,9 @@ public class SharedPreferencesHandler {
      * Gets password for video.
      *
      * @return password for video
-     * @throws MissingFormatArgumentException if password is empty
+     * @throws IllegalArgumentException if password is empty
      */
-    public final String getPassword() throws MissingFormatArgumentException {
+    public final String getPassword() throws IllegalArgumentException {
         return getString(Settings.VIDEO_PASSWORD);
     }
 
@@ -88,14 +88,14 @@ public class SharedPreferencesHandler {
      *
      * @param key gets SharedPreferences
      * @return string that saved in settings
-     * @throws MissingFormatArgumentException if string is empty
+     * @throws IllegalArgumentException if string is empty
      */
-    private String getString(final Settings key) throws MissingFormatArgumentException {
+    private String getString(final Settings key) throws IllegalArgumentException {
         final SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(mContext);
         final String host = sharedPreferences.getString(key.toString(), "");
         if (TextUtils.isEmpty(host)) {
-            throw new MissingFormatArgumentException("Empty string in settings");
+            throw new IllegalArgumentException("Empty string in settings");
         }
         return host;
     }

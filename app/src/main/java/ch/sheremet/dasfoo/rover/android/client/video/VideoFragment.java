@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.MissingFormatArgumentException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -122,7 +121,7 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
                     mVideoThread.start();
                     // Start mMediaCodec
                     mMediaCodec.start();
-                } catch (MissingFormatArgumentException e) {
+                } catch (IllegalArgumentException e) {
                     Log.e(TAG, e.getMessage());
                     Toast.makeText(getActivity(),
                             "Host and Port for video are empty", Toast.LENGTH_SHORT).show();
