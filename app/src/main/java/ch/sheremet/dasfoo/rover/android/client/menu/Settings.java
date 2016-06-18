@@ -25,7 +25,7 @@ public enum Settings {
     /**
      * Port is for getting devices information from server.
      */
-    GRPC_POST("pref_grpc_port");
+    GRPC_PORT("pref_grpc_port");
     /**
      * Constructor variable.
      */
