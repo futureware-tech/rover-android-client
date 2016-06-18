@@ -49,13 +49,18 @@ public class SharedPreferencesHandler {
     }
 
     /**
-     * Gets grpc host.
+     * Gets grpc host. If host is empty, it tries to return host from video setting.
      *
      * @return host
      * @throws MissingFormatArgumentException if host is empty
      */
     public final String getGrpcHost() throws MissingFormatArgumentException {
-        return getString(Settings.GRPC_HOST);
+        try {
+            return getString(Settings.GRPC_HOST);
+        } catch (MissingFormatArgumentException e) {
+            return getVideoHost();
+        }
+
     }
 
     /**

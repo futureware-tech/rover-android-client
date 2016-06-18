@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public final void onProviderInstalled() {
-        Toast.makeText(this, "The security provider installed.", Toast.LENGTH_SHORT).show();       
+        Toast.makeText(this, "The security provider installed.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
