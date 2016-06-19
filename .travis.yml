@@ -28,12 +28,12 @@ before_script:
 
 after_script:
 - pip install --user gsutil
-- cd app/build/outputs
+- cd app/build
 # Build a poor man's index
 - echo
-  "<h1>Artifacts for <a href=https://github.com/${TRAVIS_REPO_SLUG?}/compare/${TRAVIS_COMMIT_RANGE?}>commit ${TRAVIS_COMMIT?}</a></h1>"
+  "<h1>Artifacts for <a href=https://github.com/${TRAVIS_REPO_SLUG?}/compare/${TRAVIS_COMMIT_RANGE?}>commit ${TRAVIS_COMMIT?}</a></h1><pre>"
   >index.html
-- find . -type f -exec echo "<p><a href='{}'>{}</a></p>" \; >>index.html
+- find . -type f -exec echo "<a href='{}'>{}</a><br/>" \; | sort >>index.html
 # Upload build artifacts to GCS
 - ARTIFACTS_PATH=${GSUTIL_BUCKET?}/${TRAVIS_REPO_SLUG?}/${TRAVIS_PULL_REQUEST/false/${TRAVIS_BRANCH?}}
 - gsutil -m
