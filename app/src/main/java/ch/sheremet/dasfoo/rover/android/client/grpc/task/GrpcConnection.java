@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
+import ch.sheremet.dasfoo.rover.android.client.BuildConfig;
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -52,7 +53,9 @@ public class GrpcConnection {
             mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
             return Boolean.TRUE;
         } catch (InterruptedException e) {
-            Log.v(TAG, e.toString());
+            if (BuildConfig.DEBUG) {
+                Log.v(TAG, e.toString());
+            }
             return Boolean.FALSE;
         }
     }

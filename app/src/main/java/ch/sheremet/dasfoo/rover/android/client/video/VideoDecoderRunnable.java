@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import ch.sheremet.dasfoo.rover.android.client.BuildConfig;
+
 /**
  * Created by Katarina Sheremet on 6/8/16 1:07 PM.
  */
@@ -100,7 +102,9 @@ public class VideoDecoderRunnable implements Runnable {
                 buffer = newBuffer;
             }
         } catch (IOException e) {
-            Log.v(TAG, e.toString());
+            if (BuildConfig.DEBUG) {
+                Log.v(TAG, e.toString());
+            }
         } finally {
             mUrlConnection.disconnect();
         }
