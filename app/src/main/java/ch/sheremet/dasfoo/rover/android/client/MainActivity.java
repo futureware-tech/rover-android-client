@@ -2,7 +2,6 @@ package ch.sheremet.dasfoo.rover.android.client;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -17,8 +16,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.security.ProviderInstaller;
-
-import java.util.MissingFormatArgumentException;
 
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import ch.sheremet.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
@@ -141,7 +138,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
-        new GrpcTask(this).execute(task);
+        new GrpcTask().execute(task);
     }
 
     private void enableButtons(final boolean isEnabled) {
@@ -191,20 +188,6 @@ public class MainActivity extends AppCompatActivity
 
     public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
 
-        /**
-         * Saves information about application environment.
-         */
-        private final Context mContext;
-
-        /**
-         * Constructor.
-         * @param context saves information about application environment
-         */
-        public GrpcTask(final Context context) {
-            super();
-            this.mContext = context;
-        }
-
         @Override
         protected final void onPreExecute() {
             super.onPreExecute();
@@ -215,7 +198,7 @@ public class MainActivity extends AppCompatActivity
         protected final String doInBackground(final AbstractGrpcTaskExecutor... params) {
             try {
                 final SharedPreferencesHandler sharedPreferences =
-                        new SharedPreferencesHandler(mContext);
+                        new SharedPreferencesHandler(MainActivity.this);
                 final String host = sharedPreferences.getGrpcHost();
                 final int port = sharedPreferences.getGrpcPort();
                 if (mGrpcConnection == null
