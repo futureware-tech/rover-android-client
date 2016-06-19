@@ -7,7 +7,7 @@ android:
   - platform-tools
 
   # The BuildTools version used by your project
-  - build-tools-23.0.3
+  - build-tools-24.0.0
 
   # The SDK version used to compile your project
   - android-24
@@ -16,11 +16,11 @@ android:
   - extra
 
   # For emulator. Cannot use x86 w/o HW acceleration, which is provided by KVM.
-  - sys-img-armeabi-v7a-android-23
+  - sys-img-armeabi-v7a-android-24
 
 # Emulator Management: Create, Start and Wait
 before_script:
-- echo no | android create avd --force -n test -t android-23 --abi default/armeabi-v7a
+- echo no | android create avd --force -n test -t android-24 --abi default/armeabi-v7a
 - emulator -avd test -no-audio -no-window &
 - android-wait-for-emulator
 # Ping the emulator to make sure it's up
