@@ -14,4 +14,5 @@
     <string name="host_settings_title">Host</string>
     <string name="port_settings_title">Port</string>
     <string name="grpc_settings_title">GRPC Settings</string>
+    <string name="password_settings_title">Password</string>
 </resources>

@@ -14,8 +14,10 @@
             android:title="@string/port_settings_title" />
 
         <EditTextPreference
+            android:inputType="textPassword"
             android:key="pref_video_password"
-            android:title="Password" />
+            android:password="true"
+            android:title="@string/password_settings_title" />
 
     </PreferenceCategory>
 

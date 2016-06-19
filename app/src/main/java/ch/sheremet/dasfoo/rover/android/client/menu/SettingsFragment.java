@@ -55,7 +55,7 @@ public class SettingsFragment extends PreferenceFragment
     /**
      * Called when a shared preference is changed, added, or removed. This
      * may be called even if a preference is set to its existing value.
-     * <p>
+     * <p/>
      * <p>This callback will be run on your main thread.
      *
      * @param sharedPreferences The {@link SharedPreferences} that received
@@ -64,7 +64,7 @@ public class SettingsFragment extends PreferenceFragment
      */
     @Override
     public final void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
-                                          final String key) {
+                                                final String key) {
         final Preference pref = findPreference(key);
         pref.setSummary(sharedPreferences.getString(key, ""));
         //This is necessary to reflect change after coming back from sub-pref screen
@@ -76,10 +76,12 @@ public class SettingsFragment extends PreferenceFragment
      */
     private void updatePreference() {
         for (final Settings settings : Settings.values()) {
-            final Preference preference = findPreference(settings.toString());
-            if (preference instanceof EditTextPreference) {
-                final EditTextPreference editTextPreference = (EditTextPreference) preference;
-                editTextPreference.setSummary(editTextPreference.getText());
+            if (settings != Settings.VIDEO_PASSWORD) {
+                final Preference preference = findPreference(settings.toString());
+                if (preference instanceof EditTextPreference) {
+                    final EditTextPreference editTextPreference = (EditTextPreference) preference;
+                    editTextPreference.setSummary(editTextPreference.getText());
+                }
             }
         }
     }
