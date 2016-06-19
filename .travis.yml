@@ -33,7 +33,7 @@ after_script:
 - echo
   "<h1>Artifacts for <a href=https://github.com/${TRAVIS_REPO_SLUG?}/compare/${TRAVIS_COMMIT_RANGE?}>commit ${TRAVIS_COMMIT?}</a></h1><pre>"
   >index.html
-- find . -type f -exec echo "<a href='{}'>{}</a><br/>" \; | sort >>index.html
+- find . -type f -exec echo "<a href='{}'>{}</a>" \; | grep -E '\.htm|\.apk' | sort >>index.html
 # Upload build artifacts to GCS
 - ARTIFACTS_PATH=${GSUTIL_BUCKET?}/${TRAVIS_REPO_SLUG?}/${TRAVIS_PULL_REQUEST/false/${TRAVIS_BRANCH?}}
 - gsutil -m
