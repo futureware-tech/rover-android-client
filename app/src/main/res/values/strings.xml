@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">RoverAndroidClient</string>
-    <string name="enter_host_hint">Enter Host</string>
-    <string name="enter_port_hint">Enter Port</string>
     <string name="move_forward_button">Move Forward</string>
     <string name="get_board_info_button">Get Board Info</string>
     <string name="response_text_view">Response:</string>
