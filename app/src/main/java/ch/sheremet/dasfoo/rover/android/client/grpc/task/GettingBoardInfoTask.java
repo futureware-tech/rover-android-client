@@ -31,14 +31,15 @@ public class GettingBoardInfoTask extends AbstractGrpcTaskExecutor {
             TemperatureAndHumidityResponse temperatureAndHumidityResponse =
                     stub.getTemperatureAndHumidity(temperatureAndHumidityRequest);
             // Create answer
-            StringBuilder answer = new StringBuilder();
-            answer.append("Battery: ").append(batteryPercentageResponse.battery).append("\n");
-            answer.append("Light: ").append(ambientLightResponse.light).append("\n");
-            answer.append("Temperature: ").append(temperatureAndHumidityResponse.temperature)
-                    .append("\n");
-            answer.append("Humidity: ").append(temperatureAndHumidityResponse.humidity)
-                    .append("\n");
-            return answer.toString();
+            return String.format(
+                    "Battery: %d\n" +
+                    "Light: %d\n" +
+                    "Temperature: %d\n" +
+                    "Humidity: %d\n",
+                    batteryPercentageResponse.battery,
+                    ambientLightResponse.light,
+                    temperatureAndHumidityResponse.temperature,
+                    temperatureAndHumidityResponse.humidity);
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {
                 case UNKNOWN:

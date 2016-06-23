@@ -16,12 +16,12 @@ public class MovingRoverTask extends AbstractGrpcTaskExecutor {
     public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
             // Not implemented yet. It moves forward.
-            // Todo: Implement movement
+            // TODO(ksheremet): Implement movement
             RoverWheelRequest roverWheelRequest = new RoverWheelRequest();
             roverWheelRequest.left = FORWARD_MOVE_LEFT;
             roverWheelRequest.right = FORWARD_MOVE_RIGHT;
             stub.moveRover(roverWheelRequest);
-            return "Ok"; //Todo: Check errors and status, remove hardcode
+            return "Ok"; // TODO(ksheremet): Check errors and status, remove hardcode
         } catch (StatusRuntimeException e) {
             // Not implemented error messages
             switch (e.getStatus().getCode()) {

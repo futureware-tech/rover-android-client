@@ -15,12 +15,17 @@ public class EncodersReadingTask extends AbstractGrpcTaskExecutor {
         try {
             final ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
             ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);
-            StringBuilder answer = new StringBuilder("Encoders\n");
-            answer.append("Front left: ").append(readEncodersResponse.leftFront).append("\n");
-            answer.append("Back left: ").append(readEncodersResponse.leftBack).append("\n");
-            answer.append("Front right: ").append(readEncodersResponse.rightFront).append("\n");
-            answer.append("Back right: ").append(readEncodersResponse.rightBack).append("\n");
-            return answer.toString();
+            return String.format(
+                    "Encoders\n" +
+                    "Front left: %d\n" +
+                    "Back left: %d\n" +
+                    "Front right: %d\n" +
+                    "Back right: %d\n",
+                    readEncodersResponse.leftFront,
+                    readEncodersResponse.leftBack,
+                    readEncodersResponse.rightFront,
+                    readEncodersResponse.rightBack
+            );
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {
                 case UNKNOWN:

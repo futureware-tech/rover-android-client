@@ -40,7 +40,7 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
     /**
      * Queue is used for saving NAL units.
      */
-    //TODO(ksheremet): create setters and getters and do private
+    //TODO(ksheremet): create setters and getters and make private
     public static volatile BlockingQueue<byte[]> nalQueue = new LinkedBlockingQueue<>();
     /**
      * Thread for getting NAL units.
@@ -56,8 +56,8 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
     public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                                    final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_video, container, false);
-        TextureView textureView = (TextureView) view.findViewById(R.id.textureView);
+        final View view = inflater.inflate(R.layout.fragment_video, container, false);
+        final TextureView textureView = (TextureView) view.findViewById(R.id.textureView);
         textureView.setSurfaceTextureListener(this);
 
         final Button playVideo = (Button) view.findViewById(R.id.start_video_button);
