@@ -30,7 +30,7 @@ public class VideoDecoderRunnable implements Runnable {
     private void initServerConnection() {
         try {
             //TODO(ksheremet): UriBuilder
-            URL url = new URL("https://" + mHost + ":" + mPort);
+            final URL url = new URL("https://" + mHost + ":" + mPort);
             mUrlConnection = (HttpURLConnection) url.openConnection();
             mUrlConnection.setRequestProperty("X-Capture-Server-PASSWORD",
                     mPassword);
@@ -50,7 +50,7 @@ public class VideoDecoderRunnable implements Runnable {
      * called when a thread is started that has been created with a class which
      * implements {@code Runnable}.
      */
-    //TODO: refactoring and optimisation
+    // TODO(ksheremet): refactoring and optimisation
     @Override
     public void run() {
         initServerConnection();
@@ -60,14 +60,14 @@ public class VideoDecoderRunnable implements Runnable {
             byte[] buffer = new byte[50];
             int value = inputStream.read(buffer, 0, buffer.length);
             if (value != buffer.length) {
-                byte[] newBuffer = new byte[value];
+                final byte[] newBuffer = new byte[value];
                 System.arraycopy(buffer, 0, newBuffer, 0, newBuffer.length);
                 buffer = newBuffer;
             }
             while (true) {
                 for (; i < buffer.length; i++) {
                     if ((buffer[i] == 1) && (buffer[i - 1] == 0) && (buffer[i - 2] == 0)) {
-                        byte[] resultArray = new byte[i - 3];
+                        final byte[] resultArray = new byte[i - 3];
                         // Extract nal unit
                         System.arraycopy(buffer, 0, resultArray, 0, resultArray.length);
                         // Put nal unit to queue
@@ -78,7 +78,8 @@ public class VideoDecoderRunnable implements Runnable {
                         value = inputStream.read(buffer, buffer.length - resultArray.length,
                                 resultArray.length);
                         if (value != resultArray.length) {
-                            byte[] newBuffer = new byte[value + (buffer.length - resultArray.length)];
+                            byte[] newBuffer = new byte[
+                                value + (buffer.length - resultArray.length)];
                             System.arraycopy(buffer, 0, newBuffer, 0, newBuffer.length);
                             buffer = newBuffer;
                         }
@@ -94,7 +95,7 @@ public class VideoDecoderRunnable implements Runnable {
                 System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
                 value = inputStream.read(newBuffer, buffer.length,
                         newBuffer.length - buffer.length);
-                if (value != (newBuffer.length - buffer.length)) {
+                if (value != newBuffer.length - buffer.length) {
                     byte[] newNewBuffer = new byte[buffer.length + value];
                     System.arraycopy(newBuffer, 0, newNewBuffer, 0, newNewBuffer.length);
                     newBuffer = newNewBuffer;

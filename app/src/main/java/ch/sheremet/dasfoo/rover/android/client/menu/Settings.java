@@ -26,16 +26,19 @@ public enum Settings {
      * Port is for getting devices information from server.
      */
     GRPC_PORT("pref_grpc_port");
+
     /**
      * Constructor variable.
      */
     private final String name;
+
     /**
      * @param s string parameter for constructor
      */
     Settings(final String s) {
         name = s;
     }
+
     /**
      * @return string representation of enum element
      */
