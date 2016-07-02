@@ -29,6 +29,12 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
         View.OnClickListener {
 
     /**
+     * Queue is used for saving NAL units.
+     */
+    //TODO(ksheremet): create setters and getters and make private
+    public static volatile BlockingQueue<byte[]> nalQueue = new LinkedBlockingQueue<>();
+
+    /**
      * Formant for video.
      */
     private static final String VIDEO_FORMAT = "video/avc"; // h.264
@@ -37,11 +43,6 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
      */
     private static final String TAG = VideoFragment.class.getName();
 
-    /**
-     * Queue is used for saving NAL units.
-     */
-    //TODO(ksheremet): create setters and getters and make private
-    public static volatile BlockingQueue<byte[]> nalQueue = new LinkedBlockingQueue<>();
     /**
      * Thread for getting NAL units.
      */

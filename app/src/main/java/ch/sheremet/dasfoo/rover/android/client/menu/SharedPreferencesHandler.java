@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import java.util.MissingFormatArgumentException;
-
 /**
  * Created by Katarina Sheremet on 6/18/16 4:01 PM.
  * <p/>

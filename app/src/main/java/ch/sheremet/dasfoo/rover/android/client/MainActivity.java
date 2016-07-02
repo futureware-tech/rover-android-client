@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity
         implements ProviderInstaller.ProviderInstallListener {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String PROVIDER_NOT_INSTALLED =
-            "The security provider installation failed, "
-                    + "encrypted communication is not available: %s";
+            "The security provider installation failed, " +
+            "encrypted communication is not available: %s";
     private static final String TAG = MainActivity.class.getName();
 
     /**
@@ -201,9 +201,9 @@ public class MainActivity extends AppCompatActivity
                         new SharedPreferencesHandler(MainActivity.this);
                 final String host = sharedPreferences.getGrpcHost();
                 final int port = sharedPreferences.getGrpcPort();
-                if (mGrpcConnection == null
-                        || !host.equals(mGrpcConnection.getHost())
-                        || port != mGrpcConnection.getPort()) {
+                if (mGrpcConnection == null ||
+                        !host.equals(mGrpcConnection.getHost()) ||
+                        port != mGrpcConnection.getPort()) {
                     mGrpcConnection = new GrpcConnection(host, port);
                 }
             } catch (IllegalArgumentException e) {
