@@ -201,10 +201,13 @@ public class MainActivity extends AppCompatActivity
                         new SharedPreferencesHandler(MainActivity.this);
                 final String host = sharedPreferences.getGrpcHost();
                 final int port = sharedPreferences.getGrpcPort();
+                final String password = sharedPreferences.getPassword();
+                // TODO(ksheremet): implement onSharedPreferencesChanged
                 if (mGrpcConnection == null ||
                         !host.equals(mGrpcConnection.getHost()) ||
+                        !password.equals(mGrpcConnection.getPassword()) ||
                         port != mGrpcConnection.getPort()) {
-                    mGrpcConnection = new GrpcConnection(host, port);
+                    mGrpcConnection = new GrpcConnection(host, port, password);
                 }
             } catch (IllegalArgumentException e) {
                 return e.getMessage();
