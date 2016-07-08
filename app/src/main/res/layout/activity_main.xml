@@ -11,7 +11,7 @@
 
         <fragment
             android:id="@+id/video_fragment"
-            android:name="ch.sheremet.dasfoo.rover.android.client.video.VideoFragment"
+            android:name="org.dasfoo.rover.android.client.video.VideoFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:layout="@layout/fragment_video" />
