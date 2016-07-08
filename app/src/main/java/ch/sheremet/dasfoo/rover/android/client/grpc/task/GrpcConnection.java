@@ -18,21 +18,32 @@ import io.grpc.stub.MetadataUtils;
 public class GrpcConnection {
     private static final String TAG = GrpcConnection.class.getName();
 
+    /**
+     * Forms header.
+     */
+    private static Metadata.Key<String> authKey =
+            Metadata.Key.of("authentication", Metadata.ASCII_STRING_MARSHALLER);
+
     private final String mHost;
 
     private final int mPort;
 
+    /**
+     * Attaches to header for validation user on server.
+     */
     private final String mPassword;
 
     private ManagedChannel mChannel;
 
     private RoverServiceGrpc.RoverServiceBlockingStub mStub;
 
-    private static Metadata.Key<String> authKey =
-            Metadata.Key.of("authentication", Metadata.ASCII_STRING_MARSHALLER);
-
-
-
+    /**
+     * Constructor.
+     *
+     * @param host is for connection to the server
+     * @param port is for connection to the server
+     * @param password is for validating user
+     */
     public GrpcConnection(final String host, final int port, final String password) {
         this.mHost = host;
         this.mPort = port;
@@ -48,6 +59,11 @@ public class GrpcConnection {
         return mHost;
     }
 
+    /**
+     * Getters method for returning password.
+     *
+     * @return password
+     */
     public final String getPassword() {
         return mPassword;
     }
