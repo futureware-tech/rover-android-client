@@ -11,8 +11,7 @@ android:
   # To list all supported versions:
   # $ tools/android list sdk --extended --all
   # (look for a string: id: XX or "build-tools-A.B.C")
-  # TODO(dotdoom): test if this is necessary - gradle may be able to install it.
-  - build-tools-23.0.2
+  - build-tools-23.0.3
 
   # The SDK version used to compile your project.
   # Keep in sync with compileSdkVersion in app/build.gradle.
@@ -26,11 +25,12 @@ android:
   # To list all supported images:
   # $ cd android-sdk-linux; tools/android list sdk --extended --all
   # (look for a string: sys-img-XX-android-YY)
+  # Currently, there's no image for API level 24 with ARM EABI.
   - sys-img-armeabi-v7a-android-23
 
 # Emulator Management: Create, Start and Wait
 before_script:
-# Keep -t and --abi in sync with the SDK version above.
+# Keep -t and --abi in sync with the image version above.
 # To list all supported ABIs:
 # $ cd android-sdk-linux; tools/android list target
 # for "-t", look for: id: XX or "android-YY".
