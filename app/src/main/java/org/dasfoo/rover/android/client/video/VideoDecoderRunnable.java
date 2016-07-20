@@ -108,11 +108,11 @@ public class VideoDecoderRunnable implements Runnable {
             urlConnection = createConnection(mHost, mPort);
             setUpVideoProperties();
             InputStream inputStream = urlConnection.getInputStream();
-            StreamParser p = new StreamParser(inputStream);
+            StreamParser streamParser = new StreamParser(inputStream);
             while (!Thread.currentThread().isInterrupted()) {
                 int id = VideoFragment.getIdBufferFromQueue();
                 ByteBuffer inputBuffer = this.mCodec.getInputBuffer(id);
-                int size = p.takeUnit(inputBuffer);
+                int size = streamParser.takeUnit(inputBuffer);
                 this.mCodec.queueInputBuffer(id, 0, size, 0, 0);
             }
         } catch (MalformedInputException e) {
