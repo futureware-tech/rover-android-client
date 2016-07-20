@@ -8,22 +8,57 @@ import org.dasfoo.rover.android.client.BuildConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.charset.MalformedInputException;
 
 /**
  * Created by Katarina Sheremet on 6/8/16 1:07 PM.
+ * <p/>
+ * Class is used for creating connection to the server to get video and do
+ * processing of stream.
  */
 public class VideoDecoderRunnable implements Runnable {
+
+    /**
+     * Class information for logging.
+     */
     private static final String TAG = VideoDecoderRunnable.class.getSimpleName();
+
+    /**
+     * Host for connection to the server.
+     */
     private final String mHost;
+
+    /**
+     * Password for connection to the server.
+     */
     private final String mPassword;
+
+    /**
+     * Port for connection to the server.
+     */
     private final int mPort;
+
+    /**
+     * MediaCodec.
+     */
     private final MediaCodec mCodec;
 
-    private HttpURLConnection mUrlConnection;
+    /**
+     * Connection to the server.
+     */
+    private HttpURLConnection urlConnection;
 
+
+    /**
+     * Default constructor.
+     *
+     * @param host     for connecting to the server
+     * @param port     for connecting to the server
+     * @param password to get access to the video
+     * @param codec    for processing stream
+     */
     public VideoDecoderRunnable(final String host, final int port, final String password,
                                 final MediaCodec codec) {
         this.mHost = host;
@@ -32,22 +67,34 @@ public class VideoDecoderRunnable implements Runnable {
         this.mCodec = codec;
     }
 
-    private void initServerConnection() {
-        try {
-            //TODO(ksheremet): UriBuilder
-            final URL url = new URL("https://" + mHost + ":" + mPort);
-            mUrlConnection = (HttpURLConnection) url.openConnection();
-            mUrlConnection.setRequestProperty("X-Capture-Server-PASSWORD",
-                    mPassword);
-            // TODO(ksheremet): Change width and height
-            mUrlConnection.setRequestProperty("X-Capture-Server-WIDTH", "320");
-            mUrlConnection.setRequestProperty("X-Capture-Server-HEIGHT", "240");
-            // TODO(ksheremet): FPS
-        } catch (MalformedURLException e) {
-            Log.e(TAG, e.toString());
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
+    /**
+     * Creates connection using host and port.
+     *
+     * @param host to target server
+     * @param port to targen server
+     * @return connection to the server
+     * @throws IOException when Malformed host or port. Or input/output exception.
+     */
+    private HttpURLConnection createConnection(final String host, final int port)
+            throws IOException {
+        HttpURLConnection mUrlConnection;
+        //TODO(ksheremet): UriBuilder
+        final URL url = new URL("https://" + host + ":" + port);
+        mUrlConnection = (HttpURLConnection) url.openConnection();
+        Log.v(TAG, mUrlConnection.getClass().getSimpleName());
+        return mUrlConnection;
+    }
+
+    /**
+     * Sets up properties for video. Width, height, etc.
+     */
+    private void setUpVideoProperties() {
+        urlConnection.setRequestProperty("X-Capture-Server-PASSWORD", mPassword);
+        // TODO(ksheremet): Take this from settings
+        urlConnection.setRequestProperty("X-Capture-Server-WIDTH",
+                String.valueOf(VideoFragment.VIDEO_WIDTH));
+        urlConnection.setRequestProperty("X-Capture-Server-HEIGHT",
+                String.valueOf(VideoFragment.VIDEO_HEIGHT));
     }
 
     /**
@@ -55,12 +102,12 @@ public class VideoDecoderRunnable implements Runnable {
      * called when a thread is started that has been created with a class which
      * implements {@code Runnable}.
      */
-    // TODO(ksheremet): refactoring and optimisation
     @Override
-    public void run() {
-        initServerConnection();
+    public final void run() {
         try {
-            InputStream inputStream = mUrlConnection.getInputStream();
+            urlConnection = createConnection(mHost, mPort);
+            setUpVideoProperties();
+            InputStream inputStream = urlConnection.getInputStream();
             StreamParser p = new StreamParser(inputStream);
             while (!Thread.currentThread().isInterrupted()) {
                 int id = VideoFragment.getIdBufferFromQueue();
@@ -68,18 +115,25 @@ public class VideoDecoderRunnable implements Runnable {
                 int size = p.takeUnit(inputBuffer);
                 this.mCodec.queueInputBuffer(id, 0, size, 0, 0);
             }
+        } catch (MalformedInputException e) {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Malformed url:", e);
+            }
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
                 // TODO(ksheremet): remove .toString() from all throwables in Log()
                 Log.e(TAG, "Cannot parse stream:", e);
             }
         } catch (InterruptedException e) {
-           // TODO(ksheremet):
             if (BuildConfig.DEBUG) {
                 Log.v(TAG, "User stopped stream", e);
             }
         } finally {
-            mUrlConnection.disconnect();
+            urlConnection.disconnect();
+            mCodec.stop();
+            // Release codec
+            mCodec.release();
+            VideoFragment.clearIdBufferQueue();
         }
     }
 }

@@ -11,17 +11,28 @@ import android.util.Log;
 public class MediaCodecHandler {
 
     /**
-     * It is used for logging.
+     * Class information for logging.
      */
     private static final String TAG = MediaCodecHandler.class.getSimpleName();
 
+    /**
+     * MediaCodec.
+     */
     private final MediaCodec mediaCodec;
 
+    /**
+     * Default constructor.
+     * @param mCodec MediaCodec
+     */
     public MediaCodecHandler(final MediaCodec mCodec) {
         mediaCodec = mCodec;
     }
 
-    // Set a MediaCodec for asynchronously processing
+    /**
+     * Sets MediaCodec for asynchronously processing.
+     *
+     * @return MediaCodec
+     */
     public final MediaCodec setupAsynchMediaCodec() {
         mediaCodec.setCallback(new MediaCodec.Callback() {
             /**
@@ -37,11 +48,17 @@ public class MediaCodecHandler {
                     VideoFragment.setIdBufferInQueue(inputBufferId);
                 } catch (InterruptedException e) {
                     // TODO(ksheremet): make a better handling here
-                    Log.wtf(TAG, e);
-                    VideoFragment.clearIdBufferQueue();
+                    Log.e(TAG, "User stopped video:", e);
                 }
             }
 
+            /**
+             * Called when an output buffer becomes available.
+             *
+             * @param codec The MediaCodec object.
+             * @param index The index of the available output buffer.
+             * @param info Info regarding the available output buffer {@link MediaCodec.BufferInfo}.
+             */
             @Override
             public void onOutputBufferAvailable(@NonNull final MediaCodec codec, final int index,
                                                 @NonNull final MediaCodec.BufferInfo info) {
