@@ -5,12 +5,14 @@ import android.media.MediaFormat;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import java.nio.ByteBuffer;
-
 /**
  * Created by Katarina Sheremet on 6/8/16 1:04 PM.
  */
 public class MediaCodecHandler {
+
+    /**
+     * It is used for logging.
+     */
     private static final String TAG = MediaCodecHandler.class.getSimpleName();
 
     private final MediaCodec mediaCodec;
@@ -22,17 +24,21 @@ public class MediaCodecHandler {
     // Set a MediaCodec for asynchronously processing
     public final MediaCodec setupAsynchMediaCodec() {
         mediaCodec.setCallback(new MediaCodec.Callback() {
+            /**
+             * Called when an input buffer becomes available.
+             *
+             * @param codec The MediaCodec object.
+             * @param inputBufferId The index of the available input buffer.
+             */
             @Override
             public void onInputBufferAvailable(@NonNull final MediaCodec codec,
                                                final int inputBufferId) {
-                final ByteBuffer inputBuffer = codec.getInputBuffer(inputBufferId);
                 try {
-                    // Get Nal unit from queue
-                    byte[] unit = VideoFragment.nalQueue.take();
-                    inputBuffer.put(unit);
-                    codec.queueInputBuffer(inputBufferId, 0, unit.length, 0, 0);
+                    VideoFragment.setIdBufferInQueue(inputBufferId);
                 } catch (InterruptedException e) {
-                    Log.e(TAG, e.getMessage());
+                    // TODO(ksheremet): make a better handling here
+                    Log.wtf(TAG, e);
+                    VideoFragment.clearIdBufferQueue();
                 }
             }
 
@@ -44,11 +50,24 @@ public class MediaCodecHandler {
                 codec.releaseOutputBuffer(index, true);
             }
 
+            /**
+             * Called when the MediaCodec encountered an error
+             *
+             * @param codec The MediaCodec object.
+             * @param e The {@link MediaCodec.CodecException} object describing the error.
+             */
             @Override
             public void onError(@NonNull final MediaCodec codec,
                                 @NonNull final MediaCodec.CodecException e) {
+                Log.e(TAG, "Error occurred in MediaCodec", e);
             }
 
+            /**
+             * Called when the output format has changed
+             *
+             * @param codec The MediaCodec object.
+             * @param format The new output format.
+             */
             @Override
             public void onOutputFormatChanged(@NonNull final MediaCodec codec,
                                               @NonNull final MediaFormat format) {

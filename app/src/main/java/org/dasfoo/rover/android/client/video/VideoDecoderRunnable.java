@@ -1,14 +1,16 @@
 package org.dasfoo.rover.android.client.video;
 
+import android.media.MediaCodec;
 import android.util.Log;
+
+import org.dasfoo.rover.android.client.BuildConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.dasfoo.rover.android.client.BuildConfig;
+import java.nio.ByteBuffer;
 
 /**
  * Created by Katarina Sheremet on 6/8/16 1:07 PM.
@@ -18,13 +20,16 @@ public class VideoDecoderRunnable implements Runnable {
     private final String mHost;
     private final String mPassword;
     private final int mPort;
+    private final MediaCodec mCodec;
 
     private HttpURLConnection mUrlConnection;
 
-    public VideoDecoderRunnable(final String host, final int port, final String password) {
+    public VideoDecoderRunnable(final String host, final int port, final String password,
+                                final MediaCodec codec) {
         this.mHost = host;
         this.mPort = port;
         this.mPassword = password;
+        this.mCodec = codec;
     }
 
     private void initServerConnection() {
@@ -56,55 +61,22 @@ public class VideoDecoderRunnable implements Runnable {
         initServerConnection();
         try {
             InputStream inputStream = mUrlConnection.getInputStream();
-            int i = 4;
-            byte[] buffer = new byte[50];
-            int value = inputStream.read(buffer, 0, buffer.length);
-            if (value != buffer.length) {
-                final byte[] newBuffer = new byte[value];
-                System.arraycopy(buffer, 0, newBuffer, 0, newBuffer.length);
-                buffer = newBuffer;
-            }
-            while (true) {
-                for (; i < buffer.length; i++) {
-                    if ((buffer[i] == 1) && (buffer[i - 1] == 0) && (buffer[i - 2] == 0)) {
-                        final byte[] resultArray = new byte[i - 3];
-                        // Extract nal unit
-                        System.arraycopy(buffer, 0, resultArray, 0, resultArray.length);
-                        // Put nal unit to queue
-                        VideoFragment.nalQueue.add(resultArray);
-                        System.arraycopy(buffer, resultArray.length,
-                                buffer, 0, buffer.length - resultArray.length);
-                        // Get new data from video stream to refuel the buffer
-                        value = inputStream.read(buffer, buffer.length - resultArray.length,
-                                resultArray.length);
-                        if (value != resultArray.length) {
-                            byte[] newBuffer = new byte[
-                                value + (buffer.length - resultArray.length)];
-                            System.arraycopy(buffer, 0, newBuffer, 0, newBuffer.length);
-                            buffer = newBuffer;
-                        }
-                        i = 3;
-                    }
-                    if (Thread.interrupted()) {
-                        return;
-                    }
-                }
-                // Not found nal unit in current stream. Need to add more elements
-                // Get new stream
-                byte[] newBuffer = new byte[buffer.length + 50];
-                System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
-                value = inputStream.read(newBuffer, buffer.length,
-                        newBuffer.length - buffer.length);
-                if (value != newBuffer.length - buffer.length) {
-                    byte[] newNewBuffer = new byte[buffer.length + value];
-                    System.arraycopy(newBuffer, 0, newNewBuffer, 0, newNewBuffer.length);
-                    newBuffer = newNewBuffer;
-                }
-                buffer = newBuffer;
+            StreamParser p = new StreamParser(inputStream);
+            while (!Thread.currentThread().isInterrupted()) {
+                int id = VideoFragment.getIdBufferFromQueue();
+                ByteBuffer inputBuffer = this.mCodec.getInputBuffer(id);
+                int size = p.takeUnit(inputBuffer);
+                this.mCodec.queueInputBuffer(id, 0, size, 0, 0);
             }
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
-                Log.v(TAG, e.toString());
+                // TODO(ksheremet): remove .toString() from all throwables in Log()
+                Log.e(TAG, "Cannot parse stream:", e);
+            }
+        } catch (InterruptedException e) {
+           // TODO(ksheremet):
+            if (BuildConfig.DEBUG) {
+                Log.v(TAG, "User stopped stream", e);
             }
         } finally {
             mUrlConnection.disconnect();

@@ -14,12 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.dasfoo.rover.android.client.R;
+import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
+
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import org.dasfoo.rover.android.client.R;
-import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 
 /**
  * Created by Katarina Sheremet on 6/7/16 12:00 PM.
@@ -29,15 +29,15 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
         View.OnClickListener {
 
     /**
-     * Queue is used for saving NAL units.
+     * Queue is used for saving index of input buffer.
      */
-    //TODO(ksheremet): create setters and getters and make private
-    public static volatile BlockingQueue<byte[]> nalQueue = new LinkedBlockingQueue<>();
+    private static BlockingQueue<Integer> idBufferQueue = new LinkedBlockingQueue<>();
 
     /**
-     * Formant for video.
+     * Format for video.
      */
     private static final String VIDEO_FORMAT = "video/avc"; // h.264
+
     /**
      * Class information for logging.
      */
@@ -52,6 +52,8 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
      * MediaCodec.
      */
     private MediaCodec mMediaCodec;
+
+    MediaCodecHandler mediaCodecHandler;
 
     @Override
     public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -69,6 +71,14 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
         return view;
     }
 
+    /**
+     * Invoked when a {@link TextureView}'s SurfaceTexture is ready for use.
+     *
+     * @param surfaceTexture The surface returned by
+     *                {@link android.view.TextureView#getSurfaceTexture()}
+     * @param width The width of the surface
+     * @param height The height of the surface
+     */
     @Override
     public final void onSurfaceTextureAvailable(final SurfaceTexture surfaceTexture,
                                                 final int width, final int height) {
@@ -79,12 +89,13 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
             // Constructor for MediaCodec
             mMediaCodec = MediaCodec.createDecoderByType(VIDEO_FORMAT);
             // Set up Callback for mMediaCodec
-            MediaCodecHandler mediaCodecHandler = new MediaCodecHandler(mMediaCodec);
+            mediaCodecHandler = new MediaCodecHandler(mMediaCodec);
             mMediaCodec = mediaCodecHandler.setupAsynchMediaCodec();
             // Configure mMediaCodec
             mMediaCodec.configure(format, surface, null, 0);
+            mMediaCodec.start();
         } catch (IOException e) {
-            Log.e(TAG, e.getLocalizedMessage());
+            Log.e(TAG, "Codec cannot be created", e);
         }
     }
 
@@ -113,28 +124,49 @@ public class VideoFragment extends Fragment implements TextureView.SurfaceTextur
     public final void onClick(final View v) {
         switch (v.getId()) {
             case R.id.start_video_button:
-                // Start thread reading on server
                 try {
                     final SharedPreferencesHandler handler =
                             new SharedPreferencesHandler(getActivity());
                     mVideoThread = new Thread(new VideoDecoderRunnable(handler.getVideoHost(),
-                            handler.getVideoPort(), handler.getPassword()));
+                            handler.getVideoPort(), handler.getPassword(), mMediaCodec));
+                    // Clean queue before using from trash
                     mVideoThread.start();
-                    // Start mMediaCodec
-                    mMediaCodec.start();
+                    Log.v(TAG, "Start button" + mVideoThread.getId());
+
                 } catch (IllegalArgumentException e) {
-                    Log.e(TAG, e.getMessage());
+                    Log.e(TAG, "Host and Port for video are empty", e);
                     Toast.makeText(getActivity(),
                             "Host and Port for video are empty", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.stop_video_button:
+                Log.v(TAG, "Stop button:" + mVideoThread.getId());
                 mVideoThread.interrupt();
-                mMediaCodec.stop();
                 break;
             default:
                 Log.v(TAG, "Button is not implemented yet");
                 break;
         }
     }
+
+    /**
+     * @param id
+     * @throws InterruptedException
+     */
+    public static void setIdBufferInQueue(Integer id) throws InterruptedException {
+        idBufferQueue.put(id);
+    }
+
+    /**
+     * @return
+     * @throws InterruptedException
+     */
+    public static Integer getIdBufferFromQueue() throws InterruptedException {
+        return idBufferQueue.take();
+    }
+
+    public static void clearIdBufferQueue() {
+        idBufferQueue.clear();
+    }
 }
+
