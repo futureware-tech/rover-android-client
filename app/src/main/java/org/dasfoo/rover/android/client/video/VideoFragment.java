@@ -1,7 +1,6 @@
 package org.dasfoo.rover.android.client.video;
 
 import android.app.Fragment;
-import android.media.MediaCodec;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -145,16 +144,11 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      * @param password for accessing server.
      */
     private void startStreamVideo(final String host, final int port, final String password) {
-        // Create MediaCodec
-        MediaCodecHandler mediaCodecHandler = new MediaCodecHandler(VIDEO_FORMAT, VIDEO_WIDTH,
-                VIDEO_HEIGHT);
-        // Bind with TextureView
-        mediaCodecHandler.bindWithSurface(new Surface(textureView.getSurfaceTexture()));
-        MediaCodec mediaCodec = mediaCodecHandler.getMediaCodec();
-        mediaCodec.start();
         // Create Thread for streaming
         mVideoThread = new Thread(
-                new MediaStreamRenderer(host, port, password, mediaCodec));
+                new MediaStreamRenderer(host, port, password,
+                        new Surface(textureView.getSurfaceTexture()),
+                VIDEO_FORMAT, VIDEO_WIDTH, VIDEO_HEIGHT));
         mVideoThread.start();
     }
 

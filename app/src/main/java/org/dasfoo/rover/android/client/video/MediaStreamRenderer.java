@@ -1,7 +1,10 @@
 package org.dasfoo.rover.android.client.video;
 
 import android.media.MediaCodec;
+import android.media.MediaFormat;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Surface;
 
 import org.dasfoo.rover.android.client.BuildConfig;
 
@@ -43,35 +46,119 @@ public class MediaStreamRenderer implements Runnable {
     /**
      * MediaCodec.
      */
-    private final MediaCodec mCodec;
+    private MediaCodec mCodec;
 
     /**
      * Connection to the server.
      */
     private HttpURLConnection urlConnection;
 
+    /**
+     * Surface output format.
+     */
+    private MediaFormat mediaFormat;
 
     /**
-     * Default constructor.
-     *
-     * @param host     for connecting to the server
-     * @param port     for connecting to the server
-     * @param password to get access to the video
-     * @param codec    for processing stream
+     * Constructor.
+     * Creates MediaCodec and binds it to Surface on UI.
+     * @param host to connect to the server
+     * @param port to connect to the server
+     * @param password to get access to stream
+     * @param surface on UI
+     * @param format input video
+     * @param width of video
+     * @param height of video
      */
+    // TODO(ksheremet): Pass MediaFormat in parameters, pass InputStream.
     public MediaStreamRenderer(final String host, final int port, final String password,
-                               final MediaCodec codec) {
+                               final Surface surface, final String format,
+                               final int width,
+                               final int height) {
         this.mHost = host;
         this.mPort = port;
         this.mPassword = password;
-        this.mCodec = codec;
+
+        try {
+            mediaFormat = MediaFormat.createVideoFormat(format, width,
+                    height);
+            // Constructor for MediaCodec
+            mCodec = MediaCodec.createDecoderByType(format);
+            // Set up Callback for mMediaCodec
+            setupAsyncMediaCodec();
+            // Configure mMediaCodec and bind with TextureView
+            mCodec.configure(mediaFormat, surface, null, 0);
+        } catch (IOException e) {
+            Log.e(TAG, "Codec cannot be created", e);
+        }
+    }
+
+    /**
+     * Sets MediaCodec for asynchronously processing.
+     */
+    public final void setupAsyncMediaCodec() {
+        mCodec.setCallback(new MediaCodec.Callback() {
+            /**
+             * Called when an input buffer becomes available.
+             *
+             * @param codec The MediaCodec object.
+             * @param inputBufferId The index of the available input buffer.
+             */
+            @Override
+            public void onInputBufferAvailable(@NonNull final MediaCodec codec,
+                                               final int inputBufferId) {
+                try {
+                    VideoFragment.setIdBufferInQueue(inputBufferId);
+                } catch (InterruptedException e) {
+                    // TODO(ksheremet): make a better handling here
+                    Log.e(TAG, "User stopped video:", e);
+                }
+            }
+
+            /**
+             * Called when an output buffer becomes available.
+             *
+             * @param codec The MediaCodec object.
+             * @param index The index of the available output buffer.
+             * @param info Info regarding the available output buffer {@link MediaCodec.BufferInfo}.
+             */
+            @Override
+            public void onOutputBufferAvailable(@NonNull final MediaCodec codec, final int index,
+                                                @NonNull final MediaCodec.BufferInfo info) {
+                // If a valid surface was specified when configuring the codec,
+                // passing true renders this output buffer to the surface.
+                codec.releaseOutputBuffer(index, true);
+            }
+
+            /**
+             * Called when the MediaCodec encountered an error
+             *
+             * @param codec The MediaCodec object.
+             * @param e The {@link MediaCodec.CodecException} object describing the error.
+             */
+            @Override
+            public void onError(@NonNull final MediaCodec codec,
+                                @NonNull final MediaCodec.CodecException e) {
+                Log.e(TAG, "Error occurred in MediaCodec", e);
+            }
+
+            /**
+             * Called when the output format has changed
+             *
+             * @param codec The MediaCodec object.
+             * @param format The new output format.
+             */
+            @Override
+            public void onOutputFormatChanged(@NonNull final MediaCodec codec,
+                                              @NonNull final MediaFormat format) {
+            }
+        });
     }
 
     /**
      * Creates connection using host and port.
      *
      * @param host to target server
-     * @param port to targen server
+     * @param port to targer server
      * @return connection to the server
      * @throws IOException when Malformed host or port. Or input/output exception.
      */
@@ -105,6 +192,7 @@ public class MediaStreamRenderer implements Runnable {
     @Override
     public final void run() {
         try {
+            mCodec.start();
             urlConnection = createConnection(mHost, mPort);
             setUpVideoProperties();
             InputStream inputStream = urlConnection.getInputStream();
