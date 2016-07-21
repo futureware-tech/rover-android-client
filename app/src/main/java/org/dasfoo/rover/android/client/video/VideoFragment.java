@@ -1,6 +1,7 @@
 package org.dasfoo.rover.android.client.video;
 
 import android.app.Fragment;
+import android.media.MediaFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -145,10 +146,12 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      */
     private void startStreamVideo(final String host, final int port, final String password) {
         // Create Thread for streaming
+        MediaFormat mediaFormat = MediaFormat.createVideoFormat(VIDEO_FORMAT, VIDEO_WIDTH,
+                VIDEO_HEIGHT);
         mVideoThread = new Thread(
                 new MediaStreamRenderer(host, port, password,
                         new Surface(textureView.getSurfaceTexture()),
-                VIDEO_FORMAT, VIDEO_WIDTH, VIDEO_HEIGHT));
+                mediaFormat));
         mVideoThread.start();
     }
 

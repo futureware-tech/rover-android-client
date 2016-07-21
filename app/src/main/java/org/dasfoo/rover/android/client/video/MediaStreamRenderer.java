@@ -56,7 +56,7 @@ public class MediaStreamRenderer implements Runnable {
     /**
      * Surface output format.
      */
-    private MediaFormat mediaFormat;
+    private MediaFormat mMediaFormat;
 
     /**
      * Constructor.
@@ -65,28 +65,22 @@ public class MediaStreamRenderer implements Runnable {
      * @param port to connect to the server
      * @param password to get access to stream
      * @param surface on UI
-     * @param format input video
-     * @param width of video
-     * @param height of video
+     * @param mediaFormat output video format
      */
-    // TODO(ksheremet): Pass MediaFormat in parameters, pass InputStream.
+    // TODO(ksheremet): Pass InputStream.
     public MediaStreamRenderer(final String host, final int port, final String password,
-                               final Surface surface, final String format,
-                               final int width,
-                               final int height) {
+                               final Surface surface, final MediaFormat mediaFormat) {
         this.mHost = host;
         this.mPort = port;
         this.mPassword = password;
-
+        this.mMediaFormat = mediaFormat;
         try {
-            mediaFormat = MediaFormat.createVideoFormat(format, width,
-                    height);
             // Constructor for MediaCodec
-            mCodec = MediaCodec.createDecoderByType(format);
+            mCodec = MediaCodec.createDecoderByType(mMediaFormat.getString(MediaFormat.KEY_MIME));
             // Set up Callback for mMediaCodec
             setupAsyncMediaCodec();
             // Configure mMediaCodec and bind with TextureView
-            mCodec.configure(mediaFormat, surface, null, 0);
+            mCodec.configure(mMediaFormat, surface, null, 0);
         } catch (IOException e) {
             Log.e(TAG, "Codec cannot be created", e);
         }
@@ -158,7 +152,7 @@ public class MediaStreamRenderer implements Runnable {
      * Creates connection using host and port.
      *
      * @param host to target server
-     * @param port to targer server
+     * @param port to target server
      * @return connection to the server
      * @throws IOException when Malformed host or port. Or input/output exception.
      */
