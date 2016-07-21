@@ -11,7 +11,6 @@ import java.util.Locale;
  * Take NAL units one by one from the specified InputStream.
  */
 public class StreamParser {
-
     /**
      * Maximum size of a NAL unit, in bytes, according to RFC3984.
      */

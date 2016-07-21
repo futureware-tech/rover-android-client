@@ -18,12 +18,12 @@ import java.nio.charset.MalformedInputException;
  * Class is used for creating connection to the server to get video and do
  * processing of stream.
  */
-public class VideoDecoderRunnable implements Runnable {
+public class MediaStreamRenderer implements Runnable {
 
     /**
      * Class information for logging.
      */
-    private static final String TAG = VideoDecoderRunnable.class.getSimpleName();
+    private static final String TAG = MediaStreamRenderer.class.getSimpleName();
 
     /**
      * Host for connection to the server.
@@ -59,8 +59,8 @@ public class VideoDecoderRunnable implements Runnable {
      * @param password to get access to the video
      * @param codec    for processing stream
      */
-    public VideoDecoderRunnable(final String host, final int port, final String password,
-                                final MediaCodec codec) {
+    public MediaStreamRenderer(final String host, final int port, final String password,
+                               final MediaCodec codec) {
         this.mHost = host;
         this.mPort = port;
         this.mPassword = password;

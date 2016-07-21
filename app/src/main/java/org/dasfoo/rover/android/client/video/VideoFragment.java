@@ -154,7 +154,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
         mediaCodec.start();
         // Create Thread for streaming
         mVideoThread = new Thread(
-                new VideoDecoderRunnable(host, port, password, mediaCodec));
+                new MediaStreamRenderer(host, port, password, mediaCodec));
         mVideoThread.start();
     }
 
