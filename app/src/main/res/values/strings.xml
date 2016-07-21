@@ -13,4 +13,5 @@
     <string name="port_settings_title">Port</string>
     <string name="grpc_settings_title">GRPC Settings</string>
     <string name="password_settings_title">Password</string>
+    <string name="empty_settings_for_video">Check video settings. Maybe they are empty.</string>
 </resources>

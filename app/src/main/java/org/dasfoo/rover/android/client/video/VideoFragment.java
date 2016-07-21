@@ -120,9 +120,9 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                     startStreamVideo(handler.getVideoHost(),
                             handler.getVideoPort(), handler.getPassword());
                 } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "Host and Port for video are empty", e);
+                    Log.e(TAG, "Empty video settings", e);
                     Toast.makeText(getActivity(),
-                            "Host and Port for video are empty", Toast.LENGTH_SHORT).show();
+                            getString(R.string.empty_settings_for_video), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.stop_video_button:
