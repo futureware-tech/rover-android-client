@@ -2,7 +2,6 @@ package org.dasfoo.rover.android.client.video;
 
 import android.app.Fragment;
 import android.media.MediaCodec;
-import android.media.MediaFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import org.dasfoo.rover.android.client.R;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 
-import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,6 +28,11 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      * Queue is used for saving index of input buffer.
      */
     private static BlockingQueue<Integer> idBufferQueue = new LinkedBlockingQueue<>();
+
+    /**
+     * Class information for logging.
+     */
+    private static final String TAG = VideoFragment.class.getName();
 
     /**
      * Format for video.
@@ -47,20 +50,11 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      */
     // TODO(ksheremet): take this from settings
     public static final int VIDEO_WIDTH = 320;
-    /**
-     * Class information for logging.
-     */
-    private static final String TAG = VideoFragment.class.getName();
 
     /**
      * Thread for getting NAL units.
      */
     private Thread mVideoThread;
-
-    /**
-     * MediaCodec.
-     */
-    private MediaCodec mMediaCodec;
 
     /**
      * TextureView.
@@ -80,29 +74,6 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
         final Button stopVideo = (Button) view.findViewById(R.id.stop_video_button);
         stopVideo.setOnClickListener(this);
         return view;
-    }
-
-    /**
-     * Method creates new MediaCodec with given configuration and binds
-     * MediaCodec with TextureView.
-     */
-    private void createMediaCodec() {
-        Surface surface = new Surface(textureView.getSurfaceTexture());
-        try {
-            // Surface output format
-            MediaFormat format = MediaFormat.createVideoFormat(VIDEO_FORMAT, VIDEO_WIDTH,
-                    VIDEO_HEIGHT);
-            // Constructor for MediaCodec
-            mMediaCodec = MediaCodec.createDecoderByType(VIDEO_FORMAT);
-            // Set up Callback for mMediaCodec
-            MediaCodecHandler mediaCodecHandler = new MediaCodecHandler(mMediaCodec);
-            mMediaCodec = mediaCodecHandler.setupAsynchMediaCodec();
-            // Configure mMediaCodec and bind with TextureView
-            mMediaCodec.configure(format, surface, null, 0);
-            mMediaCodec.start();
-        } catch (IOException e) {
-            Log.e(TAG, "Codec cannot be created", e);
-        }
     }
 
     /**
@@ -169,16 +140,21 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
     /**
      * Start video streaming in new Thread.
      *
-     * @param host to target server.
-     * @param port to target server.
+     * @param host     to target server.
+     * @param port     to target server.
      * @param password for accessing server.
      */
     private void startStreamVideo(final String host, final int port, final String password) {
         // Create MediaCodec
-        createMediaCodec();
+        MediaCodecHandler mediaCodecHandler = new MediaCodecHandler(VIDEO_FORMAT, VIDEO_WIDTH,
+                VIDEO_HEIGHT);
+        // Bind with TextureView
+        mediaCodecHandler.bindWithSurface(new Surface(textureView.getSurfaceTexture()));
+        MediaCodec mediaCodec = mediaCodecHandler.getMediaCodec();
+        mediaCodec.start();
         // Create Thread for streaming
         mVideoThread = new Thread(
-                new VideoDecoderRunnable(host, port, password, mMediaCodec));
+                new VideoDecoderRunnable(host, port, password, mediaCodec));
         mVideoThread.start();
     }
 

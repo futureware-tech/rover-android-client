@@ -4,9 +4,13 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Surface;
+
+import java.io.IOException;
 
 /**
  * Created by Katarina Sheremet on 6/8/16 1:04 PM.
+ * Class configures MediaCodec.
  */
 public class MediaCodecHandler {
 
@@ -18,23 +22,58 @@ public class MediaCodecHandler {
     /**
      * MediaCodec.
      */
-    private final MediaCodec mediaCodec;
+    private MediaCodec mMediaCodec;
 
     /**
-     * Default constructor.
-     * @param mCodec MediaCodec
+     * Surface output format.
      */
-    public MediaCodecHandler(final MediaCodec mCodec) {
-        mediaCodec = mCodec;
+    private MediaFormat mediaFormat;
+
+
+    /**
+     * Constructor.
+     * Creates MediaCodec using format. Creates Surface output format
+     * @param format video, that comes from input
+     * @param width video on surface
+     * @param height video on surface
+     */
+    public MediaCodecHandler(final String format, final int width, final int height) {
+        try {
+            mediaFormat = MediaFormat.createVideoFormat(format, width,
+                    height);
+            // Constructor for MediaCodec
+            mMediaCodec = MediaCodec.createDecoderByType(format);
+            // Set up Callback for mMediaCodec
+            setupAsynchMediaCodec();
+        } catch (IOException e) {
+            Log.e(TAG, "Codec cannot be created", e);
+        }
+    }
+
+    /**
+     * Getters.
+     *
+     * @return MediaCodec
+     */
+    public final MediaCodec getMediaCodec() {
+        return mMediaCodec;
+    }
+
+    /**
+     * Configure MediaCodec and binds with video surface.
+     *
+     * @param surface from UI.
+     */
+    public final void bindWithSurface(final Surface surface) {
+        // Configure mMediaCodec and bind with TextureView
+        mMediaCodec.configure(mediaFormat, surface, null, 0);
     }
 
     /**
      * Sets MediaCodec for asynchronously processing.
-     *
-     * @return MediaCodec
      */
-    public final MediaCodec setupAsynchMediaCodec() {
-        mediaCodec.setCallback(new MediaCodec.Callback() {
+    public final void setupAsynchMediaCodec() {
+        mMediaCodec.setCallback(new MediaCodec.Callback() {
             /**
              * Called when an input buffer becomes available.
              *
@@ -90,7 +129,5 @@ public class MediaCodecHandler {
                                               @NonNull final MediaFormat format) {
             }
         });
-
-        return mediaCodec;
     }
 }
