@@ -10,9 +10,10 @@ import org.dasfoo.rover.android.client.BuildConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.nio.charset.MalformedInputException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Katarina Sheremet on 6/8/16 1:07 PM.
@@ -26,6 +27,11 @@ public class MediaStreamRenderer implements Runnable {
      * Class information for logging.
      */
     private static final String TAG = MediaStreamRenderer.class.getSimpleName();
+
+    /**
+     * Queue is used for saving index of input buffer.
+     */
+    private static BlockingQueue<Integer> idBufferQueue = new LinkedBlockingQueue<>();
 
     /**
      * MediaCodec.
@@ -68,6 +74,39 @@ public class MediaStreamRenderer implements Runnable {
     }
 
     /**
+     * Setters for idBufferQueue.
+     * Inserts the specified element at the tail of this queue,
+     * waiting if necessary for space to become available.
+     *
+     * @param id index of InputBuffer
+     * @throws InterruptedException if interrupted while waiting
+     */
+    private void setIdBufferInQueue(final Integer id)
+            throws InterruptedException {
+        idBufferQueue.put(id);
+    }
+
+    /**
+     * Getters for idBufferQueue.
+     * Retrieves and removes the head of this queue,
+     * waiting if necessary until an element becomes available.
+     *
+     * @return head element of this queue
+     * @throws InterruptedException if interrupted while waiting
+     */
+    private Integer getIdBufferFromQueue() throws InterruptedException {
+        return idBufferQueue.take();
+    }
+
+    /**
+     * Atomically removes all of the elements from this queue.
+     * The queue will be empty after this call returns.
+     */
+    private void clearIdBufferQueue() {
+        idBufferQueue.clear();
+    }
+
+    /**
      * Sets MediaCodec for asynchronously processing.
      */
     public final void setupAsyncMediaCodec() {
@@ -82,7 +121,7 @@ public class MediaStreamRenderer implements Runnable {
             public void onInputBufferAvailable(@NonNull final MediaCodec codec,
                                                final int inputBufferId) {
                 try {
-                    VideoFragment.setIdBufferInQueue(inputBufferId);
+                    setIdBufferInQueue(inputBufferId);
                 } catch (InterruptedException e) {
                     // TODO(ksheremet): make a better handling here
                     Log.e(TAG, "User stopped video:", e);
@@ -141,7 +180,7 @@ public class MediaStreamRenderer implements Runnable {
         try {
             StreamParser streamParser = new StreamParser(mInputStream);
             while (!Thread.currentThread().isInterrupted()) {
-                int id = VideoFragment.getIdBufferFromQueue();
+                int id = getIdBufferFromQueue();
                 ByteBuffer inputBuffer = this.mCodec.getInputBuffer(id);
                 int size = streamParser.takeUnit(inputBuffer);
                 this.mCodec.queueInputBuffer(id, 0, size, 0, 0);
@@ -164,7 +203,7 @@ public class MediaStreamRenderer implements Runnable {
             mCodec.stop();
             // Release codec
             mCodec.release();
-            VideoFragment.clearIdBufferQueue();
+            clearIdBufferQueue();
         }
     }
 

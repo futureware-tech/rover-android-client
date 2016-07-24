@@ -20,19 +20,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Katarina Sheremet on 6/7/16 12:00 PM.
  * Fragment setups MediaCodec and binds it with Surface.
  */
 public class VideoFragment extends Fragment implements View.OnClickListener {
-
-    /**
-     * Queue is used for saving index of input buffer.
-     */
-    private static BlockingQueue<Integer> idBufferQueue = new LinkedBlockingQueue<>();
 
     /**
      * Class information for logging.
@@ -112,39 +105,6 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
     }
 
     /**
-     * Setters for idBufferQueue.
-     * Inserts the specified element at the tail of this queue,
-     * waiting if necessary for space to become available.
-     *
-     * @param id index of InputBuffer
-     * @throws InterruptedException if interrupted while waiting
-     */
-    public static void setIdBufferInQueue(final Integer id)
-            throws InterruptedException {
-        idBufferQueue.put(id);
-    }
-
-    /**
-     * Getters for idBufferQueue.
-     * Retrieves and removes the head of this queue,
-     * waiting if necessary until an element becomes available.
-     *
-     * @return head element of this queue
-     * @throws InterruptedException if interrupted while waiting
-     */
-    public static Integer getIdBufferFromQueue() throws InterruptedException {
-        return idBufferQueue.take();
-    }
-
-    /**
-     * Atomically removes all of the elements from this queue.
-     * The queue will be empty after this call returns.
-     */
-    public static void clearIdBufferQueue() {
-        idBufferQueue.clear();
-    }
-
-    /**
      * Start video streaming in new Thread.
      *
      * @param host     to target server.
@@ -184,6 +144,14 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                             // TODO(ksheremet): do error check and notify user
                         } catch (IOException e) {
                             if (BuildConfig.DEBUG) {
+                                // Maybe it doesn't look good. But I need a code of error.
+                                try {
+                                    Log.e(TAG,
+                                            String.valueOf(mHttpURLConnection.getResponseCode()));
+                                    Log.e(TAG, mHttpURLConnection.getResponseMessage());
+                                } catch (IOException err) {
+                                    Log.e(TAG, err.getMessage());
+                                }
                                 Log.e(TAG, "Input/Output exception", e);
                             }
                         }
