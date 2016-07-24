@@ -42,7 +42,7 @@ public class MediaStreamRenderer implements Runnable {
      * It implements onBeforeStream and onAfterStream methods.
      * It is used for setting up InputStream.
      */
-    private MediaStreamRendererCallback mCallback;
+    private Callback mCallback;
 
     /**
      * It contains stream that reorganizes in Nal units.
@@ -59,7 +59,7 @@ public class MediaStreamRenderer implements Runnable {
      *                 for InputStream
      */
     public MediaStreamRenderer(final Surface surface, final MediaFormat mediaFormat,
-                               final MediaStreamRendererCallback callback) {
+                               final Callback callback) {
         this.mCallback = callback;
         try {
             // Constructor for MediaCodec
@@ -219,7 +219,7 @@ public class MediaStreamRenderer implements Runnable {
     /**
      * It is callback class used for setting up InputStream for parsing.
      */
-    public abstract static class MediaStreamRendererCallback {
+    public abstract static class Callback {
 
         /**
          * Callback is used before processing Stream.

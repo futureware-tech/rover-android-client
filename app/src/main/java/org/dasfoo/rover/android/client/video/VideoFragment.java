@@ -115,53 +115,53 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
         // Create Thread for streaming
         MediaFormat mediaFormat = MediaFormat.createVideoFormat(VIDEO_FORMAT, VIDEO_WIDTH,
                 VIDEO_HEIGHT);
-        MediaStreamRenderer.MediaStreamRendererCallback mediaStreamCallback =
-                new MediaStreamRenderer.MediaStreamRendererCallback() {
+        MediaStreamRenderer.Callback mediaStreamCallback = new MediaStreamRenderer.Callback() {
 
-                    /**
-                     * Connection to the server.
-                     */
-                    private HttpURLConnection mHttpURLConnection;
+            /**
+             * Connection to the server.
+             */
+            private HttpURLConnection mHttpURLConnection;
 
-                    @Override
-                    public void onBeforeStream(final MediaStreamRenderer streamRenderer) {
-                        //TODO(ksheremet): UriBuilder
+            @Override
+            public void onBeforeStream(final MediaStreamRenderer streamRenderer) {
+                //TODO(ksheremet): UriBuilder
+                try {
+                    final URL url = new URL("https://" + host + ":" + port);
+                    mHttpURLConnection = (HttpURLConnection) url.openConnection();
+                    mHttpURLConnection.setRequestProperty("X-Capture-Server-PASSWORD",
+                            password);
+                    // TODO(ksheremet): Take this from settings
+                    mHttpURLConnection.setRequestProperty("X-Capture-Server-WIDTH",
+                            String.valueOf(VideoFragment.VIDEO_WIDTH));
+                    mHttpURLConnection.setRequestProperty("X-Capture-Server-HEIGHT",
+                            String.valueOf(VideoFragment.VIDEO_HEIGHT));
+                    streamRenderer.setInputStream(mHttpURLConnection.getInputStream());
+                } catch (MalformedURLException e) {
+                    if (BuildConfig.DEBUG) {
+                        Log.e(TAG, "Malformed url", e);
+                    }
+                    // TODO(ksheremet): do error check and notify user
+                } catch (IOException e) {
+                    if (BuildConfig.DEBUG) {
+                        // Maybe it doesn't look good. But I need a code of error.
                         try {
-                            final URL url = new URL("https://" + host + ":" + port);
-                            mHttpURLConnection = (HttpURLConnection) url.openConnection();
-                            mHttpURLConnection.setRequestProperty("X-Capture-Server-PASSWORD",
-                                    password);
-                            // TODO(ksheremet): Take this from settings
-                            mHttpURLConnection.setRequestProperty("X-Capture-Server-WIDTH",
-                                    String.valueOf(VideoFragment.VIDEO_WIDTH));
-                            mHttpURLConnection.setRequestProperty("X-Capture-Server-HEIGHT",
-                                    String.valueOf(VideoFragment.VIDEO_HEIGHT));
-                            streamRenderer.setInputStream(mHttpURLConnection.getInputStream());
-                        } catch (MalformedURLException e) {
-                            if (BuildConfig.DEBUG) {
-                                Log.e(TAG, "Malformed url", e);
-                            }
-                            // TODO(ksheremet): do error check and notify user
-                        } catch (IOException e) {
-                            if (BuildConfig.DEBUG) {
-                                // Maybe it doesn't look good. But I need a code of error.
-                                try {
-                                    Log.e(TAG,
-                                            String.valueOf(mHttpURLConnection.getResponseCode()));
-                                    Log.e(TAG, mHttpURLConnection.getResponseMessage());
-                                } catch (IOException err) {
-                                    Log.e(TAG, err.getMessage());
-                                }
-                                Log.e(TAG, "Input/Output exception", e);
-                            }
+                            Log.e(TAG,
+                                    String.valueOf(mHttpURLConnection.getResponseCode()));
+                            Log.e(TAG, mHttpURLConnection.getResponseMessage());
+                            //mHttpURLConnection.getErrorStream()
+                        } catch (IOException err) {
+                            Log.e(TAG, err.getMessage());
                         }
+                        Log.e(TAG, "Input/Output exception", e);
                     }
+                }
+            }
 
-                    @Override
-                    public void onAfterStream(final MediaStreamRenderer streamRenderer) {
-                        mHttpURLConnection.disconnect();
-                    }
-                };
+            @Override
+            public void onAfterStream(final MediaStreamRenderer streamRenderer) {
+                mHttpURLConnection.disconnect();
+            }
+        };
 
         MediaStreamRenderer mediaStreamRenderer = new MediaStreamRenderer(
                 new Surface(mTextureView.getSurfaceTexture()),
