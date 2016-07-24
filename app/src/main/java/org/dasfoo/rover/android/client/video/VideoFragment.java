@@ -12,9 +12,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.dasfoo.rover.android.client.BuildConfig;
 import org.dasfoo.rover.android.client.R;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -57,16 +62,16 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
     private Thread mVideoThread;
 
     /**
-     * TextureView.
+     * TextureView on Ui layout.
      */
-    private TextureView textureView;
+    private TextureView mTextureView;
 
     @Override
     public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                                    final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final View view = inflater.inflate(R.layout.fragment_video, container, false);
-        textureView = (TextureView) view.findViewById(R.id.textureView);
+        mTextureView = (TextureView) view.findViewById(R.id.textureView);
 
         final Button playVideo = (Button) view.findViewById(R.id.start_video_button);
         playVideo.setOnClickListener(this);
@@ -93,7 +98,8 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                 } catch (IllegalArgumentException e) {
                     Log.e(TAG, "Empty video settings", e);
                     Toast.makeText(getActivity(),
-                            getString(R.string.empty_settings_for_video), Toast.LENGTH_SHORT).show();
+                            getString(R.string.empty_settings_for_video),
+                            Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.stop_video_button:
@@ -113,7 +119,8 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      * @param id index of InputBuffer
      * @throws InterruptedException if interrupted while waiting
      */
-    public static void setIdBufferInQueue(final Integer id) throws InterruptedException {
+    public static void setIdBufferInQueue(final Integer id)
+            throws InterruptedException {
         idBufferQueue.put(id);
     }
 
@@ -148,15 +155,55 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
         // Create Thread for streaming
         MediaFormat mediaFormat = MediaFormat.createVideoFormat(VIDEO_FORMAT, VIDEO_WIDTH,
                 VIDEO_HEIGHT);
-        mVideoThread = new Thread(
-                new MediaStreamRenderer(host, port, password,
-                        new Surface(textureView.getSurfaceTexture()),
-                mediaFormat));
+        MediaStreamRenderer.MediaStreamRendererCallback mediaStreamCallback =
+                new MediaStreamRenderer.MediaStreamRendererCallback() {
+
+                    /**
+                     * Connection to the server.
+                     */
+                    private HttpURLConnection mHttpURLConnection;
+
+                    @Override
+                    public void onBeforeStream(final MediaStreamRenderer streamRenderer) {
+                        //TODO(ksheremet): UriBuilder
+                        try {
+                            final URL url = new URL("https://" + host + ":" + port);
+                            mHttpURLConnection = (HttpURLConnection) url.openConnection();
+                            mHttpURLConnection.setRequestProperty("X-Capture-Server-PASSWORD",
+                                    password);
+                            // TODO(ksheremet): Take this from settings
+                            mHttpURLConnection.setRequestProperty("X-Capture-Server-WIDTH",
+                                    String.valueOf(VideoFragment.VIDEO_WIDTH));
+                            mHttpURLConnection.setRequestProperty("X-Capture-Server-HEIGHT",
+                                    String.valueOf(VideoFragment.VIDEO_HEIGHT));
+                            streamRenderer.setInputStream(mHttpURLConnection.getInputStream());
+                        } catch (MalformedURLException e) {
+                            if (BuildConfig.DEBUG) {
+                                Log.e(TAG, "Malformed url", e);
+                            }
+                            // TODO(ksheremet): do error check and notify user
+                        } catch (IOException e) {
+                            if (BuildConfig.DEBUG) {
+                                Log.e(TAG, "Input/Output exception", e);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onAfterStream(final MediaStreamRenderer streamRenderer) {
+                        mHttpURLConnection.disconnect();
+                    }
+                };
+
+        MediaStreamRenderer mediaStreamRenderer = new MediaStreamRenderer(
+                new Surface(mTextureView.getSurfaceTexture()),
+                mediaFormat, mediaStreamCallback);
+        mVideoThread = new Thread(mediaStreamRenderer);
         mVideoThread.start();
     }
 
     /**
-     * Stop video streaming.
+     * It interrupts thread with streaming processing.
      */
     private void stopStreamVideo() {
         mVideoThread.interrupt();

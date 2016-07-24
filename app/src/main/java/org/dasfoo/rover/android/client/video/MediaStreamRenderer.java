@@ -11,7 +11,6 @@ import org.dasfoo.rover.android.client.BuildConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.MalformedInputException;
 
@@ -29,58 +28,40 @@ public class MediaStreamRenderer implements Runnable {
     private static final String TAG = MediaStreamRenderer.class.getSimpleName();
 
     /**
-     * Host for connection to the server.
-     */
-    private final String mHost;
-
-    /**
-     * Password for connection to the server.
-     */
-    private final String mPassword;
-
-    /**
-     * Port for connection to the server.
-     */
-    private final int mPort;
-
-    /**
      * MediaCodec.
      */
     private MediaCodec mCodec;
 
     /**
-     * Connection to the server.
+     * It implements onBeforeStream and onAfterStream methods.
+     * It is used for setting up InputStream.
      */
-    private HttpURLConnection urlConnection;
+    private MediaStreamRendererCallback mCallback;
 
     /**
-     * Surface output format.
+     * It contains stream that reorganizes in Nal units.
      */
-    private MediaFormat mMediaFormat;
+    private InputStream mInputStream;
 
     /**
      * Constructor.
      * Creates MediaCodec and binds it to Surface on UI.
-     * @param host to connect to the server
-     * @param port to connect to the server
-     * @param password to get access to stream
-     * @param surface on UI
+     *
+     * @param surface     on UI
      * @param mediaFormat output video format
+     * @param callback sets up onBeforeStream and onAfterStream. It is used
+     *                 for InputStream
      */
-    // TODO(ksheremet): Pass InputStream.
-    public MediaStreamRenderer(final String host, final int port, final String password,
-                               final Surface surface, final MediaFormat mediaFormat) {
-        this.mHost = host;
-        this.mPort = port;
-        this.mPassword = password;
-        this.mMediaFormat = mediaFormat;
+    public MediaStreamRenderer(final Surface surface, final MediaFormat mediaFormat,
+                               final MediaStreamRendererCallback callback) {
+        this.mCallback = callback;
         try {
             // Constructor for MediaCodec
-            mCodec = MediaCodec.createDecoderByType(mMediaFormat.getString(MediaFormat.KEY_MIME));
+            mCodec = MediaCodec.createDecoderByType(mediaFormat.getString(MediaFormat.KEY_MIME));
             // Set up Callback for mMediaCodec
             setupAsyncMediaCodec();
             // Configure mMediaCodec and bind with TextureView
-            mCodec.configure(mMediaFormat, surface, null, 0);
+            mCodec.configure(mediaFormat, surface, null, 0);
         } catch (IOException e) {
             Log.e(TAG, "Codec cannot be created", e);
         }
@@ -149,48 +130,16 @@ public class MediaStreamRenderer implements Runnable {
     }
 
     /**
-     * Creates connection using host and port.
-     *
-     * @param host to target server
-     * @param port to target server
-     * @return connection to the server
-     * @throws IOException when Malformed host or port. Or input/output exception.
-     */
-    private HttpURLConnection createConnection(final String host, final int port)
-            throws IOException {
-        HttpURLConnection mUrlConnection;
-        //TODO(ksheremet): UriBuilder
-        final URL url = new URL("https://" + host + ":" + port);
-        mUrlConnection = (HttpURLConnection) url.openConnection();
-        Log.v(TAG, mUrlConnection.getClass().getSimpleName());
-        return mUrlConnection;
-    }
-
-    /**
-     * Sets up properties for video. Width, height, etc.
-     */
-    private void setUpVideoProperties() {
-        urlConnection.setRequestProperty("X-Capture-Server-PASSWORD", mPassword);
-        // TODO(ksheremet): Take this from settings
-        urlConnection.setRequestProperty("X-Capture-Server-WIDTH",
-                String.valueOf(VideoFragment.VIDEO_WIDTH));
-        urlConnection.setRequestProperty("X-Capture-Server-HEIGHT",
-                String.valueOf(VideoFragment.VIDEO_HEIGHT));
-    }
-
-    /**
      * Starts executing the active part of the class' code. This method is
      * called when a thread is started that has been created with a class which
      * implements {@code Runnable}.
      */
     @Override
     public final void run() {
+        mCodec.start();
+        mCallback.onBeforeStream(this);
         try {
-            mCodec.start();
-            urlConnection = createConnection(mHost, mPort);
-            setUpVideoProperties();
-            InputStream inputStream = urlConnection.getInputStream();
-            StreamParser streamParser = new StreamParser(inputStream);
+            StreamParser streamParser = new StreamParser(mInputStream);
             while (!Thread.currentThread().isInterrupted()) {
                 int id = VideoFragment.getIdBufferFromQueue();
                 ByteBuffer inputBuffer = this.mCodec.getInputBuffer(id);
@@ -211,11 +160,40 @@ public class MediaStreamRenderer implements Runnable {
                 Log.v(TAG, "User stopped stream", e);
             }
         } finally {
-            urlConnection.disconnect();
+            mCallback.onAfterStream(this);
             mCodec.stop();
             // Release codec
             mCodec.release();
             VideoFragment.clearIdBufferQueue();
         }
+    }
+
+    /**
+     * It sets up InputStream for processing.
+     *
+     * @param inputStream InputStream
+     */
+    public final void setInputStream(final InputStream inputStream) {
+        this.mInputStream = inputStream;
+    }
+
+    /**
+     * It is callback class used for setting up InputStream for parsing.
+     */
+    public abstract static class MediaStreamRendererCallback {
+
+        /**
+         * Callback is used before processing Stream.
+         * It sets up InputStream for MediaStreamRenderer.
+         * // TODO(ksheremet): unable/disable buttons.
+         *
+         * @param streamRenderer current MediaStreamRenderer
+         */
+        public abstract void onBeforeStream(MediaStreamRenderer streamRenderer);
+
+        /**
+         * @param streamRenderer current MediaStreamRenderer
+         */
+        public abstract void onAfterStream(MediaStreamRenderer streamRenderer);
     }
 }
