@@ -55,8 +55,8 @@ public class MediaStreamRenderer implements Runnable {
      *
      * @param surface     on UI
      * @param mediaFormat output video format
-     * @param callback sets up onBeforeStream and onAfterStream. It is used
-     *                 for InputStream
+     * @param callback    sets up onBeforeStream and onAfterStream. It is used
+     *                    for InputStream
      */
     public MediaStreamRenderer(final Surface surface, final MediaFormat mediaFormat,
                                final Callback callback) {
@@ -131,6 +131,7 @@ public class MediaStreamRenderer implements Runnable {
             @Override
             public void onOutputFormatChanged(@NonNull final MediaCodec codec,
                                               @NonNull final MediaFormat format) {
+                // Changing format is not implemented yet.
             }
         });
     }
@@ -198,6 +199,9 @@ public class MediaStreamRenderer implements Runnable {
         public abstract void onBeforeStream(MediaStreamRenderer streamRenderer);
 
         /**
+         * Callback is used after processing Stream.
+         * It can be used for closing connection.
+         * 
          * @param streamRenderer current MediaStreamRenderer
          */
         public abstract void onAfterStream(MediaStreamRenderer streamRenderer);
