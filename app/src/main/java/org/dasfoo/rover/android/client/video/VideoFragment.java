@@ -16,7 +16,9 @@ import org.dasfoo.rover.android.client.BuildConfig;
 import org.dasfoo.rover.android.client.R;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -148,7 +150,14 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                             Log.e(TAG,
                                     String.valueOf(mHttpURLConnection.getResponseCode()));
                             Log.e(TAG, mHttpURLConnection.getResponseMessage());
-                            //mHttpURLConnection.getErrorStream()
+                            BufferedReader r = new BufferedReader(
+                                    new InputStreamReader(mHttpURLConnection.getErrorStream()));
+                            StringBuilder total = new StringBuilder();
+                            String line;
+                            while ((line = r.readLine()) != null) {
+                                total.append(line).append('\n');
+                            }
+                            Log.e(TAG, total.toString());
                         } catch (IOException err) {
                             Log.e(TAG, err.getMessage());
                         }
