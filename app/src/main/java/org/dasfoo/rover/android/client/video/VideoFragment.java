@@ -87,8 +87,8 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                 try {
                     final SharedPreferencesHandler handler =
                             new SharedPreferencesHandler(getActivity());
-                    startStreamVideo(handler.getVideoHost(),
-                            handler.getVideoPort(), handler.getPassword());
+                    startStreamVideo(handler.getHost(),
+                            handler.getPort(), handler.getPassword());
                 } catch (IllegalArgumentException e) {
                     Log.e(TAG, "Empty video settings", e);
                     Toast.makeText(getActivity(),
