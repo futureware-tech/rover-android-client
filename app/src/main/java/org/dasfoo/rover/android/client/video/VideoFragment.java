@@ -29,16 +29,6 @@ import java.util.Scanner;
 public class VideoFragment extends Fragment implements View.OnClickListener {
 
     /**
-     * Class information for logging.
-     */
-    private static final String TAG = VideoFragment.class.getName();
-
-    /**
-     * Format for video.
-     */
-    private static final String VIDEO_FORMAT = "video/avc"; // h.264
-
-    /**
      * Height of video.
      */
     // TODO(ksheremet): take this from settings
@@ -49,6 +39,16 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      */
     // TODO(ksheremet): take this from settings
     public static final int VIDEO_WIDTH = 320;
+
+    /**
+     * Class information for logging.
+     */
+    private static final String TAG = VideoFragment.class.getName();
+
+    /**
+     * Format for video.
+     */
+    private static final String VIDEO_FORMAT = "video/avc"; // h.264
 
     /**
      * Thread for getting NAL units.

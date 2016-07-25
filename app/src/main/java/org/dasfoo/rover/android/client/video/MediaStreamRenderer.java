@@ -201,7 +201,7 @@ public class MediaStreamRenderer implements Runnable {
         /**
          * Callback is used after processing Stream.
          * It can be used for closing connection.
-         * 
+         *
          * @param streamRenderer current MediaStreamRenderer
          */
         public abstract void onAfterStream(MediaStreamRenderer streamRenderer);
