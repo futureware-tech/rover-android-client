@@ -42,7 +42,7 @@ public class MediaStreamRenderer implements Runnable {
      * It implements onBeforeStream and onAfterStream methods.
      * It is used for setting up InputStream.
      */
-    private Callback mCallback;
+    private final Callback mCallback;
 
     /**
      * It contains stream that reorganizes in Nal units.
