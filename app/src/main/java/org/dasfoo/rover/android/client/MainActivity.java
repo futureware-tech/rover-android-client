@@ -199,8 +199,8 @@ public class MainActivity extends AppCompatActivity
             try {
                 final SharedPreferencesHandler sharedPreferences =
                         new SharedPreferencesHandler(MainActivity.this);
-                final String host = sharedPreferences.getGrpcHost();
-                final int port = sharedPreferences.getGrpcPort();
+                final String host = sharedPreferences.getHost();
+                final int port = sharedPreferences.getPort();
                 final String password = sharedPreferences.getPassword();
                 // TODO(ksheremet): implement onSharedPreferencesChanged
                 if (mGrpcConnection == null ||

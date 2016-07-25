@@ -1,38 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:key="pref_video_settings"
-        android:title="@string/video_settings_title">
+        android:key="pref_server_settings"
+        android:title="@string/server_settings_title">
 
         <EditTextPreference
-            android:key="pref_video_host"
+            android:key="pref_host"
             android:title="@string/host_settings_title" />
 
         <EditTextPreference
-            android:key="pref_video_port"
+            android:key="pref_port"
             android:numeric="integer"
             android:title="@string/port_settings_title" />
 
         <EditTextPreference
             android:inputType="textPassword"
-            android:key="pref_video_password"
+            android:key="pref_password"
             android:password="true"
             android:title="@string/password_settings_title" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="pref_GRPC_settings"
-        android:title="@string/grpc_settings_title">
-
-        <EditTextPreference
-            android:key="pref_grpc_host"
-            android:title="@string/host_settings_title" />
-
-        <EditTextPreference
-            android:key="pref_grpc_port"
-            android:numeric="integer"
-            android:title="@string/port_settings_title" />
 
     </PreferenceCategory>
 

@@ -27,48 +27,23 @@ public class SharedPreferencesHandler {
     }
 
     /**
-     * Gets host for video.
+     * Gets host of server from settings.
      *
      * @return host
      * @throws IllegalArgumentException if host is empty
      */
-    public final String getVideoHost() throws IllegalArgumentException {
-        return getString(Settings.VIDEO_HOST);
+    public final String getHost() throws IllegalArgumentException {
+        return getString(Settings.HOST);
     }
 
     /**
-     * Gets port for video.
+     * Gets port of server from settings.
      *
      * @return port
      * @throws IllegalArgumentException if port is empty
      */
-    public final int getVideoPort() throws IllegalArgumentException {
-        return Integer.parseInt(getString(Settings.VIDEO_PORT));
-    }
-
-    /**
-     * Gets grpc host. If host is empty, it tries to return host from video setting.
-     *
-     * @return host
-     * @throws IllegalArgumentException if host is empty
-     */
-    public final String getGrpcHost() throws IllegalArgumentException {
-        try {
-            return getString(Settings.GRPC_HOST);
-        } catch (IllegalArgumentException e) {
-            return getVideoHost();
-        }
-
-    }
-
-    /**
-     * Gets grpc post.
-     *
-     * @return grpc port
-     * @throws IllegalArgumentException if post is empty
-     */
-    public final int getGrpcPort() throws IllegalArgumentException {
-        return Integer.parseInt(getString(Settings.GRPC_PORT));
+    public final int getPort() throws IllegalArgumentException {
+        return Integer.parseInt(getString(Settings.PORT));
     }
 
     /**
@@ -78,7 +53,7 @@ public class SharedPreferencesHandler {
      * @throws IllegalArgumentException if password is empty
      */
     public final String getPassword() throws IllegalArgumentException {
-        return getString(Settings.VIDEO_PASSWORD);
+        return getString(Settings.PASSWORD);
     }
 
     /**
