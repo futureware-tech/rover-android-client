@@ -15,6 +15,33 @@ public class L {
     public static int logLevel = Log.VERBOSE;
 
     /**
+     * It checks String on Null.
+     * If it is null, create String with "null" value.
+     *
+     * @param s log message
+     * @return String with log message or "null"
+     */
+    private static String stringOrNull(String s) {
+        if (s == null) {
+            return "null";
+        }
+        return s;
+    }
+
+    /**
+     * It checks Throwable on Null.
+     * If it is null, create Throwable to notify that variable is null.
+     * @param tr exception
+     * @return exception
+     */
+    private static Throwable throwableOrNull(Throwable tr) {
+        if (tr == null) {
+            tr = new Throwable("Null Throwable set to log");
+        }
+        return tr;
+    }
+
+    /**
      * Send a VERBOSE log message.
      *
      * @param tag    Used to identify the source of a log message
@@ -22,11 +49,7 @@ public class L {
      */
     public static void v(String tag, String string) {
         if (isLogEnabled && logLevel <= Log.VERBOSE) {
-            if (string == null) {
-                string = "null";
-            }
-
-            Log.v(tag, string);
+            Log.v(tag, stringOrNull(string));
         }
     }
 
@@ -38,10 +61,7 @@ public class L {
      */
     public static void d(String tag, String string) {
         if (isLogEnabled && logLevel <= Log.DEBUG) {
-            if (string == null) {
-                string = "null";
-            }
-            Log.d(tag, string);
+            Log.d(tag, stringOrNull(string));
         }
     }
 
@@ -53,10 +73,7 @@ public class L {
      */
     public static void i(String tag, String string) {
         if (isLogEnabled && logLevel <= Log.INFO) {
-            if (string == null) {
-                string = "null";
-            }
-            Log.i(tag, string);
+            Log.i(tag, stringOrNull(string));
         }
     }
 
@@ -68,10 +85,7 @@ public class L {
      */
     public static void w(String tag, String string) {
         if (isLogEnabled && logLevel <= Log.WARN) {
-            if (string == null) {
-                string = "null";
-            }
-            Log.w(tag, string);
+            Log.w(tag, stringOrNull(string));
         }
     }
 
@@ -83,10 +97,7 @@ public class L {
      */
     public static void e(String tag, String string) {
         if (isLogEnabled && logLevel <= Log.ERROR) {
-            if (string == null) {
-                string = "null";
-            }
-            Log.e(tag, string);
+            Log.e(tag, stringOrNull(string));
         }
     }
 
@@ -98,10 +109,7 @@ public class L {
      */
     public static void w(String tag, Throwable tr) {
         if (isLogEnabled && logLevel <= Log.WARN) {
-            if (tr == null) {
-                tr = new Throwable("Null Throwable set to log");
-            }
-            Log.w(tag, tr);
+            Log.w(tag, throwableOrNull(tr));
         }
     }
 
@@ -114,13 +122,7 @@ public class L {
      */
     public static void v(String tag, String string, Throwable tr) {
         if (isLogEnabled && logLevel <= Log.VERBOSE) {
-            if (string == null) {
-                string = "null";
-            }
-            if (tr == null) {
-                tr = new Throwable("Null Throwable set to log");
-            }
-            Log.v(tag, string, tr);
+            Log.v(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
 
@@ -133,13 +135,7 @@ public class L {
      */
     public static void d(String tag, String string, Throwable tr) {
         if (isLogEnabled && logLevel <= Log.DEBUG) {
-            if (string == null) {
-                string = "null";
-            }
-            if (tr == null) {
-                tr = new Throwable("Null Throwable set to log");
-            }
-            Log.d(tag, string, tr);
+            Log.d(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
 
@@ -152,13 +148,7 @@ public class L {
      */
     public static void i(String tag, String string, Throwable tr) {
         if (isLogEnabled && logLevel <= Log.INFO) {
-            if (string == null) {
-                string = "null";
-            }
-            if (tr == null) {
-                tr = new Throwable("Null Throwable set to log");
-            }
-            Log.i(tag, string, tr);
+            Log.i(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
 
@@ -171,13 +161,7 @@ public class L {
      */
     public static void w(String tag, String string, Throwable tr) {
         if (isLogEnabled && logLevel <= Log.WARN) {
-            if (string == null) {
-                string = "null";
-            }
-            if (tr == null) {
-                tr = new Throwable("Null Throwable set to log");
-            }
-            Log.w(tag, string, tr);
+            Log.w(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
 
@@ -190,13 +174,7 @@ public class L {
      */
     public static void e(String tag, String string, Throwable tr) {
         if (isLogEnabled && logLevel <= Log.ERROR) {
-            if (string == null) {
-                string = "null";
-            }
-            if (tr == null) {
-                tr = new Throwable("Null Throwable set to log");
-            }
-            Log.e(tag, string, tr);
+            Log.e(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
 }
