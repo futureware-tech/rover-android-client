@@ -1,10 +1,10 @@
 package org.dasfoo.rover.android.client.grpc.task;
 
-import android.util.Log;
+import org.dasfoo.rover.android.client.BuildConfig;
+import org.dasfoo.rover.android.client.util.L;
 
 import java.util.concurrent.TimeUnit;
 
-import org.dasfoo.rover.android.client.BuildConfig;
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -88,7 +88,7 @@ public class GrpcConnection {
             return Boolean.TRUE;
         } catch (InterruptedException e) {
             if (BuildConfig.DEBUG) {
-                Log.v(TAG, e.toString());
+                L.v(TAG, e.toString());
             }
             return Boolean.FALSE;
         }

@@ -16,7 +16,17 @@ android {
     }
     buildTypes {
         release {
+            // It detects any code or libraries that aren't being used
+            // and ignores them from your final apk.
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
             minifyEnabled false
+            // It sets its package to be .debug
+            // to be able to install both debug and release apk on the same device
+            applicationIdSuffix ".debug"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

@@ -3,7 +3,6 @@ package org.dasfoo.rover.android.client.video;
 import android.app.Fragment;
 import android.media.MediaFormat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 import org.dasfoo.rover.android.client.BuildConfig;
 import org.dasfoo.rover.android.client.R;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
+import org.dasfoo.rover.android.client.util.L;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -90,7 +90,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                     startStreamVideo(handler.getHost(),
                             handler.getPort(), handler.getPassword());
                 } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "Empty video settings", e);
+                    L.e(TAG, "Empty video settings", e);
                     Toast.makeText(getActivity(),
                             getString(R.string.empty_settings_for_video),
                             Toast.LENGTH_SHORT).show();
@@ -100,7 +100,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                 stopStreamVideo();
                 break;
             default:
-                Log.v(TAG, "Button is not implemented yet");
+                L.v(TAG, "Button is not implemented yet");
                 break;
         }
     }
@@ -139,22 +139,22 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                     streamRenderer.setInputStream(mHttpURLConnection.getInputStream());
                 } catch (MalformedURLException e) {
                     if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Malformed url", e);
+                        L.e(TAG, "Malformed url", e);
                     }
                     // TODO(ksheremet): do error check and notify user
                 } catch (IOException e) {
                     if (BuildConfig.DEBUG) {
                         // Maybe it doesn't look good. But I need a code of error.
                         try {
-                            Log.e(TAG, String.valueOf(mHttpURLConnection.getResponseCode()));
-                            Log.e(TAG, mHttpURLConnection.getResponseMessage());
-                            Log.e(TAG, new Scanner(mHttpURLConnection.getErrorStream())
+                            L.e(TAG, String.valueOf(mHttpURLConnection.getResponseCode()));
+                            L.e(TAG, mHttpURLConnection.getResponseMessage());
+                            L.e(TAG, new Scanner(mHttpURLConnection.getErrorStream())
                                     .useDelimiter("$")
                                     .next());
                         } catch (IOException err) {
-                            Log.e(TAG, err.getMessage());
+                            L.e(TAG, err.getMessage());
                         }
-                        Log.e(TAG, "Input/Output exception", e);
+                        L.e(TAG, "Input/Output exception", e);
                     }
                 }
             }

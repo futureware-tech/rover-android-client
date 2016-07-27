@@ -3,10 +3,10 @@ package org.dasfoo.rover.android.client.video;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.Surface;
 
 import org.dasfoo.rover.android.client.BuildConfig;
+import org.dasfoo.rover.android.client.util.L;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,7 +69,7 @@ public class MediaStreamRenderer implements Runnable {
             // Configure mMediaCodec and bind with TextureView
             mCodec.configure(mediaFormat, surface, null, 0);
         } catch (IOException e) {
-            Log.e(TAG, "Codec cannot be created", e);
+            L.e(TAG, "Codec cannot be created", e);
         }
     }
 
@@ -91,7 +91,7 @@ public class MediaStreamRenderer implements Runnable {
                     idBufferQueue.put(inputBufferId);
                 } catch (InterruptedException e) {
                     // TODO(ksheremet): make a better handling here
-                    Log.e(TAG, "User stopped video:", e);
+                    L.e(TAG, "User stopped video:", e);
                 }
             }
 
@@ -119,7 +119,7 @@ public class MediaStreamRenderer implements Runnable {
             @Override
             public void onError(@NonNull final MediaCodec codec,
                                 @NonNull final MediaCodec.CodecException e) {
-                Log.e(TAG, "Error occurred in MediaCodec", e);
+                L.e(TAG, "Error occurred in MediaCodec", e);
             }
 
             /**
@@ -155,16 +155,16 @@ public class MediaStreamRenderer implements Runnable {
             }
         } catch (MalformedInputException e) {
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Malformed url:", e);
+                L.e(TAG, "Malformed url:", e);
             }
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
                 // TODO(ksheremet): remove .toString() from all throwables in Log()
-                Log.e(TAG, "Cannot parse stream:", e);
+                L.e(TAG, "Cannot parse stream:", e);
             }
         } catch (InterruptedException e) {
             if (BuildConfig.DEBUG) {
-                Log.v(TAG, "User stopped stream", e);
+                L.v(TAG, "User stopped stream", e);
             }
         } finally {
             mCallback.onAfterStream(this);
