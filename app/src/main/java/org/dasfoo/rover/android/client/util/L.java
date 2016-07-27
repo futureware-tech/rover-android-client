@@ -12,6 +12,9 @@ public final class L {
      */
     public static boolean isLogEnabled = false;
 
+    /**
+     * Level of logs.
+     */
     public static int logLevel = Log.VERBOSE;
 
     /**
@@ -28,7 +31,7 @@ public final class L {
      * @param s log message
      * @return String with log message or "null"
      */
-    private static String stringOrNull(String s) {
+    private static String stringOrNull(final String s) {
         if (s == null) {
             return "null";
         }
@@ -42,9 +45,9 @@ public final class L {
      * @param tr exception
      * @return exception
      */
-    private static Throwable throwableOrNull(Throwable tr) {
+    private static Throwable throwableOrNull(final Throwable tr) {
         if (tr == null) {
-            tr = new Throwable("Null Throwable set to log");
+            return new Throwable("Null Throwable set to log");
         }
         return tr;
     }
@@ -55,7 +58,7 @@ public final class L {
      * @param tag    Used to identify the source of a log message
      * @param string log message
      */
-    public static void v(String tag, String string) {
+    public static void v(final String tag, final String string) {
         if (isLogEnabled && logLevel <= Log.VERBOSE) {
             Log.v(tag, stringOrNull(string));
         }
@@ -67,7 +70,7 @@ public final class L {
      * @param tag    Used to identify the source of a log message
      * @param string log message
      */
-    public static void d(String tag, String string) {
+    public static void d(final String tag, final String string) {
         if (isLogEnabled && logLevel <= Log.DEBUG) {
             Log.d(tag, stringOrNull(string));
         }
@@ -79,7 +82,7 @@ public final class L {
      * @param tag    Used to identify the source of a log message
      * @param string log message
      */
-    public static void i(String tag, String string) {
+    public static void i(final String tag, final String string) {
         if (isLogEnabled && logLevel <= Log.INFO) {
             Log.i(tag, stringOrNull(string));
         }
@@ -91,7 +94,7 @@ public final class L {
      * @param tag    Used to identify the source of a log message
      * @param string log message
      */
-    public static void w(String tag, String string) {
+    public static void w(final String tag, final String string) {
         if (isLogEnabled && logLevel <= Log.WARN) {
             Log.w(tag, stringOrNull(string));
         }
@@ -103,7 +106,7 @@ public final class L {
      * @param tag    Used to identify the source of a log message
      * @param string log message
      */
-    public static void e(String tag, String string) {
+    public static void e(final String tag, final String string) {
         if (isLogEnabled && logLevel <= Log.ERROR) {
             Log.e(tag, stringOrNull(string));
         }
@@ -115,7 +118,7 @@ public final class L {
      * @param tag Used to identify the source of a log message
      * @param tr  exception
      */
-    public static void w(String tag, Throwable tr) {
+    public static void w(final String tag, final Throwable tr) {
         if (isLogEnabled && logLevel <= Log.WARN) {
             Log.w(tag, throwableOrNull(tr));
         }
@@ -128,7 +131,7 @@ public final class L {
      * @param string log message
      * @param tr     exception
      */
-    public static void v(String tag, String string, Throwable tr) {
+    public static void v(final String tag, final String string, final Throwable tr) {
         if (isLogEnabled && logLevel <= Log.VERBOSE) {
             Log.v(tag, stringOrNull(string), throwableOrNull(tr));
         }
@@ -141,7 +144,7 @@ public final class L {
      * @param string log message
      * @param tr     exception
      */
-    public static void d(String tag, String string, Throwable tr) {
+    public static void d(final String tag, final String string, final Throwable tr) {
         if (isLogEnabled && logLevel <= Log.DEBUG) {
             Log.d(tag, stringOrNull(string), throwableOrNull(tr));
         }
@@ -154,7 +157,7 @@ public final class L {
      * @param string log message
      * @param tr     exception
      */
-    public static void i(String tag, String string, Throwable tr) {
+    public static void i(final String tag, final String string, final Throwable tr) {
         if (isLogEnabled && logLevel <= Log.INFO) {
             Log.i(tag, stringOrNull(string), throwableOrNull(tr));
         }
@@ -167,7 +170,7 @@ public final class L {
      * @param string log message
      * @param tr     exception
      */
-    public static void w(String tag, String string, Throwable tr) {
+    public static void w(final String tag, final String string, final Throwable tr) {
         if (isLogEnabled && logLevel <= Log.WARN) {
             Log.w(tag, stringOrNull(string), throwableOrNull(tr));
         }
@@ -180,7 +183,7 @@ public final class L {
      * @param string log message
      * @param tr     exception
      */
-    public static void e(String tag, String string, Throwable tr) {
+    public static void e(final String tag, final String string, final Throwable tr) {
         if (isLogEnabled && logLevel <= Log.ERROR) {
             Log.e(tag, stringOrNull(string), throwableOrNull(tr));
         }
