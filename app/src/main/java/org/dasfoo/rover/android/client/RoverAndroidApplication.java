@@ -20,6 +20,6 @@ public class RoverAndroidApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        L.isLogEnable = getResources().getBoolean(R.bool.log_enable);
+        L.isLogEnabled = getResources().getBoolean(R.bool.log_enable);
     }
 }

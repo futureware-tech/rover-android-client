@@ -3,14 +3,14 @@ package org.dasfoo.rover.android.client.util;
 import android.util.Log;
 
 /**
- * Log wrapper. To disable logging L.isLogEnable = false; To set min log level,
+ * Log wrapper. To disable logging L.isLogEnabled = false; To set min log level,
  * when log enabled set L.logLevel = Log.VERBOSE;
  */
 public class L {
     /**
      * It enables/disables logs.
      */
-    public static boolean isLogEnable = false;
+    public static boolean isLogEnabled = false;
 
     public static int logLevel = Log.VERBOSE;
 
@@ -21,7 +21,7 @@ public class L {
      * @param string log message
      */
     public static void v(String tag, String string) {
-        if (isLogEnable && logLevel <= Log.VERBOSE) {
+        if (isLogEnabled && logLevel <= Log.VERBOSE) {
             if (string == null) {
                 string = "null";
             }
@@ -37,7 +37,7 @@ public class L {
      * @param string log message
      */
     public static void d(String tag, String string) {
-        if (isLogEnable && logLevel <= Log.DEBUG) {
+        if (isLogEnabled && logLevel <= Log.DEBUG) {
             if (string == null) {
                 string = "null";
             }
@@ -52,7 +52,7 @@ public class L {
      * @param string log message
      */
     public static void i(String tag, String string) {
-        if (isLogEnable && logLevel <= Log.INFO) {
+        if (isLogEnabled && logLevel <= Log.INFO) {
             if (string == null) {
                 string = "null";
             }
@@ -67,7 +67,7 @@ public class L {
      * @param string log message
      */
     public static void w(String tag, String string) {
-        if (isLogEnable && logLevel <= Log.WARN) {
+        if (isLogEnabled && logLevel <= Log.WARN) {
             if (string == null) {
                 string = "null";
             }
@@ -82,7 +82,7 @@ public class L {
      * @param string log message
      */
     public static void e(String tag, String string) {
-        if (isLogEnable && logLevel <= Log.ERROR) {
+        if (isLogEnabled && logLevel <= Log.ERROR) {
             if (string == null) {
                 string = "null";
             }
@@ -97,7 +97,7 @@ public class L {
      * @param tr  exception
      */
     public static void w(String tag, Throwable tr) {
-        if (isLogEnable && logLevel <= Log.WARN) {
+        if (isLogEnabled && logLevel <= Log.WARN) {
             if (tr == null) {
                 tr = new Throwable("Null Throwable set to log");
             }
@@ -113,7 +113,7 @@ public class L {
      * @param tr     exception
      */
     public static void v(String tag, String string, Throwable tr) {
-        if (isLogEnable && logLevel <= Log.VERBOSE) {
+        if (isLogEnabled && logLevel <= Log.VERBOSE) {
             if (string == null) {
                 string = "null";
             }
@@ -132,7 +132,7 @@ public class L {
      * @param tr     exception
      */
     public static void d(String tag, String string, Throwable tr) {
-        if (isLogEnable && logLevel <= Log.DEBUG) {
+        if (isLogEnabled && logLevel <= Log.DEBUG) {
             if (string == null) {
                 string = "null";
             }
@@ -151,7 +151,7 @@ public class L {
      * @param tr     exception
      */
     public static void i(String tag, String string, Throwable tr) {
-        if (isLogEnable && logLevel <= Log.INFO) {
+        if (isLogEnabled && logLevel <= Log.INFO) {
             if (string == null) {
                 string = "null";
             }
@@ -170,7 +170,7 @@ public class L {
      * @param tr     exception
      */
     public static void w(String tag, String string, Throwable tr) {
-        if (isLogEnable && logLevel <= Log.WARN) {
+        if (isLogEnabled && logLevel <= Log.WARN) {
             if (string == null) {
                 string = "null";
             }
@@ -189,7 +189,7 @@ public class L {
      * @param tr     exception
      */
     public static void e(String tag, String string, Throwable tr) {
-        if (isLogEnable && logLevel <= Log.ERROR) {
+        if (isLogEnabled && logLevel <= Log.ERROR) {
             if (string == null) {
                 string = "null";
             }
