@@ -6,13 +6,20 @@ import android.util.Log;
  * Log wrapper. To disable logging L.isLogEnabled = false; To set min log level,
  * when log enabled set L.logLevel = Log.VERBOSE;
  */
-public class L {
+public final class L {
     /**
      * It enables/disables logs.
      */
     public static boolean isLogEnabled = false;
 
     public static int logLevel = Log.VERBOSE;
+
+    /**
+     * Prevents the default parameter-less constructor from being used.
+     */
+    private L() {
+        // Utility classes should not have a public or default constructor
+    }
 
     /**
      * It checks String on Null.
@@ -31,6 +38,7 @@ public class L {
     /**
      * It checks Throwable on Null.
      * If it is null, create Throwable to notify that variable is null.
+     *
      * @param tr exception
      * @return exception
      */
