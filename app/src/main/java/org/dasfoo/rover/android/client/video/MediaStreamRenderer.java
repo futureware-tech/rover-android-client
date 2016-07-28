@@ -26,7 +26,7 @@ public class MediaStreamRenderer implements Runnable {
     /**
      * Class information for logging.
      */
-    private static final String TAG = MediaStreamRenderer.class.getSimpleName();
+    private static final String TAG = L.tagFor(MediaStreamRenderer.class);
 
     /**
      * Queue is used for saving index of input buffer.

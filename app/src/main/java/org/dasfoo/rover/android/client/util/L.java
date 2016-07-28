@@ -52,6 +52,10 @@ public final class L {
         return tr;
     }
 
+    public static String tagFor(Class c) {
+        return c.getSimpleName();
+    }
+
     /**
      * Send a VERBOSE log message.
      *

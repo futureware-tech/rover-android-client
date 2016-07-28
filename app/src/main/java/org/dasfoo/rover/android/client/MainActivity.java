@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity
     private static final String PROVIDER_NOT_INSTALLED =
             "The security provider installation failed, " +
             "encrypted communication is not available: %s";
-    private static final String TAG = MainActivity.class.getName();
+    private static final String TAG = L.tagFor(MainActivity.class);
 
     /**
      * Moves rover forward.

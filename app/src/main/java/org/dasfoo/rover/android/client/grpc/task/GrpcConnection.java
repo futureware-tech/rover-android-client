@@ -16,7 +16,10 @@ import io.grpc.stub.MetadataUtils;
  * Created by Katarina Sheremet on 5/24/16 5:09 PM.
  */
 public class GrpcConnection {
-    private static final String TAG = GrpcConnection.class.getName();
+    /**
+     * It is used for logging.
+     */
+    private static final String TAG = L.tagFor(GrpcConnection.class);
 
     /**
      * Forms header.

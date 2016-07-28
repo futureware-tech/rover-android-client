@@ -43,7 +43,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
     /**
      * Class information for logging.
      */
-    private static final String TAG = VideoFragment.class.getName();
+    private static final String TAG = L.tagFor(VideoFragment.class);
 
     /**
      * Format for video.
