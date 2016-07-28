@@ -24,7 +24,7 @@ android {
 
         debug {
             minifyEnabled false
-            // It sets its package to be .debug
+            // Adds .debug to the application package name
             // to be able to install both debug and release apk on the same device
             applicationIdSuffix ".debug"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
