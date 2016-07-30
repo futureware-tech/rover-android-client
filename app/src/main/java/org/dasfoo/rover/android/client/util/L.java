@@ -8,11 +8,6 @@ import android.util.Log;
  */
 public final class L {
     /**
-     * It enables/disables logs.
-     */
-    public static boolean isLogEnabled = false;
-
-    /**
      * Level of logs.
      */
     public static int logLevel = Log.VERBOSE;
@@ -63,7 +58,7 @@ public final class L {
      * @param string log message
      */
     public static void v(final String tag, final String string) {
-        if (isLogEnabled && logLevel <= Log.VERBOSE) {
+        if (logLevel <= Log.VERBOSE) {
             Log.v(tag, stringOrNull(string));
         }
     }
@@ -75,7 +70,7 @@ public final class L {
      * @param string log message
      */
     public static void d(final String tag, final String string) {
-        if (isLogEnabled && logLevel <= Log.DEBUG) {
+        if (logLevel <= Log.DEBUG) {
             Log.d(tag, stringOrNull(string));
         }
     }
@@ -87,7 +82,7 @@ public final class L {
      * @param string log message
      */
     public static void i(final String tag, final String string) {
-        if (isLogEnabled && logLevel <= Log.INFO) {
+        if (logLevel <= Log.INFO) {
             Log.i(tag, stringOrNull(string));
         }
     }
@@ -99,7 +94,7 @@ public final class L {
      * @param string log message
      */
     public static void w(final String tag, final String string) {
-        if (isLogEnabled && logLevel <= Log.WARN) {
+        if (logLevel <= Log.WARN) {
             Log.w(tag, stringOrNull(string));
         }
     }
@@ -111,7 +106,7 @@ public final class L {
      * @param string log message
      */
     public static void e(final String tag, final String string) {
-        if (isLogEnabled && logLevel <= Log.ERROR) {
+        if (logLevel <= Log.ERROR) {
             Log.e(tag, stringOrNull(string));
         }
     }
@@ -123,7 +118,7 @@ public final class L {
      * @param tr  exception
      */
     public static void w(final String tag, final Throwable tr) {
-        if (isLogEnabled && logLevel <= Log.WARN) {
+        if (logLevel <= Log.WARN) {
             Log.w(tag, throwableOrNull(tr));
         }
     }
@@ -136,7 +131,7 @@ public final class L {
      * @param tr     exception
      */
     public static void v(final String tag, final String string, final Throwable tr) {
-        if (isLogEnabled && logLevel <= Log.VERBOSE) {
+        if (logLevel <= Log.VERBOSE) {
             Log.v(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
@@ -149,7 +144,7 @@ public final class L {
      * @param tr     exception
      */
     public static void d(final String tag, final String string, final Throwable tr) {
-        if (isLogEnabled && logLevel <= Log.DEBUG) {
+        if (logLevel <= Log.DEBUG) {
             Log.d(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
@@ -162,7 +157,7 @@ public final class L {
      * @param tr     exception
      */
     public static void i(final String tag, final String string, final Throwable tr) {
-        if (isLogEnabled && logLevel <= Log.INFO) {
+        if (logLevel <= Log.INFO) {
             Log.i(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
@@ -175,7 +170,7 @@ public final class L {
      * @param tr     exception
      */
     public static void w(final String tag, final String string, final Throwable tr) {
-        if (isLogEnabled && logLevel <= Log.WARN) {
+        if (logLevel <= Log.WARN) {
             Log.w(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
@@ -188,7 +183,7 @@ public final class L {
      * @param tr     exception
      */
     public static void e(final String tag, final String string, final Throwable tr) {
-        if (isLogEnabled && logLevel <= Log.ERROR) {
+        if (logLevel <= Log.ERROR) {
             Log.e(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
