@@ -10,13 +10,22 @@ public final class L {
     /**
      * Level of logs.
      */
-    public static int logLevel = Log.VERBOSE;
+    private static int logLevel = Log.VERBOSE;
 
     /**
      * Prevents the default parameter-less constructor from being used.
      */
     private L() {
         // Utility classes should not have a public or default constructor
+    }
+
+    /**
+     * Sets level of logs. By default it is Log.VERBOSE.
+     *
+     * @param logLevel lever of logs
+     */
+    public static void setLogLevel(int logLevel) {
+        L.logLevel = logLevel;
     }
 
     /**
@@ -47,7 +56,13 @@ public final class L {
         return tr;
     }
 
-    public static String tagFor(Class c) {
+    /**
+     * Extract class information for logger.
+     *
+     * @param c class for logging
+     * @return string of class information for logger.
+     */
+    public static String tagFor(final Class c) {
         return c.getSimpleName();
     }
 
@@ -64,6 +79,19 @@ public final class L {
     }
 
     /**
+     * Send a VERBOSE log message and log the exception.
+     *
+     * @param tag    Used to identify the source of a log message
+     * @param string log message
+     * @param tr     exception
+     */
+    public static void v(final String tag, final String string, final Throwable tr) {
+        if (logLevel <= Log.VERBOSE) {
+            Log.v(tag, stringOrNull(string), throwableOrNull(tr));
+        }
+    }
+
+    /**
      * Send a DEBUG log message.
      *
      * @param tag    Used to identify the source of a log message
@@ -76,6 +104,19 @@ public final class L {
     }
 
     /**
+     * Send a DEBUG log message and log the exception.
+     *
+     * @param tag    Used to identify the source of a log message
+     * @param string log message
+     * @param tr     exception
+     */
+    public static void d(final String tag, final String string, final Throwable tr) {
+        if (logLevel <= Log.DEBUG) {
+            Log.d(tag, stringOrNull(string), throwableOrNull(tr));
+        }
+    }
+
+    /**
      * Send an INFO log message.
      *
      * @param tag    Used to identify the source of a log message
@@ -84,6 +125,19 @@ public final class L {
     public static void i(final String tag, final String string) {
         if (logLevel <= Log.INFO) {
             Log.i(tag, stringOrNull(string));
+        }
+    }
+
+    /**
+     * Send a INFO log message and log the exception.
+     *
+     * @param tag    Used to identify the source of a log message
+     * @param string log message
+     * @param tr     exception
+     */
+    public static void i(final String tag, final String string, final Throwable tr) {
+        if (logLevel <= Log.INFO) {
+            Log.i(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
 
@@ -112,6 +166,19 @@ public final class L {
     }
 
     /**
+     * Send a ERROR log message and log the exception.
+     *
+     * @param tag    Used to identify the source of a log message
+     * @param string log message
+     * @param tr     exception
+     */
+    public static void e(final String tag, final String string, final Throwable tr) {
+        if (logLevel <= Log.ERROR) {
+            Log.e(tag, stringOrNull(string), throwableOrNull(tr));
+        }
+    }
+
+    /**
      * Send a WARN and log the exception.
      *
      * @param tag Used to identify the source of a log message
@@ -120,45 +187,6 @@ public final class L {
     public static void w(final String tag, final Throwable tr) {
         if (logLevel <= Log.WARN) {
             Log.w(tag, throwableOrNull(tr));
-        }
-    }
-
-    /**
-     * Send a VERBOSE log message and log the exception.
-     *
-     * @param tag    Used to identify the source of a log message
-     * @param string log message
-     * @param tr     exception
-     */
-    public static void v(final String tag, final String string, final Throwable tr) {
-        if (logLevel <= Log.VERBOSE) {
-            Log.v(tag, stringOrNull(string), throwableOrNull(tr));
-        }
-    }
-
-    /**
-     * Send a DEBUG log message and log the exception.
-     *
-     * @param tag    Used to identify the source of a log message
-     * @param string log message
-     * @param tr     exception
-     */
-    public static void d(final String tag, final String string, final Throwable tr) {
-        if (logLevel <= Log.DEBUG) {
-            Log.d(tag, stringOrNull(string), throwableOrNull(tr));
-        }
-    }
-
-    /**
-     * Send a INFO log message and log the exception.
-     *
-     * @param tag    Used to identify the source of a log message
-     * @param string log message
-     * @param tr     exception
-     */
-    public static void i(final String tag, final String string, final Throwable tr) {
-        if (logLevel <= Log.INFO) {
-            Log.i(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
 
@@ -172,19 +200,6 @@ public final class L {
     public static void w(final String tag, final String string, final Throwable tr) {
         if (logLevel <= Log.WARN) {
             Log.w(tag, stringOrNull(string), throwableOrNull(tr));
-        }
-    }
-
-    /**
-     * Send a ERROR log message and log the exception.
-     *
-     * @param tag    Used to identify the source of a log message
-     * @param string log message
-     * @param tr     exception
-     */
-    public static void e(final String tag, final String string, final Throwable tr) {
-        if (logLevel <= Log.ERROR) {
-            Log.e(tag, stringOrNull(string), throwableOrNull(tr));
         }
     }
 }
