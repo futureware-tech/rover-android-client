@@ -22,10 +22,10 @@ public final class L {
     /**
      * Sets level of logs. By default it is Log.VERBOSE.
      *
-     * @param logLevel lever of logs
+     * @param lLevel lever of logs
      */
-    public static void setLogLevel(int logLevel) {
-        L.logLevel = logLevel;
+    public static void setLogLevel(final int lLevel) {
+        L.logLevel = lLevel;
     }
 
     /**
@@ -142,18 +142,6 @@ public final class L {
     }
 
     /**
-     * Send a WARN log message.
-     *
-     * @param tag    Used to identify the source of a log message
-     * @param string log message
-     */
-    public static void w(final String tag, final String string) {
-        if (logLevel <= Log.WARN) {
-            Log.w(tag, stringOrNull(string));
-        }
-    }
-
-    /**
      * Send an ERROR log message.
      *
      * @param tag    Used to identify the source of a log message
@@ -175,6 +163,18 @@ public final class L {
     public static void e(final String tag, final String string, final Throwable tr) {
         if (logLevel <= Log.ERROR) {
             Log.e(tag, stringOrNull(string), throwableOrNull(tr));
+        }
+    }
+
+    /**
+     * Send a WARN log message.
+     *
+     * @param tag    Used to identify the source of a log message
+     * @param string log message
+     */
+    public static void w(final String tag, final String string) {
+        if (logLevel <= Log.WARN) {
+            Log.w(tag, stringOrNull(string));
         }
     }
 
