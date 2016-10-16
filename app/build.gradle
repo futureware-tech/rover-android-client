@@ -37,11 +37,11 @@ protobuf {
     // Configure the protoc executable
     protoc {
         // Download from repositories
-        artifact = 'com.google.protobuf:protoc:3.0.0-beta-3'
+        artifact = 'com.google.protobuf:protoc:3.1.0'
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:0.15.0'
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.1'
         }
     }
     generateProtoTasks {
@@ -69,13 +69,13 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // According to lint, major version number should match compileSdkVersion.
-    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
 
-    compile 'io.grpc:grpc-okhttp:0.15.0'
-    compile 'io.grpc:grpc-protobuf-nano:0.15.0'
-    compile 'io.grpc:grpc-stub:0.15.0'
+    compile 'io.grpc:grpc-okhttp:1.0.1'
+    compile 'io.grpc:grpc-protobuf-nano:1.0.1'
+    compile 'io.grpc:grpc-stub:1.0.1'
 
     compile 'javax.annotation:javax.annotation-api:1.2'
 
-    compile 'com.google.android.gms:play-services-safetynet:9.2.0'
+    compile 'com.google.android.gms:play-services-safetynet:9.6.1'
 }
