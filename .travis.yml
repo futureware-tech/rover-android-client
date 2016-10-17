@@ -11,11 +11,11 @@ android:
   # To list all supported versions:
   # $ tools/android list sdk --extended --all
   # (look for a string: id: XX or "build-tools-A.B.C")
-  - build-tools-23.0.3
+  - build-tools-24.0.3
 
   # The SDK version used to compile your project.
   # Keep in sync with compileSdkVersion in app/build.gradle.
-  - android-23
+  - android-24
 
   # For AppCompat.
   - extra
@@ -26,7 +26,7 @@ android:
   # $ cd android-sdk-linux; tools/android list sdk --extended --all
   # (look for a string: sys-img-XX-android-YY)
   # Currently, there's no image for API level 24 with ARM EABI.
-  - sys-img-armeabi-v7a-android-23
+  - sys-img-armeabi-v7a-android-24
 
 # Emulator Management: Create, Start and Wait
 before_script:
@@ -35,7 +35,7 @@ before_script:
 # $ cd android-sdk-linux; tools/android list target
 # for "-t", look for: id: XX or "android-YY".
 # for "--abi", use one of "Tag/ABIs" on that id.
-- echo no | android create avd --force -n test -t android-23 --abi default/armeabi-v7a
+- echo no | android create avd --force -n test -t android-24 --abi default/armeabi-v7a
 - emulator -avd test -no-audio -no-window &
 - android-wait-for-emulator
 # Ping the emulator to make sure it's up
