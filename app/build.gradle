@@ -3,10 +3,8 @@ apply plugin: 'com.google.protobuf'
 
 android {
     compileSdkVersion 24
-
     // https://developer.android.com/studio/releases/build-tools.html
     buildToolsVersion '24.0.3'
-
     defaultConfig {
         applicationId 'org.dasfoo.rover.android.client'
         minSdkVersion 21
@@ -15,12 +13,19 @@ android {
         versionName '1.0'
     }
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            // To apply Proguard (e.g. to test the configuration), simply copy over
+            // minifyEnabled and proguardFiles from "release" build type and add:
+            //   debuggable false
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            // getDefaultProguardFile searches for the files in path-to-android-sdk/tools/proguard/.
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
         }
     }
-
     lintOptions {
         // https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.LintOptions.html
 
@@ -65,17 +70,13 @@ protobuf {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-
     // According to lint, major version number should match compileSdkVersion.
     compile 'com.android.support:appcompat-v7:24.2.1'
-
     compile 'io.grpc:grpc-okhttp:1.0.1'
     compile 'io.grpc:grpc-protobuf-nano:1.0.1'
     compile 'io.grpc:grpc-stub:1.0.1'
-
     compile 'javax.annotation:javax.annotation-api:1.2'
-
     compile 'com.google.android.gms:play-services-safetynet:9.6.1'
 }
