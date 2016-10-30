@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import org.dasfoo.rover.android.client.BuildConfig;
 import org.dasfoo.rover.android.client.R;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
+import org.dasfoo.rover.android.client.util.LogUtil;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -43,7 +43,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
     /**
      * Class information for logging.
      */
-    private static final String TAG = VideoFragment.class.getName();
+    private static final String TAG = LogUtil.tagFor(VideoFragment.class);
 
     /**
      * Format for video.
@@ -138,24 +138,20 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                             String.valueOf(VideoFragment.VIDEO_HEIGHT));
                     streamRenderer.setInputStream(mHttpURLConnection.getInputStream());
                 } catch (MalformedURLException e) {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Malformed url", e);
-                    }
+                    Log.e(TAG, "Malformed url", e);
                     // TODO(ksheremet): do error check and notify user
                 } catch (IOException e) {
-                    if (BuildConfig.DEBUG) {
-                        // Maybe it doesn't look good. But I need a code of error.
-                        try {
-                            Log.e(TAG, String.valueOf(mHttpURLConnection.getResponseCode()));
-                            Log.e(TAG, mHttpURLConnection.getResponseMessage());
-                            Log.e(TAG, new Scanner(mHttpURLConnection.getErrorStream())
-                                    .useDelimiter("$")
-                                    .next());
-                        } catch (IOException err) {
-                            Log.e(TAG, err.getMessage());
-                        }
-                        Log.e(TAG, "Input/Output exception", e);
+                    // Maybe it doesn't look good. But I need a code of error.
+                    try {
+                        Log.e(TAG, String.valueOf(mHttpURLConnection.getResponseCode()));
+                        Log.e(TAG, mHttpURLConnection.getResponseMessage());
+                        Log.e(TAG, new Scanner(mHttpURLConnection.getErrorStream())
+                                .useDelimiter("$")
+                                .next());
+                    } catch (IOException err) {
+                        Log.e(TAG, err.getMessage());
                     }
+                    Log.e(TAG, "Input/Output exception", e);
                 }
             }
 

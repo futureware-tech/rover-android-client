@@ -24,6 +24,7 @@ import org.dasfoo.rover.android.client.grpc.task.GrpcConnection;
 import org.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 import org.dasfoo.rover.android.client.menu.MenuFragment;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
+import org.dasfoo.rover.android.client.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity
         implements ProviderInstaller.ProviderInstallListener {
@@ -31,7 +32,11 @@ public class MainActivity extends AppCompatActivity
     private static final String PROVIDER_NOT_INSTALLED =
             "The security provider installation failed, " +
             "encrypted communication is not available: %s";
-    private static final String TAG = MainActivity.class.getName();
+
+    /**
+     * Class information for logging.
+     */
+    private static final String TAG = LogUtil.tagFor(MainActivity.class);
 
     /**
      * Moves rover forward.
