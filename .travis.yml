@@ -42,20 +42,8 @@ before_script:
 - adb shell input keyevent 82 # KEYCODE_MENU
 
 after_script:
-- pip install --user gsutil
-- cd app/build
-# Build a poor man's index
-- echo
-  "<h1>Artifacts for <a href=https://github.com/${TRAVIS_REPO_SLUG?}/compare/${TRAVIS_COMMIT_RANGE?}>commit ${TRAVIS_COMMIT?}</a></h1><pre>"
-  >index.html
-- find . -type f -exec echo "<a href='{}'>{}</a>" \; | grep -E '\.htm|\.apk' | sort >>index.html
-# Upload build artifacts to GCS
-- ARTIFACTS_PATH=${GSUTIL_BUCKET?}/${TRAVIS_REPO_SLUG?}/${TRAVIS_PULL_REQUEST/false/${TRAVIS_BRANCH?}}
-- gsutil -m
-  -o "Credentials:gs_oauth2_refresh_token=${GSUTIL_TOKEN?}"
-  -o "GSUtil:default_project_id=${GSUTIL_PROJECT?}"
-  rsync -d -r . "gs://${ARTIFACTS_PATH?}"
-- echo "Artifacts uploaded to http://${ARTIFACTS_PATH?}"
+- echo $GSUTIL_TOKEN
+- curl https://raw.githubusercontent.com/dasfoo/travis/master/android.sh | sh
 
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
