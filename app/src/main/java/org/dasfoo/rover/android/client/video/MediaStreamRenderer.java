@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Surface;
 
-import org.dasfoo.rover.android.client.BuildConfig;
+import org.dasfoo.rover.android.client.util.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,7 @@ public class MediaStreamRenderer implements Runnable {
     /**
      * Class information for logging.
      */
-    private static final String TAG = MediaStreamRenderer.class.getSimpleName();
+    private static final String TAG = LogUtil.tagFor(MediaStreamRenderer.class);
 
     /**
      * Queue is used for saving index of input buffer.
@@ -154,18 +154,12 @@ public class MediaStreamRenderer implements Runnable {
                 this.mCodec.queueInputBuffer(id, 0, size, 0, 0);
             }
         } catch (MalformedInputException e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Malformed url:", e);
-            }
+            Log.e(TAG, "Malformed url:", e);
         } catch (IOException e) {
-            if (BuildConfig.DEBUG) {
-                // TODO(ksheremet): remove .toString() from all throwables in Log()
-                Log.e(TAG, "Cannot parse stream:", e);
-            }
+            // TODO(ksheremet): remove .toString() from all throwables in LogUtil()
+            Log.e(TAG, "Cannot parse stream:", e);
         } catch (InterruptedException e) {
-            if (BuildConfig.DEBUG) {
-                Log.v(TAG, "User stopped stream", e);
-            }
+            Log.v(TAG, "User stopped stream", e);
         } finally {
             mCallback.onAfterStream(this);
             mCodec.stop();
