@@ -4,19 +4,24 @@ import android.util.Log;
 
 import java.util.concurrent.TimeUnit;
 
-import org.dasfoo.rover.android.client.BuildConfig;
+// TODO(dotdoom): why "dasfoo" and not "org.dasfoo" ?
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 
+import org.dasfoo.rover.android.client.util.LogUtil;
+
 
 /**
  * Created by Katarina Sheremet on 5/24/16 5:09 PM.
  */
 public class GrpcConnection {
-    private static final String TAG = GrpcConnection.class.getName();
+    /**
+     * Class information for logging.
+     */
+    private static final String TAG = LogUtil.tagFor(GrpcConnection.class);
 
     /**
      * Forms header.
@@ -87,9 +92,7 @@ public class GrpcConnection {
             mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
             return Boolean.TRUE;
         } catch (InterruptedException e) {
-            if (BuildConfig.DEBUG) {
-                Log.v(TAG, e.toString());
-            }
+            Log.v(TAG, e.toString());
             return Boolean.FALSE;
         }
     }
