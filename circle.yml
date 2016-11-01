@@ -10,9 +10,9 @@ checkout:
 
 dependencies:
     pre:
-    - mkdir -p "$ANDROID_HOME/licenses"
+    - mkdir -p "${ANDROID_HOME?}/licenses"
     # Take this text from the Android SDK directory on your machine.
-    - echo '8933bad161af4178b1185d1a37fbf41ea5269c55' >"$ANDROID_HOME/licenses/android-sdk-license"
+    - echo '8933bad161af4178b1185d1a37fbf41ea5269c55' >"${ANDROID_HOME?}/licenses/android-sdk-license"
     post:
     # For emulator. Cannot use x86 w/o HW acceleration, which is provided by KVM.
     # Keep in sync with the SDK version.
@@ -35,4 +35,5 @@ test:
   - GRADLE_OPTS=-Xmx256m ./gradlew build connectedCheck
   post:
   # TODO(dotdoom): cleanup, leave only useful files.
-  - mv app/build/{outputs,reports} "$CIRCLE_ARTIFACTS"
+  - mv app/build/{outputs,reports} "${CIRCLE_ARTIFACTS}"
+  - mv app/build/test-results/* "${CIRCLE_TEST_REPORTS}"
