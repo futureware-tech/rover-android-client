@@ -35,5 +35,5 @@ test:
   - GRADLE_OPTS=-Xmx256m ./gradlew build connectedCheck
   post:
   # TODO(dotdoom): cleanup, leave only useful files.
-  - mv app/build/{outputs,reports} "${CIRCLE_ARTIFACTS}"
-  - mv app/build/test-results/* "${CIRCLE_TEST_REPORTS}"
+  - mv app/build/{outputs,reports} "${CIRCLE_ARTIFACTS?}"
+  - mv app/build/test-results/* "${CIRCLE_TEST_REPORTS?}"
