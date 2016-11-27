@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.dasfoo.android.h264videostream.MediaStreamRenderer;
 import org.dasfoo.rover.android.client.R;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 import org.dasfoo.rover.android.client.util.LogUtil;

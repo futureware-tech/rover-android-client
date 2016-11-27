@@ -1,4 +1,4 @@
-package org.dasfoo.rover.android.client.video;
+package org.dasfoo.android.h264videostream;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

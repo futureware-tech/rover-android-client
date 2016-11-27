@@ -1,10 +1,8 @@
-package org.dasfoo.rover.android.client.video;
+package org.dasfoo.android.h264videostream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import org.dasfoo.rover.android.client.video.StreamParser;
 
 import org.junit.Test;
 
