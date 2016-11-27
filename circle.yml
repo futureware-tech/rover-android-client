@@ -13,6 +13,9 @@ dependencies:
     - mkdir -p "${ANDROID_HOME?}/licenses"
     # Take this text from the Android SDK directory on your machine.
     - echo '8933bad161af4178b1185d1a37fbf41ea5269c55' >"${ANDROID_HOME?}/licenses/android-sdk-license"
+    override:
+    # There's some kind of bug in Gradle that requires us to run it twice.
+    - ./gradlew dependencies || ./gradlew dependencies
     post:
     # For emulator. Cannot use x86 w/o HW acceleration, which is provided by KVM.
     # Keep in sync with the SDK version.

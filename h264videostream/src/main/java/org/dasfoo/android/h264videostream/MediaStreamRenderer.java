@@ -1,12 +1,10 @@
-package org.dasfoo.rover.android.client.video;
+package org.dasfoo.android.h264videostream;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Surface;
-
-import org.dasfoo.rover.android.client.util.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,18 +13,12 @@ import java.nio.charset.MalformedInputException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- * Created by Katarina Sheremet on 6/8/16 1:07 PM.
- * <p/>
- * Class is used for creating connection to the server to get video and do
- * processing of stream.
- */
 public class MediaStreamRenderer implements Runnable {
 
     /**
      * Class information for logging.
      */
-    private static final String TAG = LogUtil.tagFor(MediaStreamRenderer.class);
+    private static final String TAG = MediaStreamRenderer.class.getSimpleName();
 
     /**
      * Queue is used for saving index of input buffer.
@@ -186,7 +178,7 @@ public class MediaStreamRenderer implements Runnable {
         /**
          * Callback is used before processing Stream.
          * It sets up InputStream for MediaStreamRenderer.
-         * // TODO(ksheremet): unable/disable buttons.
+         * // TODO(ksheremet): enable/disable buttons.
          *
          * @param streamRenderer current MediaStreamRenderer
          */
