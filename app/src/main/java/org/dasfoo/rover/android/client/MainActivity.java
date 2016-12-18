@@ -26,12 +26,21 @@ import org.dasfoo.rover.android.client.menu.MenuFragment;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 import org.dasfoo.rover.android.client.util.LogUtil;
 
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+/** Main Activity of the application.
+ */
 public class MainActivity extends AppCompatActivity
         implements ProviderInstaller.ProviderInstallListener {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String PROVIDER_NOT_INSTALLED =
             "The security provider installation failed, " +
-            "encrypted communication is not available: %s";
+                    "encrypted communication is not available: %s";
 
     /**
      * Class information for logging.
@@ -39,58 +48,77 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = LogUtil.tagFor(MainActivity.class);
 
     /**
+     * ButterKnife.apply() callback to enable / disable views (useful for lists).
+     */
+    private static final ButterKnife.Setter<View, Boolean> ENABLED =
+            new ButterKnife.Setter<View, Boolean>() {
+                @Override
+                public void set(final View view, final Boolean value, final int index) {
+                    view.setEnabled(value);
+                }
+            };
+
+    /**
+     * All buttons on this activity.
+     */
+    @BindViews({R.id.move_forward_button, R.id.info_button, R.id.read_encoders_button})
+    protected List<Button> mButtons;
+    // TODO(dotdoom): try using the same for OnClick below
+
+    /**
      * Moves rover forward.
      */
-    private Button mMoveForwardButton;
+    @BindView(R.id.move_forward_button)
+    protected Button mMoveForwardButton;
 
     /**
      * Gets information about battery, humidity, temperature and light.
      */
-    private Button mInfoButton;
+    @BindView(R.id.info_button)
+    protected Button mInfoButton;
 
     /**
      * Gets the number of turns the rights and left wheels.
      */
-    private Button mReadEncodersButton;
+    @BindView(R.id.read_encoders_button)
+    protected Button mReadEncodersButton;
 
     /**
      * Result text view.
      */
-    private TextView mResultText;
+    @BindView(R.id.grpc_response_text)
+    protected TextView mResultText;
 
     private GrpcConnection mGrpcConnection;
 
-    private View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(final View v) {
-            switch (v.getId()) {
-                case R.id.move_forward_button:
-                    executeGrpcTask(new MovingRoverTask());
-                    break;
-                case R.id.info_button:
-                    executeGrpcTask(new GettingBoardInfoTask());
-                    break;
-                case R.id.read_encoders_button:
-                    executeGrpcTask(new EncodersReadingTask());
-                    break;
-                default:
-                    Log.v(TAG, "Button is not implemented yet.");
-                    break;
-            }
+    /**
+     * Activity's click handler.
+     *
+     * @param v view that has been clicked
+     */
+    @OnClick({R.id.move_forward_button, R.id.info_button, R.id.read_encoders_button})
+    public void onClick(final View v) {
+        switch (v.getId()) {
+            case R.id.move_forward_button:
+                executeGrpcTask(new MovingRoverTask());
+                break;
+            case R.id.info_button:
+                executeGrpcTask(new GettingBoardInfoTask());
+                break;
+            case R.id.read_encoders_button:
+                executeGrpcTask(new EncodersReadingTask());
+                break;
+            default:
+                Log.v(TAG, "Button is not implemented yet.");
+                break;
         }
-    };
+    }
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mMoveForwardButton = (Button) findViewById(R.id.move_forward_button);
-        mMoveForwardButton.setOnClickListener(onClickListener);
-        mInfoButton = (Button) findViewById(R.id.info_button);
-        mInfoButton.setOnClickListener(onClickListener);
-        mReadEncodersButton = (Button) findViewById(R.id.read_encoders_button);
-        mReadEncodersButton.setOnClickListener(onClickListener);
-        mResultText = (TextView) findViewById(R.id.grpc_response_text);
+        ButterKnife.bind(this);
 
         // Android relies on a security Provider to provide secure network communications.
         // It verifies that the security provider is up-to-date.
@@ -146,12 +174,6 @@ public class MainActivity extends AppCompatActivity
         new GrpcTask().execute(task);
     }
 
-    private void enableButtons(final boolean isEnabled) {
-        mMoveForwardButton.setEnabled(isEnabled);
-        mInfoButton.setEnabled(isEnabled);
-        mReadEncodersButton.setEnabled(isEnabled);
-    }
-
     @Override
     public final void onProviderInstalled() {
         Toast.makeText(this, "The security provider installed.", Toast.LENGTH_SHORT).show();
@@ -191,12 +213,12 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-    public class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
+    private class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
 
         @Override
         protected final void onPreExecute() {
             super.onPreExecute();
-            enableButtons(Boolean.FALSE);
+            ButterKnife.apply(mButtons, ENABLED, false);
         }
 
         @Override
@@ -223,7 +245,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected final void onPostExecute(final String result) {
             mResultText.setText(result);
-            enableButtons(Boolean.TRUE);
+            ButterKnife.apply(mButtons, ENABLED, true);
         }
     }
 }
