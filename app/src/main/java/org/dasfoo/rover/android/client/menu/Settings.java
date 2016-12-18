@@ -25,6 +25,8 @@ public enum Settings {
     private final String name;
 
     /**
+     * Constructor.
+     *
      * @param s string parameter for constructor
      */
     Settings(final String s) {
@@ -32,6 +34,8 @@ public enum Settings {
     }
 
     /**
+     * Stringifier.
+     *
      * @return string representation of enum element
      */
     public String toString() {

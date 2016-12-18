@@ -1,5 +1,27 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
+apply plugin: 'checkstyle'
+
+checkstyle {
+    // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.CheckstyleExtension.html
+    toolVersion '7.3'
+}
+
+// Have to create our own task because Android's sourceSets:
+// https://android.googlesource.com/platform/tools/build/+/master/gradle/src/main/groovy/com/android/build/gradle/internal/api/DefaultAndroidSourceSet.java
+// are not compatible with Gradle sourceSets:
+// https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/SourceSet.html
+// therefore checkstyle initializer doesn't see them.
+task checkstyle(type: Checkstyle) {
+    // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.Checkstyle.html
+    source android.sourceSets.main.getJava().getSrcDirs()
+    classpath = files()
+    ignoreFailures = false
+}
+
+project.afterEvaluate {
+    lintDebug.dependsOn 'checkstyle'
+}
 
 android {
     compileSdkVersion 24

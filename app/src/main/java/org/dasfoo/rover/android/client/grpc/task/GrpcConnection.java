@@ -56,10 +56,20 @@ public class GrpcConnection {
         establishConnection();
     }
 
+    /**
+     * Reads configuration.
+     *
+     * @return remote server port.
+     */
     public final int getPort() {
         return mPort;
     }
 
+    /**
+     * Reads configuration.
+     *
+     * @return remote server host.
+     */
     public final String getHost() {
         return mHost;
     }
@@ -83,10 +93,20 @@ public class GrpcConnection {
         mStub = MetadataUtils.attachHeaders(mStub, headers);
     }
 
+    /**
+     * Get gRPC client stub associated with this connection.
+     *
+     * @return RoverService stub.
+     */
     public final RoverServiceGrpc.RoverServiceBlockingStub getStub() {
         return mStub;
     }
 
+    /**
+     * Try to kill the current gRPC connection.
+     *
+     * @return true if connection was killed.
+     */
     public final boolean shutDownConnection() {
         try {
             mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
