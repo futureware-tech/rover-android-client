@@ -29,7 +29,10 @@
 		<module name="AvoidStaticImport"/>
 		<module name="BooleanExpressionComplexity"/>
 		<module name="CatchParameterName"/>
-		<module name="ClassFanOutComplexity"/>
+		<module name="ClassFanOutComplexity">
+			<!-- Activities depend on lots of android.* classes -->
+			<property name="max" value="30"/>
+		</module>
 		<module name="ClassTypeParameterName"/>
 		<module name="CommentsIndentation"/>
 		<module name="CovariantEquals"/>
