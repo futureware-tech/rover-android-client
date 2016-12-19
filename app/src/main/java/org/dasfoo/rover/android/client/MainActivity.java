@@ -25,6 +25,7 @@ import org.dasfoo.rover.android.client.grpc.task.MovingRoverTask;
 import org.dasfoo.rover.android.client.menu.MenuFragment;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 import org.dasfoo.rover.android.client.util.LogUtil;
+import org.dasfoo.rover.android.client.util.ResultCallback;
 
 import java.util.List;
 
@@ -37,7 +38,6 @@ import butterknife.OnClick;
  */
 public class MainActivity extends AppCompatActivity
         implements ProviderInstaller.ProviderInstallListener {
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String PROVIDER_NOT_INSTALLED =
             "The security provider installation failed, " +
                     "encrypted communication is not available: %s";
@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.grpc_response_text)
     protected TextView mResultText;
 
+    private final ResultCallback mActivityResultCallback = new ResultCallback();
+
     private GrpcConnection mGrpcConnection;
 
     /**
@@ -112,6 +114,20 @@ public class MainActivity extends AppCompatActivity
                 Log.v(TAG, "Button is not implemented yet.");
                 break;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode,
+                                           final String[] permissions, final int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mActivityResultCallback.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode,
+                                    final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mActivityResultCallback.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -181,10 +197,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public final void onProviderInstallFailed(final int errorCode, final Intent intent) {
-        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        final GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         if (googleAPI.isUserResolvableError(errorCode)) {
-            googleAPI.getErrorDialog(MainActivity.this, errorCode,
-                    PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            mActivityResultCallback.startActivityWithResultHandler(
+                new ResultCallback.ActivityCallbacks() {
+                    @Override
+                    public void start(final int requestCode) {
+                        googleAPI.getErrorDialog(MainActivity.this, errorCode, requestCode).show();
+                    }
+
+                    @Override
+                    public void handle(final int resultCode, final Intent data) {
+                        // TODO(dotdoom): what should we do now?
+                    }
+                });
         } else {
             onProviderInstallerNotAvailable(errorCode);
         }
