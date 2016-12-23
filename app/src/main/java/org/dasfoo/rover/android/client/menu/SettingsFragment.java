@@ -17,6 +17,10 @@ import org.dasfoo.rover.android.client.R;
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    /**
+     * Fetch preferences.
+     * @param savedInstanceState state
+     */
     @Override
     public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

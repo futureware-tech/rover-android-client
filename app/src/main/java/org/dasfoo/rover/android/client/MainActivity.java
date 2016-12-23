@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onRequestPermissionsResult(final int requestCode,
                                            final String[] permissions, final int[] grantResults) {
@@ -190,13 +191,22 @@ public class MainActivity extends AppCompatActivity
         new GrpcTask().execute(task);
     }
 
+    /**
+     * Show a message to the user that secure communication is available.
+     */
     @Override
     public final void onProviderInstalled() {
         Toast.makeText(this, "The security provider installed.", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Try to recover from the error, or show an error message.
+     *
+     * @param errorCode error code
+     * @param recoveryIntent intent for recovery action
+     */
     @Override
-    public final void onProviderInstallFailed(final int errorCode, final Intent intent) {
+    public final void onProviderInstallFailed(final int errorCode, final Intent recoveryIntent) {
         final GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         if (googleAPI.isUserResolvableError(errorCode)) {
             mActivityResultCallback.startActivityWithResultHandler(
@@ -223,7 +233,7 @@ public class MainActivity extends AppCompatActivity
      * @param errorCode code of exception
      */
     private void onProviderInstallerNotAvailable(final int errorCode) {
-        new AlertDialog.Builder(MainActivity.this)
+        new AlertDialog.Builder(this)
                 .setMessage(String.format(PROVIDER_NOT_INSTALLED, errorCode))
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {

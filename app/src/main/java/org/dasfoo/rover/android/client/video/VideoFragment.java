@@ -2,14 +2,10 @@ package org.dasfoo.rover.android.client.video;
 
 import android.app.Fragment;
 import android.media.MediaFormat;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import org.dasfoo.android.h264videostream.MediaStreamRenderer;
@@ -22,6 +18,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by Katarina Sheremet on 6/7/16 12:00 PM.
@@ -52,35 +51,22 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
     private static final String VIDEO_FORMAT = "video/avc"; // h.264
 
     /**
+     * TextureView on Ui layout.
+     */
+    @BindView(R.id.textureView)
+    protected TextureView mTextureView;
+
+    /**
      * Thread for getting NAL units.
      */
     private Thread mVideoThread;
-
-    /**
-     * TextureView on Ui layout.
-     */
-    private TextureView mTextureView;
-
-    @Override
-    public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                                   final Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        final View view = inflater.inflate(R.layout.fragment_video, container, false);
-        mTextureView = (TextureView) view.findViewById(R.id.textureView);
-
-        final Button playVideo = (Button) view.findViewById(R.id.start_video_button);
-        playVideo.setOnClickListener(this);
-
-        final Button stopVideo = (Button) view.findViewById(R.id.stop_video_button);
-        stopVideo.setOnClickListener(this);
-        return view;
-    }
 
     /**
      * Called when a button has been clicked.
      *
      * @param v The button that was clicked.
      */
+    @OnClick({ R.id.start_video_button, R.id.stop_video_button })
     @Override
     public final void onClick(final View v) {
         switch (v.getId()) {

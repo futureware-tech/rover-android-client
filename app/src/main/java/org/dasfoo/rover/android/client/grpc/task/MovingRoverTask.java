@@ -12,6 +12,12 @@ public class MovingRoverTask extends AbstractGrpcTaskExecutor {
 
     private static final int FORWARD_MOVE_RIGHT = 30;
 
+    /**
+     * Send a move request to the rover and wait for result.
+     *
+     * @param stub gRPC
+     * @return response as text
+     */
     @Override
     public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
@@ -30,8 +36,6 @@ public class MovingRoverTask extends AbstractGrpcTaskExecutor {
                 default:
                     return e.getMessage();
             }
-        } catch (Exception e) {
-            return "Failed... : " + e.getMessage();
         }
     }
 }
