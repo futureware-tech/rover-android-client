@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
+apply plugin: 'findbugs'
 
 checkstyle {
     // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.CheckstyleExtension.html
@@ -11,6 +12,11 @@ checkstyle {
 pmd {
     // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.PmdExtension.html
     toolVersion '5.5.2'
+}
+
+findbugs {
+    // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.FindBugsExtension.html
+    toolVersion '3.0.1'
 }
 
 // Have to create our own tasks because Android's sourceSets:
@@ -37,9 +43,18 @@ task pmd(type: Pmd) {
     consoleOutput = true
 }
 
+task findbugs(type: FindBugs) {
+    // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.FindBugs.html
+    source android.sourceSets.main.getJavaDirectories()
+    classes = files("${project.rootDir}/app/build/intermediates/classes")
+    classpath = files()
+    ignoreFailures = false
+    effort = 'max'
+}
+
 project.afterEvaluate {
     tasks.withType(tasks['lint'].class) {
-        dependsOn 'checkstyle', 'pmd'
+        dependsOn 'checkstyle', 'pmd', 'findbugs'
     }
 }
 
