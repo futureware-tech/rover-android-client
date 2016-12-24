@@ -5,6 +5,8 @@
 
 <!-- http://checkstyle.sf.net/ -->
 
+<!-- TODO(dotdoom): enable all available checks -->
+
 <module name="Checker">
 	<module name="FileLength"/>
 	<module name="FileTabCharacter"/>
@@ -68,6 +70,8 @@
 		<module name="JavadocTagContinuationIndentation"/>
 		<module name="JavadocMethod">
 			<property name="scope" value="public"/>
+			<!-- Require javadoc for @Override methods as well (e.g. reason) -->
+			<property name="allowedAnnotations" value=""/>
 		</module>
 		<module name="JavadocType">
 			<property name="scope" value="public"/>

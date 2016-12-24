@@ -10,6 +10,12 @@ import io.grpc.StatusRuntimeException;
  */
 public class EncodersReadingTask extends AbstractGrpcTaskExecutor {
 
+    /**
+     * Send an encoder read request to the rover and wait for result.
+     *
+     * @param stub gRPC
+     * @return response as text
+     */
     @Override
     public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
@@ -33,8 +39,6 @@ public class EncodersReadingTask extends AbstractGrpcTaskExecutor {
                 default:
                     return e.getMessage();
             }
-        } catch (Exception e) {
-            return "Failed... : " + e.getMessage();
         }
     }
 }
