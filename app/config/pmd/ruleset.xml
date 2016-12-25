@@ -42,12 +42,12 @@
 
 		<!-- Early returns may decrease mental complexity -->
 		<exclude name="OnlyOneReturn"/>
-	</rule>
-	<rule ref="rulesets/java/controversial.xml/DataflowAnomalyAnalysis">
-		<properties>
-			<!-- https://sourceforge.net/p/pmd/bugs/1383/ -->
-			<property name="violationSuppressRegex" value="^Found 'UR'-anomaly.*"/>
-		</properties>
+
+		<!-- While generally useful, has too many false positives:
+			* UR https://sourceforge.net/p/pmd/bugs/1383/
+			* DD when variable matches method name
+			* DU when passing variable to another class constructor -->
+		<exclude name="DataflowAnomalyAnalysis"/>
 	</rule>
 
 	<rule ref="rulesets/java/coupling.xml">

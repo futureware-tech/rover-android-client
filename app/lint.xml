@@ -7,4 +7,7 @@
 			 java.nio.file. We don't use that part. -->
 		<ignore regexp="okio-[0-9.]+jar" />
 	</issue>
+
+	<!-- We use ProGuard to remove specific log levels. -->
+	<issue id="LogConditional" severity="ignore"/>
 </lint>
