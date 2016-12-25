@@ -17,7 +17,11 @@ public enum Settings {
     /**
      * Password is for server to get video.
      */
-    PASSWORD("pref_password");
+    PASSWORD("pref_password"),
+    /**
+     * User-selected account name.
+     */
+    ACCOUNT_NAME("pref_account_name");
 
     /**
      * Constructor variable.

@@ -57,6 +57,29 @@ public class SharedPreferencesHandler {
     }
 
     /**
+     * Gets account name.
+     *
+     * @return account name
+     * @throws IllegalArgumentException if account name is empty
+     */
+    public final String getAccountName() throws IllegalArgumentException {
+        return getString(Settings.ACCOUNT_NAME);
+    }
+
+    /**
+     * Update account name in preferences.
+     *
+     * @param accountName account name as returned by account selector
+     */
+    public final void setAccountName(final String accountName) {
+        final SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(mContext);
+        final SharedPreferences.Editor e = sharedPreferences.edit();
+        e.putString(Settings.ACCOUNT_NAME.toString(), accountName);
+        e.apply();
+    }
+
+    /**
      * Gets string using key from settings.
      *
      * @param key gets SharedPreferences
