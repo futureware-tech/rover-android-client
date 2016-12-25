@@ -2,10 +2,13 @@ package org.dasfoo.rover.android.client.video;
 
 import android.app.Fragment;
 import android.media.MediaFormat;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.dasfoo.android.h264videostream.MediaStreamRenderer;
@@ -20,6 +23,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -60,6 +64,16 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      * Thread for getting NAL units.
      */
     private Thread mVideoThread;
+
+    /** {@inheritDoc} */
+    @Override
+    public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                                   final Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        final View view = inflater.inflate(R.layout.fragment_video, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
 
     /**
      * Called when a button has been clicked.
