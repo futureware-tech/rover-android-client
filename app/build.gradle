@@ -116,9 +116,11 @@ dependencies {
     testCompile 'junit:junit:4.12'
     // According to lint, major version number should match compileSdkVersion.
     compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'io.grpc:grpc-okhttp:1.0.1'
-    compile 'io.grpc:grpc-protobuf-nano:1.0.1'
-    compile 'io.grpc:grpc-stub:1.0.1'
+
+    compile 'io.grpc:grpc-okhttp:1.0.3'
+    compile 'io.grpc:grpc-protobuf-nano:1.0.3'
+    compile 'io.grpc:grpc-stub:1.0.3'
+
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile 'com.google.android.gms:play-services-safetynet:9.8.0'
 
