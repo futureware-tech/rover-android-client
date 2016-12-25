@@ -111,8 +111,19 @@ protobuf {
     }
 }
 
+configurations {
+    // guava-jdk5, which is a transitive dependency of google-api-client,
+    // contains it's own com.google.common.annotations which conflicts with the
+    // one we already have.
+    all*.exclude group: 'com.google.guava', module: 'guava-jdk5'
+
+    // These are brought by google-api-client but are not needed on Android.
+    all*.exclude group: 'org.apache.httpcomponents'
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
     testCompile 'junit:junit:4.12'
     // According to lint, major version number should match compileSdkVersion.
     compile 'com.android.support:appcompat-v7:24.2.1'
@@ -122,7 +133,12 @@ dependencies {
     compile 'io.grpc:grpc-stub:1.0.3'
 
     compile 'javax.annotation:javax.annotation-api:1.2'
+
     compile 'com.google.android.gms:play-services-safetynet:9.8.0'
+    compile 'com.google.android.gms:play-services-auth:9.8.0'
+
+    compile 'com.google.api-client:google-api-client-android:1.22.0'
+    compile 'com.google.apis:google-api-services-storage:v1-rev92-1.22.0'
 
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
