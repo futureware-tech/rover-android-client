@@ -20,6 +20,9 @@
 -dontwarn com.google.**
 -dontwarn okio.**
 
+# https://sourceforge.net/p/proguard/bugs/573/
+-optimizations !class/unboxing/enum
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
