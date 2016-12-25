@@ -29,13 +29,14 @@ dependencies:
 
 test:
   pre:
+  - ./gradlew build
   - echo no | android create avd --force -n test -t android-24 --abi default/armeabi-v7a
   - emulator -avd test -no-audio -no-window:
       background: true
       parallel: true
   - circle-android wait-for-boot
   override:
-  - GRADLE_OPTS=-Xmx256m ./gradlew build connectedCheck
+  - ./gradlew connectedCheck
   post:
   # TODO(dotdoom): cleanup, leave only useful files.
   - mv app/build/{outputs,reports} "${CIRCLE_ARTIFACTS?}"
