@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity
     private static final ButterKnife.Setter<View, Boolean> ENABLED =
             new ButterKnife.Setter<View, Boolean>() {
                 @Override
-                public void set(final View view, final Boolean value, final int index) {
+                public void set(@NonNull final View view, final Boolean value, final int index) {
                     view.setEnabled(value);
                 }
             };
@@ -119,7 +120,8 @@ public class MainActivity extends AppCompatActivity
     /** {@inheritDoc} */
     @Override
     public void onRequestPermissionsResult(final int requestCode,
-                                           final String[] permissions, final int[] grantResults) {
+                                           @NonNull final String[] permissions,
+                                           @NonNull final int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mActivityResultCallback.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
