@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.dasfoo.rover.android.client.auth.PasswordManager;
 import org.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import org.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
 import org.dasfoo.rover.android.client.grpc.task.GettingBoardInfoTask;
@@ -81,7 +82,18 @@ public class MainActivity extends AppCompatActivity {
 
     private ResultCallback mActivityResultCallback;
 
+    private PasswordManager mPasswordManager;
+
     private GrpcConnection mGrpcConnection;
+
+    /**
+     * Get PasswordManager associated with this activity.
+     * @return password manager
+     */
+    public PasswordManager getPasswordManager() {
+        // TODO(dotdoom): remove this
+        return mPasswordManager;
+    }
 
     /**
      * Activity's click handler.
@@ -129,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mActivityResultCallback = new ResultCallback(this);
+        mPasswordManager = new PasswordManager(mActivityResultCallback);
 
         // Add menu fragment
         final FragmentManager fragmentManager = getFragmentManager();
@@ -148,10 +161,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
-        new GrpcTask().execute(task);
+        mPasswordManager.getPassword(new PasswordManager.PasswordAvailableListener() {
+            @Override
+            public void handle(final String password) {
+                new GrpcTask(password).execute(task);
+            }
+        });
     }
 
     private class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {
+        private final String mPassword;
+
+        GrpcTask(final String password) {
+            super();
+            mPassword = password;
+        }
 
         @Override
         protected final void onPreExecute() {
@@ -166,13 +190,13 @@ public class MainActivity extends AppCompatActivity {
                         new SharedPreferencesHandler(MainActivity.this);
                 final String host = sharedPreferences.getHost();
                 final int port = sharedPreferences.getPort();
-                final String password = sharedPreferences.getPassword();
                 // TODO(ksheremet): implement onSharedPreferencesChanged
+                // TODO(dotdoom): forgetPassword() when access is denied by the server
                 if (mGrpcConnection == null ||
                         !host.equals(mGrpcConnection.getHost()) ||
-                        !password.equals(mGrpcConnection.getPassword()) ||
+                        !mPassword.equals(mGrpcConnection.getPassword()) ||
                         port != mGrpcConnection.getPort()) {
-                    mGrpcConnection = new GrpcConnection(host, port, password);
+                    mGrpcConnection = new GrpcConnection(host, port, mPassword);
                 }
             } catch (IllegalArgumentException e) {
                 return e.getMessage();
