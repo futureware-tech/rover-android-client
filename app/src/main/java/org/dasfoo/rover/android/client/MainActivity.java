@@ -2,21 +2,15 @@ package org.dasfoo.rover.android.client;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.security.ProviderInstaller;
 
 import org.dasfoo.rover.android.client.grpc.task.AbstractGrpcTaskExecutor;
 import org.dasfoo.rover.android.client.grpc.task.EncodersReadingTask;
@@ -37,12 +31,7 @@ import butterknife.OnClick;
 
 /** Main Activity of the application.
  */
-public class MainActivity extends AppCompatActivity
-        implements ProviderInstaller.ProviderInstallListener {
-    private static final String PROVIDER_NOT_INSTALLED =
-            "The security provider installation failed, " +
-                    "encrypted communication is not available: %s";
-
+public class MainActivity extends AppCompatActivity {
     /**
      * Class information for logging.
      */
@@ -90,7 +79,7 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.grpc_response_text)
     protected TextView mResultText;
 
-    private final ResultCallback mActivityResultCallback = new ResultCallback();
+    private ResultCallback mActivityResultCallback;
 
     private GrpcConnection mGrpcConnection;
 
@@ -139,9 +128,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        // Android relies on a security Provider to provide secure network communications.
-        // It verifies that the security provider is up-to-date.
-        ProviderInstaller.installIfNeededAsync(this, this);
+        mActivityResultCallback = new ResultCallback(this);
 
         // Add menu fragment
         final FragmentManager fragmentManager = getFragmentManager();
@@ -149,35 +136,6 @@ public class MainActivity extends AppCompatActivity
         final MenuFragment menuFragment = new MenuFragment();
         fragmentTransaction.add(menuFragment, "menu");
         fragmentTransaction.commit();
-    }
-
-    @Override
-    protected final void onSaveInstanceState(final Bundle state) {
-        super.onSaveInstanceState(state);
-    }
-
-    /**
-     * This method is called after {@link #onStart} when the activity is
-     * being re-initialized from a previously saved state, given here in
-     * savedInstanceState. Most implementations will simply use {@link #onCreate}
-     * to restore their state, but it is sometimes convenient to do it here
-     * after all of the initialization has been done or to allow subclasses to
-     * decide whether to use your default implementation.  The default
-     * implementation of this method performs a restore of any view state that
-     * had previously been frozen by {@link #onSaveInstanceState}.
-     * <p/>
-     * <p>This method is called between {@link #onStart} and
-     * {@link #onPostCreate}.
-     *
-     * @param savedInstanceState the data most recently supplied in {@link #onSaveInstanceState}.
-     * @see #onCreate
-     * @see #onPostCreate
-     * @see #onResume
-     * @see #onSaveInstanceState
-     */
-    @Override
-    protected final void onRestoreInstanceState(final Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -191,64 +149,6 @@ public class MainActivity extends AppCompatActivity
 
     private void executeGrpcTask(final AbstractGrpcTaskExecutor task) {
         new GrpcTask().execute(task);
-    }
-
-    /**
-     * Show a message to the user that secure communication is available.
-     */
-    @Override
-    public final void onProviderInstalled() {
-        Toast.makeText(this, "The security provider installed.", Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Try to recover from the error, or show an error message.
-     *
-     * @param errorCode error code
-     * @param recoveryIntent intent for recovery action
-     */
-    @Override
-    public final void onProviderInstallFailed(final int errorCode, final Intent recoveryIntent) {
-        final GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-        if (googleAPI.isUserResolvableError(errorCode)) {
-            mActivityResultCallback.startActivityWithResultHandler(
-                new ResultCallback.ActivityCallbacks() {
-                    @Override
-                    public void start(final int requestCode) {
-                        googleAPI.getErrorDialog(MainActivity.this, errorCode, requestCode).show();
-                    }
-
-                    @Override
-                    public void handle(final int resultCode, final Intent data) {
-                        // TODO(dotdoom): what should we do now?
-                    }
-                });
-        } else {
-            onProviderInstallerNotAvailable(errorCode);
-        }
-    }
-
-    /**
-     * Executes when provider installation was failed. And it is not possible to install it.
-     * Shows the dialog to a user and returns to the main screen.
-     *
-     * @param errorCode code of exception
-     */
-    private void onProviderInstallerNotAvailable(final int errorCode) {
-        new AlertDialog.Builder(this)
-                .setMessage(String.format(PROVIDER_NOT_INSTALLED, errorCode))
-                .setCancelable(false)
-                .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.addCategory(Intent.CATEGORY_HOME);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                })
-                .create()
-                .show();
     }
 
     private class GrpcTask extends AsyncTask<AbstractGrpcTaskExecutor, Void, String> {

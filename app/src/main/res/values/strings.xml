@@ -13,5 +13,8 @@
     <string name="port_settings_title">Port</string>
     <string name="password_settings_title">Password</string>
     <string name="empty_settings_for_video">Check video settings. Maybe they are empty.</string>
-    <string name="grant_button">GRANT</string>
+    <string name="grant_button">Grant</string>
+    <string name="security_provider_failed_message">Security provider has failed to install: %d</string>
+    <string name="retry_button">Retry</string>
+    <string name="get_accounts_permission_rationale">Access is required to select an account.</string>
 </resources>

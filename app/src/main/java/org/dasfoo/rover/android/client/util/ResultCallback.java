@@ -1,6 +1,16 @@
 package org.dasfoo.rover.android.client.util;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+
+import org.dasfoo.rover.android.client.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,28 +28,87 @@ public class ResultCallback {
 
     private static final int REQUEST_PERMISSION_REQUEST_BASE = 13000;
 
-    private final List<ActivityCallbacks> mActivityCallbacks = new ArrayList<>();
+    private final List<AbstractActivityResultListener> mActivityListeners = new ArrayList<>();
 
-    private final List<RequestPermissionCallbacks> mRequestPermissionCallbacks = new ArrayList<>();
+    private final List<RequestPermissionListener> mRequestPermissionListeners = new ArrayList<>();
+
+    private final Activity mActivity;
 
     /**
-     * Allocates a new requestCode, puts handle() as a listener for it, and calls callbacks.start().
+     * Create a new instance of ResultCallback (normally one per activity).
+     * @param activity activity this callback belongs to
+     */
+    public ResultCallback(final Activity activity) {
+        mActivity = activity;
+    }
+
+    /**
+     * Allocates a new requestCode, puts handle() as a listener for it, and starts a new activity.
+     * @param intent parameter for startActivityForResult, or AbstractActivityResultListener.start()
      * @param cb executed in the UI thread
      */
-    public void startActivityWithResultHandler(final ActivityCallbacks cb) {
-        int requestCode = mActivityCallbacks.size() + ACTIVITY_REQUEST_BASE;
-        mActivityCallbacks.add(cb);
-        cb.start(requestCode);
+    public void startActivityWithResultHandler(@Nullable final Intent intent,
+                                               final AbstractActivityResultListener cb) {
+        int requestCode = mActivityListeners.size() + ACTIVITY_REQUEST_BASE;
+        mActivityListeners.add(cb);
+        if (intent == null) {
+            cb.start(requestCode);
+        } else {
+            mActivity.startActivityForResult(intent, requestCode);
+        }
+    }
+
+    /**
+     * Allocates a new requestCode, puts handle() as a listener for it, and starts a new intent.
+     * @param cls activity class for the intent
+     * @param cb executed in the UI thread
+     */
+    public void startActivityWithResultHandler(final Class<?> cls,
+                                               final AbstractActivityResultListener cb) {
+        startActivityWithResultHandler(new Intent(mActivity, cls), cb);
     }
 
     /**
      * Allocates a new requestCode, puts handle() as a listener for it, and calls callbacks.start().
+     * @param permission permission name to request (e.g. a constant from Manifest.permission)
+     * @param rationale rationale to show to the user if necessary
      * @param cb executed in the UI thread
      */
-    public void startPermissionRequestWithResultHandler(final RequestPermissionCallbacks cb) {
-        int requestCode = mRequestPermissionCallbacks.size() + REQUEST_PERMISSION_REQUEST_BASE;
-        mRequestPermissionCallbacks.add(cb);
-        cb.start(requestCode);
+    public void startPermissionRequestWithResultHandler(
+            final String permission,
+            @Nullable final String rationale,
+            final RequestPermissionListener cb) {
+        if (ContextCompat.checkSelfPermission(mActivity, permission) ==
+                PackageManager.PERMISSION_GRANTED) {
+            cb.handle(PackageManager.PERMISSION_GRANTED);
+            return;
+        }
+
+        if (rationale != null && ActivityCompat.shouldShowRequestPermissionRationale(mActivity,
+                permission)) {
+            new AlertDialog.Builder(mActivity)
+                    .setMessage(rationale)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(final DialogInterface dialog) {
+                            cb.handle(PackageManager.PERMISSION_DENIED);
+                        }
+                    })
+                    .setPositiveButton(R.string.grant_button,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(final DialogInterface dialog, final int which) {
+                                    startPermissionRequestWithResultHandler(permission, null, cb);
+                                }
+                            })
+                    .create()
+                    .show();
+            return;
+        }
+
+        int requestCode = mRequestPermissionListeners.size() + REQUEST_PERMISSION_REQUEST_BASE;
+        mRequestPermissionListeners.add(cb);
+        ActivityCompat.requestPermissions(mActivity, new String[]{permission}, requestCode);
     }
 
     /**
@@ -54,8 +123,13 @@ public class ResultCallback {
                                               final int[] grantResults) {
         if (requestCode >= REQUEST_PERMISSION_REQUEST_BASE) {
             int handlerId = requestCode - REQUEST_PERMISSION_REQUEST_BASE;
-            if (handlerId < mRequestPermissionCallbacks.size()) {
-                mRequestPermissionCallbacks.get(handlerId).handle(permissions, grantResults);
+            if (handlerId < mRequestPermissionListeners.size()) {
+                RequestPermissionListener cb = mRequestPermissionListeners.get(handlerId);
+                if (grantResults.length > 0) {
+                    cb.handle(grantResults[0]);
+                } else {
+                    cb.handle(PackageManager.PERMISSION_DENIED);
+                }
                 return true;
             }
         }
@@ -73,8 +147,8 @@ public class ResultCallback {
                                     final Intent data) {
         if (requestCode >= ACTIVITY_REQUEST_BASE) {
             int handlerId = requestCode - ACTIVITY_REQUEST_BASE;
-            if (handlerId < mActivityCallbacks.size()) {
-                mActivityCallbacks.get(handlerId).handle(resultCode, data);
+            if (handlerId < mActivityListeners.size()) {
+                mActivityListeners.get(handlerId).handle(resultCode, data);
                 return true;
             }
         }
@@ -84,36 +158,31 @@ public class ResultCallback {
     /**
      * Callbacks to start an activity and handle the result.
      */
-    public interface ActivityCallbacks {
+    public abstract static class AbstractActivityResultListener {
         /**
-         * Starts the activity (normally by calling startActivityForResult).
-         * @param requestCode a unique value to use as an activity request code
+         * If intent was not provided, this callback will be used to start a new activity.
+         * @param requestCode generated request code that should be used as a start activity param
          */
-        void start(int requestCode);
+        public void start(final int requestCode) {
+            throw new UnsupportedOperationException();
+        }
 
         /**
          * Handles the return from the activity previously launched in start().
          * @param resultCode activity result code (see onActivityResult)
          * @param data activity response data (see onActivityResult)
          */
-        void handle(int resultCode, Intent data);
+        public abstract void handle(int resultCode, Intent data);
     }
 
     /**
      * Callbacks to start a request for permissions and handle the result.
      */
-    public interface RequestPermissionCallbacks {
+    public interface RequestPermissionListener {
         /**
-         * Initiates a request for permissions (usually via ActivityCompat.requestPermissions).
-         * @param requestCode a unique value to use as a permission request code
+         * Handles the result of permission request.
+         * @param grantResult granted/denied outcome of the request
          */
-        void start(int requestCode);
-
-        /**
-         * Handles the result of permissions request.
-         * @param permissions permissions requested (see onRequestPermissionsResult)
-         * @param grantResults respective granted/denied results (see onRequestPermissionsResult)
-         */
-        void handle(String[] permissions, int[] grantResults);
+        void handle(int grantResult);
     }
 }
