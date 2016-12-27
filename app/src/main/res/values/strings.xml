@@ -4,14 +4,12 @@
     <string name="get_board_info_button">Get Board Info</string>
     <string name="response_text_view">Response:</string>
     <string name="read_encoders_button">Read Encoders</string>
-    <string name="ok_button">OK</string>
     <string name="start_video_button">Start</string>
     <string name="stop_video_button">Stop</string>
     <string name="settings_title_menu">Settings</string>
     <string name="server_settings_title">Server Settings</string>
     <string name="host_settings_title">Host</string>
     <string name="port_settings_title">Port</string>
-    <string name="password_settings_title">Password</string>
     <string name="empty_settings_for_video">Check video settings. Maybe they are empty.</string>
     <string name="grant_button">Grant</string>
     <string name="security_provider_failed_message">Security provider has failed to install: %d</string>
