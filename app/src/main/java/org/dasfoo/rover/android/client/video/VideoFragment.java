@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import org.dasfoo.android.h264videostream.MediaStreamRenderer;
+import org.dasfoo.rover.android.client.MainActivity;
 import org.dasfoo.rover.android.client.R;
+import org.dasfoo.rover.android.client.auth.PasswordManager;
 import org.dasfoo.rover.android.client.menu.SharedPreferencesHandler;
 import org.dasfoo.rover.android.client.util.LogUtil;
 
@@ -88,8 +90,14 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
                 try {
                     final SharedPreferencesHandler handler =
                             new SharedPreferencesHandler(getActivity());
-                    startStreamVideo(handler.getHost(),
-                            handler.getPort(), handler.getPassword());
+                    ((MainActivity) getActivity()).getPasswordManager().getPassword(
+                            new PasswordManager.PasswordAvailableListener() {
+                                @Override
+                                public void handle(final String password) {
+                                    startStreamVideo(handler.getHost(),
+                                            handler.getPort(), password);
+                                }
+                            });
                 } catch (IllegalArgumentException e) {
                     Log.e(TAG, "Empty video settings", e);
                     Toast.makeText(getActivity(),

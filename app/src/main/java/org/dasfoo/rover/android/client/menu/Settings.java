@@ -15,10 +15,6 @@ public enum Settings {
      */
     PORT("pref_port"),
     /**
-     * Password is for server to get video.
-     */
-    PASSWORD("pref_password"),
-    /**
      * User-selected account name.
      */
     ACCOUNT_NAME("pref_account_name");

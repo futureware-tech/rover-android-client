@@ -13,12 +13,6 @@
             android:numeric="integer"
             android:title="@string/port_settings_title" />
 
-        <EditTextPreference
-            android:inputType="textPassword"
-            android:key="pref_password"
-            android:password="true"
-            android:title="@string/password_settings_title" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -80,12 +80,10 @@ public class SettingsFragment extends PreferenceFragment
      */
     private void updatePreference() {
         for (final Settings settings : Settings.values()) {
-            if (settings != Settings.PASSWORD) {
-                final Preference preference = findPreference(settings.toString());
-                if (preference instanceof EditTextPreference) {
-                    final EditTextPreference editTextPreference = (EditTextPreference) preference;
-                    editTextPreference.setSummary(editTextPreference.getText());
-                }
+            final Preference preference = findPreference(settings.toString());
+            if (preference instanceof EditTextPreference) {
+                final EditTextPreference editTextPreference = (EditTextPreference) preference;
+                editTextPreference.setSummary(editTextPreference.getText());
             }
         }
     }

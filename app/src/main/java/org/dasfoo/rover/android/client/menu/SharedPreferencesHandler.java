@@ -47,16 +47,6 @@ public class SharedPreferencesHandler {
     }
 
     /**
-     * Gets password for video.
-     *
-     * @return password for video
-     * @throws IllegalArgumentException if password is empty
-     */
-    public final String getPassword() throws IllegalArgumentException {
-        return getString(Settings.PASSWORD);
-    }
-
-    /**
      * Gets account name.
      *
      * @return account name
