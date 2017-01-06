@@ -101,7 +101,6 @@ public class ResultCallback {
                                     startPermissionRequestWithResultHandler(permission, null, cb);
                                 }
                             })
-                    .create()
                     .show();
             return;
         }

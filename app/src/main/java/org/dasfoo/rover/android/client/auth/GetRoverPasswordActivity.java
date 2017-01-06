@@ -139,7 +139,6 @@ public class GetRoverPasswordActivity
             buildCancelableAlertDialog()
                     // TODO(dotdoom): get descriptive error message from the code
                     .setMessage(getString(R.string.security_provider_failed_message, errorCode))
-                    .create()
                     .show();
         }
     }
@@ -199,7 +198,6 @@ public class GetRoverPasswordActivity
                                     downloadPassword();
                                 }
                             })
-                    .create()
                     .show();
             return;
         }
@@ -275,7 +273,6 @@ public class GetRoverPasswordActivity
                                     downloadPassword();
                                 }
                             })
-                    .create()
                     .show();
         }
     }
