@@ -11,8 +11,8 @@ import android.support.v7.app.AlertDialog;
 
 import org.dasfoo.rover.android.client.R;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class for automatically managing requestCode values and activity/permission result callbacks.
@@ -21,16 +21,11 @@ import java.util.List;
  */
 public class ResultCallback {
 
-    // TODO(dotdoom): make it thread-safe
-    // TODO(dotdoom): delete callbacks once used (by e.g. assigning null)
+    private final CallbackStore<AbstractActivityResultListener> mActivityListeners =
+            new CallbackStore<>(9000);
 
-    private static final int ACTIVITY_REQUEST_BASE = 9000;
-
-    private static final int REQUEST_PERMISSION_REQUEST_BASE = 13000;
-
-    private final List<AbstractActivityResultListener> mActivityListeners = new ArrayList<>();
-
-    private final List<RequestPermissionListener> mRequestPermissionListeners = new ArrayList<>();
+    private final CallbackStore<RequestPermissionListener> mRequestPermissionListeners =
+            new CallbackStore<>(13000);
 
     private final Activity mActivity;
 
@@ -51,8 +46,7 @@ public class ResultCallback {
      */
     public void startActivityWithResultHandler(@Nullable final Intent intent,
                                                final AbstractActivityResultListener cb) {
-        int requestCode = mActivityListeners.size() + ACTIVITY_REQUEST_BASE;
-        mActivityListeners.add(cb);
+        int requestCode = mActivityListeners.put(cb);
         if (intent == null) {
             cb.start(requestCode);
         } else {
@@ -109,8 +103,7 @@ public class ResultCallback {
             return;
         }
 
-        int requestCode = mRequestPermissionListeners.size() + REQUEST_PERMISSION_REQUEST_BASE;
-        mRequestPermissionListeners.add(cb);
+        int requestCode = mRequestPermissionListeners.put(cb);
         ActivityCompat.requestPermissions(mActivity, new String[]{permission}, requestCode);
     }
 
@@ -125,17 +118,14 @@ public class ResultCallback {
     public boolean onRequestPermissionsResult(final int requestCode,
                                               final String[] permissions,
                                               final int[] grantResults) {
-        if (requestCode >= REQUEST_PERMISSION_REQUEST_BASE) {
-            int handlerId = requestCode - REQUEST_PERMISSION_REQUEST_BASE;
-            if (handlerId < mRequestPermissionListeners.size()) {
-                RequestPermissionListener cb = mRequestPermissionListeners.get(handlerId);
-                if (grantResults.length > 0) {
-                    cb.handle(grantResults[0]);
-                } else {
-                    cb.handle(PackageManager.PERMISSION_DENIED);
-                }
-                return true;
+        RequestPermissionListener cb = mRequestPermissionListeners.remove(requestCode);
+        if (cb != null) {
+            if (grantResults.length > 0) {
+                cb.handle(grantResults[0]);
+            } else {
+                cb.handle(PackageManager.PERMISSION_DENIED);
             }
+            return true;
         }
         return false;
     }
@@ -150,12 +140,10 @@ public class ResultCallback {
      */
     public boolean onActivityResult(final int requestCode, final int resultCode,
                                     final Intent data) {
-        if (requestCode >= ACTIVITY_REQUEST_BASE) {
-            int handlerId = requestCode - ACTIVITY_REQUEST_BASE;
-            if (handlerId < mActivityListeners.size()) {
-                mActivityListeners.get(handlerId).handle(resultCode, data);
-                return true;
-            }
+        AbstractActivityResultListener cb = mActivityListeners.remove(requestCode);
+        if (cb != null) {
+            cb.handle(resultCode, data);
+            return true;
         }
         return false;
     }
@@ -192,5 +180,42 @@ public class ResultCallback {
          * @param data       activity response data (see onActivityResult)
          */
         public abstract void handle(int resultCode, Intent data);
+    }
+
+    private class CallbackStore<T> {
+        private final Map<Integer, T> mCallbacks = new ConcurrentHashMap<>();
+
+        private int mBase;
+
+        /**
+         * Create a new instance with keys starting at specific value.
+         *
+         * @param base minimum value for the request codes (only values above will be used)
+         */
+        CallbackStore(final int base) {
+            mBase = base;
+        }
+
+        /**
+         * Add a new callback.
+         *
+         * @param callback callback to add
+         * @return requestCode which can then be used in {@link this.remove}
+         */
+        public synchronized int put(final T callback) {
+            mBase++;
+            mCallbacks.put(mBase, callback);
+            return mBase;
+        }
+
+        /**
+         * Remove and return a callback.
+         *
+         * @param id requestCode returned by {@link this.put}
+         * @return callback stored by {@link this.put}
+         */
+        public T remove(final int id) {
+            return mCallbacks.remove(id);
+        }
     }
 }
