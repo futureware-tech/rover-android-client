@@ -1,8 +1,9 @@
 package org.dasfoo.rover.android.client.grpc.task;
 
-import dasfoo.grpc.roverserver.nano.ReadEncodersRequest;
-import dasfoo.grpc.roverserver.nano.ReadEncodersResponse;
-import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
+import org.dasfoo.rover.server.nano.ReadEncodersRequest;
+import org.dasfoo.rover.server.nano.ReadEncodersResponse;
+import org.dasfoo.rover.server.nano.RoverServiceGrpc;
+
 import io.grpc.StatusRuntimeException;
 
 /**

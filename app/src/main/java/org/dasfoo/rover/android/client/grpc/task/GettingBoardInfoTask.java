@@ -1,12 +1,13 @@
 package org.dasfoo.rover.android.client.grpc.task;
 
-import dasfoo.grpc.roverserver.nano.AmbientLightRequest;
-import dasfoo.grpc.roverserver.nano.AmbientLightResponse;
-import dasfoo.grpc.roverserver.nano.BatteryPercentageRequest;
-import dasfoo.grpc.roverserver.nano.BatteryPercentageResponse;
-import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
-import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityRequest;
-import dasfoo.grpc.roverserver.nano.TemperatureAndHumidityResponse;
+import org.dasfoo.rover.server.nano.AmbientLightRequest;
+import org.dasfoo.rover.server.nano.AmbientLightResponse;
+import org.dasfoo.rover.server.nano.BatteryPercentageRequest;
+import org.dasfoo.rover.server.nano.BatteryPercentageResponse;
+import org.dasfoo.rover.server.nano.RoverServiceGrpc;
+import org.dasfoo.rover.server.nano.TemperatureAndHumidityRequest;
+import org.dasfoo.rover.server.nano.TemperatureAndHumidityResponse;
+
 import io.grpc.StatusRuntimeException;
 
 /**
