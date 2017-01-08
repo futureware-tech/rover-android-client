@@ -81,9 +81,6 @@ public class GetRoverPasswordActivity
                 AndroidHttp.newCompatibleTransport(),
                 new JacksonFactory(),
                 mAccountCredential
-        ).setApplicationName(
-                // TODO(dotdoom): use real values or try to get rid of it
-                "SomeApplication/1.0"
         ).build();
 
         // Android relies on a security Provider to provide secure network communications.
