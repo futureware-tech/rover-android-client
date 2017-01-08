@@ -113,7 +113,7 @@ public class GrpcConnection {
             mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
             return Boolean.TRUE;
         } catch (InterruptedException e) {
-            Log.v(TAG, e.toString());
+            Log.w(TAG, e);
             return Boolean.FALSE;
         }
     }

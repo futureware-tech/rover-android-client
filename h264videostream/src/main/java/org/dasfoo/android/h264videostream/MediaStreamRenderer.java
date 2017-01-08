@@ -148,7 +148,6 @@ public class MediaStreamRenderer implements Runnable {
         } catch (MalformedInputException e) {
             Log.e(TAG, "Malformed url:", e);
         } catch (IOException e) {
-            // TODO(ksheremet): remove .toString() from all throwables in LogUtil()
             Log.e(TAG, "Cannot parse stream:", e);
         } catch (InterruptedException e) {
             Log.v(TAG, "User stopped stream", e);
