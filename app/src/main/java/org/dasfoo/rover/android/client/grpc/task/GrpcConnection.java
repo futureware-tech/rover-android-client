@@ -2,16 +2,17 @@ package org.dasfoo.rover.android.client.grpc.task;
 
 import android.util.Log;
 
+import org.dasfoo.rover.android.client.util.LogUtil;
+
 import java.util.concurrent.TimeUnit;
 
-// TODO(dotdoom): why "dasfoo" and not "org.dasfoo" ?
 import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 
-import org.dasfoo.rover.android.client.util.LogUtil;
+// TODO(dotdoom): why "dasfoo" and not "org.dasfoo" ?
 
 
 /**
@@ -45,8 +46,8 @@ public class GrpcConnection {
     /**
      * Constructor.
      *
-     * @param host is for connection to the server
-     * @param port is for connection to the server
+     * @param host     is for connection to the server
+     * @param port     is for connection to the server
      * @param password is for validating user
      */
     public GrpcConnection(final String host, final int port, final String password) {

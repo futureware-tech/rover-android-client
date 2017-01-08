@@ -5,13 +5,13 @@ import android.preference.PreferenceActivity;
 
 /**
  * Created by Katarina Sheremet on 6/15/16 12:44 PM.
- *
+ * <p>
  * Class is created for opening Settings from menu
  */
 public class SettingsActivity extends PreferenceActivity {
 
     @Override
-    protected  final void onCreate(final Bundle savedInstanceState) {
+    protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment()).commit();

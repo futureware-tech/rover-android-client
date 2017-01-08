@@ -23,10 +23,10 @@ public class EncodersReadingTask extends AbstractGrpcTaskExecutor {
             ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);
             return String.format(
                     "Encoders\n" +
-                    "Front left: %d\n" +
-                    "Back left: %d\n" +
-                    "Front right: %d\n" +
-                    "Back right: %d\n",
+                            "Front left: %d\n" +
+                            "Back left: %d\n" +
+                            "Front right: %d\n" +
+                            "Back right: %d\n",
                     readEncodersResponse.leftFront,
                     readEncodersResponse.leftBack,
                     readEncodersResponse.rightFront,

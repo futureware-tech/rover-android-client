@@ -2,7 +2,7 @@ package org.dasfoo.rover.android.client.menu;
 
 /**
  * Created by Katarina Sheremet on 6/17/16 11:21 AM.
- *
+ * <p>
  * This class is used for saving settings keys.
  */
 public enum Settings {

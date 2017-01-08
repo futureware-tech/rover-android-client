@@ -3,6 +3,6 @@
 
     <include
         domain="sharedpref"
-        path="preferences.xml" />
+        path="preferences.xml"/>
 
 </full-backup-content>

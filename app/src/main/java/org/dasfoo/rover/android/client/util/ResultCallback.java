@@ -36,6 +36,7 @@ public class ResultCallback {
 
     /**
      * Create a new instance of ResultCallback (normally one per activity).
+     *
      * @param activity activity this callback belongs to
      */
     public ResultCallback(final Activity activity) {
@@ -44,8 +45,9 @@ public class ResultCallback {
 
     /**
      * Allocates a new requestCode, puts handle() as a listener for it, and starts a new activity.
+     *
      * @param intent parameter for startActivityForResult, or AbstractActivityResultListener.start()
-     * @param cb executed in the UI thread
+     * @param cb     executed in the UI thread
      */
     public void startActivityWithResultHandler(@Nullable final Intent intent,
                                                final AbstractActivityResultListener cb) {
@@ -60,8 +62,9 @@ public class ResultCallback {
 
     /**
      * Allocates a new requestCode, puts handle() as a listener for it, and starts a new intent.
+     *
      * @param cls activity class for the intent
-     * @param cb executed in the UI thread
+     * @param cb  executed in the UI thread
      */
     public void startActivityWithResultHandler(final Class<?> cls,
                                                final AbstractActivityResultListener cb) {
@@ -70,9 +73,10 @@ public class ResultCallback {
 
     /**
      * Allocates a new requestCode, puts handle() as a listener for it, and calls callbacks.start().
+     *
      * @param permission permission name to request (e.g. a constant from Manifest.permission)
-     * @param rationale rationale to show to the user if necessary
-     * @param cb executed in the UI thread
+     * @param rationale  rationale to show to the user if necessary
+     * @param cb         executed in the UI thread
      */
     public void startPermissionRequestWithResultHandler(
             final String permission,
@@ -112,8 +116,9 @@ public class ResultCallback {
 
     /**
      * Chain handler to call after super() in Activity.onRequestPermissionsResult().
-     * @param requestCode pass verbatim from Activity.onRequestPermissionsResult()
-     * @param permissions pass verbatim from Activity.onRequestPermissionsResult()
+     *
+     * @param requestCode  pass verbatim from Activity.onRequestPermissionsResult()
+     * @param permissions  pass verbatim from Activity.onRequestPermissionsResult()
      * @param grantResults pass verbatim from Activity.onRequestPermissionsResult()
      * @return true if requestCode was found in the registered callbacks
      */
@@ -137,9 +142,10 @@ public class ResultCallback {
 
     /**
      * Chain handler to call after super() in Activity.onActivityResult().
+     *
      * @param requestCode pass verbatim from Activity.onActivityResult()
-     * @param resultCode pass verbatim from Activity.onActivityResult()
-     * @param data pass verbatim from Activity.onActivityResult()
+     * @param resultCode  pass verbatim from Activity.onActivityResult()
+     * @param data        pass verbatim from Activity.onActivityResult()
      * @return true if requestCode was found in the registered callbacks
      */
     public boolean onActivityResult(final int requestCode, final int resultCode,
@@ -155,11 +161,24 @@ public class ResultCallback {
     }
 
     /**
+     * Callbacks to start a request for permissions and handle the result.
+     */
+    public interface RequestPermissionListener {
+        /**
+         * Handles the result of permission request.
+         *
+         * @param grantResult granted/denied outcome of the request
+         */
+        void handle(int grantResult);
+    }
+
+    /**
      * Callbacks to start an activity and handle the result.
      */
     public abstract static class AbstractActivityResultListener {
         /**
          * If intent was not provided, this callback will be used to start a new activity.
+         *
          * @param requestCode generated request code that should be used as a start activity param
          */
         public void start(final int requestCode) {
@@ -168,20 +187,10 @@ public class ResultCallback {
 
         /**
          * Handles the return from the activity previously launched in start().
+         *
          * @param resultCode activity result code (see onActivityResult)
-         * @param data activity response data (see onActivityResult)
+         * @param data       activity response data (see onActivityResult)
          */
         public abstract void handle(int resultCode, Intent data);
-    }
-
-    /**
-     * Callbacks to start a request for permissions and handle the result.
-     */
-    public interface RequestPermissionListener {
-        /**
-         * Handles the result of permission request.
-         * @param grantResult granted/denied outcome of the request
-         */
-        void handle(int grantResult);
     }
 }

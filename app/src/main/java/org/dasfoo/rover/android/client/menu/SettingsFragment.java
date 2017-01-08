@@ -19,6 +19,7 @@ public class SettingsFragment extends PreferenceFragment
 
     /**
      * Fetch preferences.
+     *
      * @param savedInstanceState state
      */
     @Override

@@ -6,12 +6,12 @@
 
         <EditTextPreference
             android:key="pref_host"
-            android:title="@string/host_settings_title" />
+            android:title="@string/host_settings_title"/>
 
         <EditTextPreference
             android:key="pref_port"
             android:numeric="integer"
-            android:title="@string/port_settings_title" />
+            android:title="@string/port_settings_title"/>
 
     </PreferenceCategory>
 

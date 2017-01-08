@@ -39,9 +39,9 @@ public class GettingBoardInfoTask extends AbstractGrpcTaskExecutor {
             // Create answer
             return String.format(
                     "Battery: %d\n" +
-                    "Light: %d\n" +
-                    "Temperature: %d\n" +
-                    "Humidity: %d\n",
+                            "Light: %d\n" +
+                            "Temperature: %d\n" +
+                            "Humidity: %d\n",
                     batteryPercentageResponse.battery,
                     ambientLightResponse.light,
                     temperatureAndHumidityResponse.temperature,
