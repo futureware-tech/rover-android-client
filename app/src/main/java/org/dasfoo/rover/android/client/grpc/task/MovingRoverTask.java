@@ -1,7 +1,8 @@
 package org.dasfoo.rover.android.client.grpc.task;
 
-import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
-import dasfoo.grpc.roverserver.nano.RoverWheelRequest;
+import org.dasfoo.rover.server.nano.RoverServiceGrpc;
+import org.dasfoo.rover.server.nano.RoverWheelRequest;
+
 import io.grpc.StatusRuntimeException;
 
 /**

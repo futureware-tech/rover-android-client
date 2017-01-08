@@ -3,17 +3,14 @@ package org.dasfoo.rover.android.client.grpc.task;
 import android.util.Log;
 
 import org.dasfoo.rover.android.client.util.LogUtil;
+import org.dasfoo.rover.server.nano.RoverServiceGrpc;
 
 import java.util.concurrent.TimeUnit;
 
-import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
-
-// TODO(dotdoom): why "dasfoo" and not "org.dasfoo" ?
-
 
 /**
  * Created by Katarina Sheremet on 5/24/16 5:09 PM.
@@ -113,7 +110,7 @@ public class GrpcConnection {
             mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
             return Boolean.TRUE;
         } catch (InterruptedException e) {
-            Log.v(TAG, e.toString());
+            Log.w(TAG, e);
             return Boolean.FALSE;
         }
     }

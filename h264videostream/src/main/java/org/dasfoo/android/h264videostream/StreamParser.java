@@ -63,7 +63,9 @@ public class StreamParser {
      */
     private synchronized int skipToAfterSignature(final int maxBytesToRead)
             throws IOException, InterruptedException {
-        assert maxBytesToRead >= StreamParser.unitSignature.length;
+        if (maxBytesToRead < StreamParser.unitSignature.length) {
+            throw new IOException("Too small chunk to read (won't keep the signature)");
+        }
 
         int bytesRead = 0;
         while (bytesRead < this.readSignature.length) {
