@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
      */
     @BindViews({R.id.move_forward_button, R.id.info_button, R.id.read_encoders_button})
     protected List<Button> mButtons;
-    // TODO(dotdoom): try using the same for OnClick below
 
     /**
      * Moves rover forward.
