@@ -1,7 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,25 +14,25 @@
             android:name="org.dasfoo.rover.android.client.video.VideoFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:layout="@layout/fragment_video" />
+            tools:layout="@layout/fragment_video"/>
 
         <Button
             android:id="@+id/move_forward_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/move_forward_button" />
+            android:text="@string/move_forward_button"/>
 
         <Button
             android:id="@+id/info_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/get_board_info_button" />
+            android:text="@string/get_board_info_button"/>
 
         <Button
             android:id="@+id/read_encoders_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/read_encoders_button" />
+            android:text="@string/read_encoders_button"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -40,14 +40,14 @@
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:text="@string/response_text_view"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/grpc_response_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textIsSelectable="true"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
     </LinearLayout>
 

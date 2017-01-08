@@ -8,10 +8,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -48,7 +48,9 @@ public class GetRoverPasswordActivity
 
     private ResultCallback mActivityResultCallback;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onRequestPermissionsResult(final int requestCode,
                                            @NonNull final String[] permissions,
@@ -113,7 +115,8 @@ public class GetRoverPasswordActivity
 
     /**
      * Callback for the failure to install a security provider.
-     * @param errorCode error code
+     *
+     * @param errorCode      error code
      * @param recoveryIntent an intent that can be used to recover from the failure
      */
     @Override

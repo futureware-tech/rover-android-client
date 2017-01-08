@@ -15,6 +15,7 @@ public class PasswordManager {
 
     /**
      * Constructor for the PasswordManager. Does not try to fetch the password.
+     *
      * @param resultCallback used to launch new activities
      */
     public PasswordManager(final ResultCallback resultCallback) {
@@ -23,6 +24,7 @@ public class PasswordManager {
 
     /**
      * Get password and start the listener.
+     *
      * @param listener callback when the password is available. Executed in the main thread
      */
     public void getPassword(final PasswordAvailableListener listener) {
@@ -54,6 +56,7 @@ public class PasswordManager {
     public interface PasswordAvailableListener {
         /**
          * Called when a password is successfully fetched.
+         *
          * @param password a password that was fetched
          */
         void handle(String password);

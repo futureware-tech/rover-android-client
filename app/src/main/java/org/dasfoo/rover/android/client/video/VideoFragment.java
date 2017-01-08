@@ -67,7 +67,9 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      */
     private Thread mVideoThread;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                                    final Bundle savedInstanceState) {
@@ -82,7 +84,7 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
      *
      * @param v The button that was clicked.
      */
-    @OnClick({ R.id.start_video_button, R.id.stop_video_button })
+    @OnClick({R.id.start_video_button, R.id.stop_video_button})
     @Override
     public final void onClick(final View v) {
         switch (v.getId()) {

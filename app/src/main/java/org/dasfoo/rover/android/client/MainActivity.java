@@ -30,7 +30,8 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/** Main Activity of the application.
+/**
+ * Main Activity of the application.
  */
 public class MainActivity extends AppCompatActivity {
     /**
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Get PasswordManager associated with this activity.
+     *
      * @return password manager
      */
     public PasswordManager getPasswordManager() {
@@ -118,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onRequestPermissionsResult(final int requestCode,
                                            @NonNull final String[] permissions,

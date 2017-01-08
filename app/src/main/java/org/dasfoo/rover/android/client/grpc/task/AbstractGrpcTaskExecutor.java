@@ -8,6 +8,7 @@ import dasfoo.grpc.roverserver.nano.RoverServiceGrpc;
 public abstract class AbstractGrpcTaskExecutor {
     /**
      * Executes given gRPC.
+     *
      * @param stub gRPC client stub
      * @return response from gRPC method call
      */
