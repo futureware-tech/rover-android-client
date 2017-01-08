@@ -22,7 +22,7 @@ public enum Settings {
     /**
      * Constructor variable.
      */
-    private final String name;
+    private final String mName;
 
     /**
      * Constructor.
@@ -30,7 +30,7 @@ public enum Settings {
      * @param s string parameter for constructor
      */
     Settings(final String s) {
-        name = s;
+        mName = s;
     }
 
     /**
@@ -39,6 +39,6 @@ public enum Settings {
      * @return string representation of enum element
      */
     public String toString() {
-        return this.name;
+        return this.mName;
     }
 }

@@ -1,3 +1,6 @@
 [submodule "app/src/main/proto"]
 	path = app/src/main/proto
 	url = https://github.com/dasfoo/rover-proto.git
+[submodule "app/config"]
+	path = app/config
+	url = git@github.com:dasfoo/java-android.git

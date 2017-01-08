@@ -26,7 +26,7 @@ public class GrpcConnection {
     /**
      * Forms header.
      */
-    private static Metadata.Key<String> authKey =
+    private static Metadata.Key<String> sAuthKey =
             Metadata.Key.of("authentication", Metadata.ASCII_STRING_MARSHALLER);
 
     private final String mHost;
@@ -86,7 +86,7 @@ public class GrpcConnection {
     private void establishConnection() {
         // Create header for stub
         Metadata headers = new Metadata();
-        headers.put(authKey, mPassword);
+        headers.put(sAuthKey, mPassword);
         mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).build();
         mStub = RoverServiceGrpc.newBlockingStub(mChannel);
         // Attach header to stub
