@@ -44,13 +44,13 @@ project.afterEvaluate {
 }
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     // https://developer.android.com/studio/releases/build-tools.html
-    buildToolsVersion '24.0.3'
+    buildToolsVersion '25.0.1'
     defaultConfig {
         applicationId 'org.dasfoo.rover.android.client'
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName '1.0'
     }
@@ -126,7 +126,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     // According to lint, major version number should match compileSdkVersion.
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
 
     compile 'io.grpc:grpc-okhttp:1.0.3'
     compile 'io.grpc:grpc-protobuf-nano:1.0.3'
@@ -134,8 +134,8 @@ dependencies {
 
     compile 'javax.annotation:javax.annotation-api:1.2'
 
-    compile 'com.google.android.gms:play-services-safetynet:9.8.0'
-    compile 'com.google.android.gms:play-services-auth:9.8.0'
+    compile 'com.google.android.gms:play-services-safetynet:10.0.1'
+    compile 'com.google.android.gms:play-services-auth:10.0.1'
 
     compile 'com.google.api-client:google-api-client-android:1.22.0'
     compile 'com.google.apis:google-api-services-storage:v1-rev92-1.22.0'
