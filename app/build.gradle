@@ -47,6 +47,7 @@ android {
     compileSdkVersion 25
     // https://developer.android.com/studio/releases/build-tools.html
     buildToolsVersion '25.0.1'
+    testBuildType 'release'
     defaultConfig {
         applicationId 'org.dasfoo.rover.android.client'
         minSdkVersion 21
@@ -56,6 +57,7 @@ android {
     }
     buildTypes {
         debug {
+            signingConfig signingConfigs.debug
             applicationIdSuffix '.debug'
             // To apply Proguard (e.g. to test the configuration), simply copy over
             // minifyEnabled and proguardFiles from "release" build type and add:
@@ -68,15 +70,30 @@ android {
                     'proguard-rules.pro'
         }
     }
+    // Have to use flavors instead of buildTypes because testBuildType can only
+    // be set to a single buildType, which fortunately can have multiple flavors.
+    productFlavors {
+        normal {
+            //signingConfig signingConfigs.release
+        }
+        instrumented {
+            // A flavor for running instrumented tests.
+            signingConfig signingConfigs.debug
+            applicationIdSuffix '.instrumented'
+            versionNameSuffix '-instrumented'
+        }
+    }
+    variantFilter { variant ->
+        if (variant.buildType.name == 'debug') {
+            // For "debug" we don't need instrumented flavors, because we want to run instrumented
+            // tests with ProGuard.
+            variant.ignore = !variant.flavors*.name.contains('normal')
+        }
+    }
     lintOptions {
         // https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.LintOptions.html
-
         // Enable all warnings, even those disabled by default.
         checkAllWarnings true
-
-        // Generate a text report that might be seen in the CI build log.
-        textReport true
-        textOutput "stdout"
     }
 }
 
@@ -126,7 +143,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     // According to lint, major version number should match compileSdkVersion.
-    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.1.1'
 
     compile 'io.grpc:grpc-okhttp:1.0.3'
     compile 'io.grpc:grpc-protobuf-nano:1.0.3'
