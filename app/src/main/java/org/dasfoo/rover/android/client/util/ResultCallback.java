@@ -202,7 +202,7 @@ public class ResultCallback {
          * @param callback callback to add
          * @return requestCode which can then be used in {@link this.remove}
          */
-        public synchronized int put(final T callback) {
+        private synchronized int put(final T callback) {
             mBase++;
             mCallbacks.put(mBase, callback);
             return mBase;
@@ -214,7 +214,7 @@ public class ResultCallback {
          * @param id requestCode returned by {@link this.put}
          * @return callback stored by {@link this.put}
          */
-        public T remove(final int id) {
+        private T remove(final int id) {
             return mCallbacks.remove(id);
         }
     }
