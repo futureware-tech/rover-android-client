@@ -52,9 +52,9 @@ public class VideoFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = LogUtil.tagFor(VideoFragment.class);
 
     /**
-     * Format for video.
+     * Format for video (h.264).
      */
-    private static final String VIDEO_FORMAT = "video/avc"; // h.264
+    private static final String VIDEO_FORMAT = "video/avc";
 
     /**
      * TextureView on Ui layout.
