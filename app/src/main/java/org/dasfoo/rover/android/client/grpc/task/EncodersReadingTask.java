@@ -1,8 +1,8 @@
 package org.dasfoo.rover.android.client.grpc.task;
 
-import org.dasfoo.rover.server.nano.ReadEncodersRequest;
-import org.dasfoo.rover.server.nano.ReadEncodersResponse;
-import org.dasfoo.rover.server.nano.RoverServiceGrpc;
+import org.dasfoo.rover.server.RoverServiceGrpc;
+import org.dasfoo.rover.server.ReadEncodersRequest;
+import org.dasfoo.rover.server.ReadEncodersResponse;
 
 import io.grpc.StatusRuntimeException;
 
@@ -20,7 +20,8 @@ public class EncodersReadingTask extends AbstractGrpcTaskExecutor {
     @Override
     public String execute(final RoverServiceGrpc.RoverServiceBlockingStub stub) {
         try {
-            final ReadEncodersRequest readEncodersRequest = new ReadEncodersRequest();
+            final ReadEncodersRequest readEncodersRequest =
+                    ReadEncodersRequest.getDefaultInstance();
             ReadEncodersResponse readEncodersResponse = stub.readEncoders(readEncodersRequest);
             return String.format(
                     "Encoders\n" +
@@ -28,10 +29,10 @@ public class EncodersReadingTask extends AbstractGrpcTaskExecutor {
                             "Back left: %d\n" +
                             "Front right: %d\n" +
                             "Back right: %d\n",
-                    readEncodersResponse.leftFront,
-                    readEncodersResponse.leftBack,
-                    readEncodersResponse.rightFront,
-                    readEncodersResponse.rightBack
+                    readEncodersResponse.getLeftFront(),
+                    readEncodersResponse.getLeftBack(),
+                    readEncodersResponse.getRightFront(),
+                    readEncodersResponse.getRightBack()
             );
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {

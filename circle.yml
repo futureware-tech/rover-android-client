@@ -44,8 +44,8 @@ test:
   # http://www.littlerobots.nl/blog/disable-android-pre-dexing-on-ci-builds/
   - ./gradlew -PdisablePreDex lintNormalDebug testNormalDebugUnitTest assembleInstrumentedRelease assembleInstrumentedReleaseAndroidTest --console=plain
   # Have to keep the directory for CircleCI to correctly identify the tests.
-  - mkdir "${CIRCLE_TEST_REPORTS?}"/lint
-  - xsltproc app/config/lint-junit.xslt app/build/outputs/lint-results-normalDebug.xml >"${CIRCLE_TEST_REPORTS?}"/lint/results.xml
+  #- mkdir "${CIRCLE_TEST_REPORTS?}"/lint
+  #- xsltproc app/config/lint-junit.xslt app/build/outputs/lint-results-normalDebug.xml >"${CIRCLE_TEST_REPORTS?}"/lint/results.xml
   - emulator -avd test -no-window:
       background: true
   - circle-android wait-for-boot

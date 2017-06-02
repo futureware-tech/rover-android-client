@@ -1,12 +1,12 @@
 package org.dasfoo.rover.android.client.grpc.task;
 
-import org.dasfoo.rover.server.nano.AmbientLightRequest;
-import org.dasfoo.rover.server.nano.AmbientLightResponse;
-import org.dasfoo.rover.server.nano.BatteryPercentageRequest;
-import org.dasfoo.rover.server.nano.BatteryPercentageResponse;
-import org.dasfoo.rover.server.nano.RoverServiceGrpc;
-import org.dasfoo.rover.server.nano.TemperatureAndHumidityRequest;
-import org.dasfoo.rover.server.nano.TemperatureAndHumidityResponse;
+import org.dasfoo.rover.server.AmbientLightRequest;
+import org.dasfoo.rover.server.AmbientLightResponse;
+import org.dasfoo.rover.server.BatteryPercentageRequest;
+import org.dasfoo.rover.server.BatteryPercentageResponse;
+import org.dasfoo.rover.server.RoverServiceGrpc;
+import org.dasfoo.rover.server.TemperatureAndHumidityRequest;
+import org.dasfoo.rover.server.TemperatureAndHumidityResponse;
 
 import io.grpc.StatusRuntimeException;
 
@@ -26,15 +26,16 @@ public class GettingBoardInfoTask extends AbstractGrpcTaskExecutor {
         try {
             // Get battery percentage
             final BatteryPercentageRequest batteryPercentageRequest =
-                    new BatteryPercentageRequest();
+                    BatteryPercentageRequest.getDefaultInstance();
             BatteryPercentageResponse batteryPercentageResponse =
                     stub.getBatteryPercentage(batteryPercentageRequest);
             // Get light
-            final AmbientLightRequest ambientLightRequest = new AmbientLightRequest();
+            final AmbientLightRequest ambientLightRequest =
+                    AmbientLightRequest.getDefaultInstance();
             AmbientLightResponse ambientLightResponse =
                     stub.getAmbientLight(ambientLightRequest);
             final TemperatureAndHumidityRequest temperatureAndHumidityRequest =
-                    new TemperatureAndHumidityRequest();
+                    TemperatureAndHumidityRequest.getDefaultInstance();
             TemperatureAndHumidityResponse temperatureAndHumidityResponse =
                     stub.getTemperatureAndHumidity(temperatureAndHumidityRequest);
             // Create answer
@@ -43,10 +44,10 @@ public class GettingBoardInfoTask extends AbstractGrpcTaskExecutor {
                             "Light: %d\n" +
                             "Temperature: %d\n" +
                             "Humidity: %d\n",
-                    batteryPercentageResponse.battery,
-                    ambientLightResponse.light,
-                    temperatureAndHumidityResponse.temperature,
-                    temperatureAndHumidityResponse.humidity);
+                    batteryPercentageResponse.getBattery(),
+                    ambientLightResponse.getLight(),
+                    temperatureAndHumidityResponse.getTemperature(),
+                    temperatureAndHumidityResponse.getHumidity());
         } catch (StatusRuntimeException e) {
             switch (e.getStatus().getCode()) {
                 case UNKNOWN:

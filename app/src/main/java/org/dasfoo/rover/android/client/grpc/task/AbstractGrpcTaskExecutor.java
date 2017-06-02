@@ -1,6 +1,6 @@
 package org.dasfoo.rover.android.client.grpc.task;
 
-import org.dasfoo.rover.server.nano.RoverServiceGrpc;
+import org.dasfoo.rover.server.RoverServiceGrpc;
 
 /**
  * Created by Katarina Sheremet on 5/23/16 11:12 AM.

@@ -1,52 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
-apply plugin: 'checkstyle'
-apply plugin: 'pmd'
+apply from: 'config/quality.gradle'
 
-checkstyle {
-    // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.CheckstyleExtension.html
-    toolVersion '7.3'
-}
-
-pmd {
-    // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.PmdExtension.html
-    toolVersion '5.5.2'
-}
-
-// Have to create our own tasks because Android's sourceSets:
-// https://android.googlesource.com/platform/tools/build/+/master/gradle/src/main/groovy/com/android/build/gradle/internal/api/DefaultAndroidSourceSet.java
-// are not compatible with Gradle sourceSets:
-// https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/SourceSet.html
-// therefore checkstyle/pmd/etc constructors doesn't see them.
-
-// TODO(dotdoom): enable checkstyle and pmd for all Gradle projects
-
-task checkstyle(type: Checkstyle) {
-    // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.Checkstyle.html
-    source android.sourceSets.main.getJavaDirectories()
-    classpath = files()
-    ignoreFailures = false
-}
-
-task pmd(type: Pmd) {
-    // https://docs.gradle.org/current/dsl/org.gradle.api.plugins.quality.Pmd.html
-    source android.sourceSets.main.getJavaDirectories()
-    classpath = files()
-    ignoreFailures = false
-    ruleSetFiles = files('config/pmd/ruleset.xml')
-    consoleOutput = true
-}
-
-project.afterEvaluate {
-    tasks.withType(tasks['lint'].class) {
-        dependsOn 'checkstyle', 'pmd'
-    }
+ext {
+    grpcVersion = '1.3.0'
 }
 
 android {
     compileSdkVersion 25
     // https://developer.android.com/studio/releases/build-tools.html
-    buildToolsVersion '25.0.1'
+    buildToolsVersion '25.0.2'
     testBuildType 'release'
     defaultConfig {
         applicationId 'org.dasfoo.rover.android.client'
@@ -90,39 +53,33 @@ android {
             variant.ignore = !variant.flavors*.name.contains('normal')
         }
     }
-    lintOptions {
-        // https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.LintOptions.html
-        // Enable all warnings, even those disabled by default.
-        checkAllWarnings true
-    }
 }
 
 protobuf {
     // Configure the protoc executable
     protoc {
         // Download from repositories
-        artifact = 'com.google.protobuf:protoc:3.1.0'
+        artifact = 'com.google.protobuf:protoc:3.2.0'
+        //path = '/usr/bin/protoc'
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.1'
+            artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
+        }
+        javalite {
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
         }
     }
     generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                javanano {
-                    // Options added to --javanano_out
-                    option 'ignore_services=true'
-                }
+        all()*.plugins {
+            javalite {
+                // TODO(dotdoom): find out why it's not working (not adding
+                //                @Generated)
+                option 'annotate_code'
             }
-
-            task.plugins {
-                grpc {
-                    // Options added to --grpc_out
-                    option 'nano=true'
-                    option 'nano'
-                }
+            grpc {
+                // Options added to --grpc_out
+                option 'lite'
             }
         }
     }
@@ -143,16 +100,16 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     // According to lint, major version number should match compileSdkVersion.
-    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
 
-    compile 'io.grpc:grpc-okhttp:1.0.3'
-    compile 'io.grpc:grpc-protobuf-nano:1.0.3'
-    compile 'io.grpc:grpc-stub:1.0.3'
+    compile "io.grpc:grpc-okhttp:$grpcVersion"
+    compile "io.grpc:grpc-protobuf-lite:$grpcVersion"
+    compile "io.grpc:grpc-stub:$grpcVersion"
 
     compile 'javax.annotation:javax.annotation-api:1.2'
 
-    compile 'com.google.android.gms:play-services-safetynet:10.0.1'
-    compile 'com.google.android.gms:play-services-auth:10.0.1'
+    compile 'com.google.android.gms:play-services-safetynet:10.2.6'
+    compile 'com.google.android.gms:play-services-auth:10.2.6'
 
     compile 'com.google.api-client:google-api-client-android:1.22.0'
     compile 'com.google.apis:google-api-services-storage:v1-rev92-1.22.0'
@@ -161,4 +118,19 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 
     compile project(path: ':h264videostream')
+}
+tasks.withType(JavaCompile) {
+    options.compilerArgs += [
+            // TODO(dotdoom): make use of annotate_code to ignore issues in @Generated code:
+            //                https://github.com/google/protobuf/blob/master/src/google/protobuf/compiler/java/java_generator.cc#L83
+            //                https://github.com/google/error-prone/issues/463
+            // TODO(dotdoom): enable all checks and promote to Errors in error-prone config:
+            //                http://errorprone.info/docs/flags
+            '-XepDisableWarningsInGeneratedCode',
+            '-XepAllDisabledChecksAsWarnings',
+            '-Xep:FallThrough:WARN',
+            '-Xep:ConstantField:WARN',
+            '-Xep:RemoveUnusedImports:WARN',
+            '-Xep:PrivateConstructorForUtilityClass:WARN',
+    ]
 }

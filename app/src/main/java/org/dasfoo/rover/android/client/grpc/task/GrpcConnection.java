@@ -3,7 +3,7 @@ package org.dasfoo.rover.android.client.grpc.task;
 import android.util.Log;
 
 import org.dasfoo.rover.android.client.util.LogUtil;
-import org.dasfoo.rover.server.nano.RoverServiceGrpc;
+import org.dasfoo.rover.server.RoverServiceGrpc;
 
 import java.util.concurrent.TimeUnit;
 

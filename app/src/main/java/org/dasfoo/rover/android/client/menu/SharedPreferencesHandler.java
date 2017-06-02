@@ -32,7 +32,7 @@ public class SharedPreferencesHandler {
      * @return host
      * @throws IllegalArgumentException if host is empty
      */
-    public final String getHost() throws IllegalArgumentException {
+    public final String getHost() {
         return getString(Settings.HOST);
     }
 
@@ -42,7 +42,7 @@ public class SharedPreferencesHandler {
      * @return port
      * @throws IllegalArgumentException if port is empty
      */
-    public final int getPort() throws IllegalArgumentException {
+    public final int getPort() {
         return Integer.parseInt(getString(Settings.PORT));
     }
 
@@ -52,7 +52,7 @@ public class SharedPreferencesHandler {
      * @return account name
      * @throws IllegalArgumentException if account name is empty
      */
-    public final String getAccountName() throws IllegalArgumentException {
+    public final String getAccountName() {
         return getString(Settings.ACCOUNT_NAME);
     }
 
@@ -76,7 +76,7 @@ public class SharedPreferencesHandler {
      * @return string that saved in settings
      * @throws IllegalArgumentException if string is empty
      */
-    private String getString(final Settings key) throws IllegalArgumentException {
+    private String getString(final Settings key) {
         final SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(mContext);
         final String host = sharedPreferences.getString(key.toString(), "");
